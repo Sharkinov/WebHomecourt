@@ -56,6 +56,8 @@ export async function getUserCards(userId: string): Promise<CollectedCard[]> {
     // Data is not formatted as array, entcs hace un array vacío and sends that will show no user colls
     if (!Array.isArray(data)) return []
 
+    console.log("raw data:", JSON.stringify(data, null, 2)) // A ver
+
     // Takes results del data and turns into the CollectedCard obj
     const cards: CollectedCard[] = data.map(row => {
         // Stores the card row
