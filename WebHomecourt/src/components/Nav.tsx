@@ -19,14 +19,14 @@ function Nav({ current }: NavProps) {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-wrap gap-3 justify-center mt-6">
+    <div className="flex flex-wrap gap-3 mt-6">
       {pages
         .filter((p) => p.label !== current)
         .map((p) => (
           <button
             key={p.path}
             onClick={() => navigate(p.path)}
-            className="px-5 py-2 bg-white text-black rounded-lg text-base cursor-pointer hover:bg-gray-200 transition-colors"
+            className="px-5 py-2 bg-white drop-shadow text-black rounded-lg text-base cursor-pointer hover:bg-gray-200 transition-colors"
           >
             {p.label}
           </button>
