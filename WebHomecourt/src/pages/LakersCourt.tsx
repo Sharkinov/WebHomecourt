@@ -7,7 +7,7 @@ function LakersCourt() {
     <div>
       <div className="flex flex-col items-center justify-center p-10">
         <h1 className="text-5xl font-bold">LakersCourt</h1>
-        <Nav current="LakersCourt" userId='ac3a5447-1b6f-4324-8830-5ddc2d7b2c47' />
+        <Nav current="LakersCourt"  />
       </div>
       
       <div>

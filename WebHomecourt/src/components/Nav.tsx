@@ -16,10 +16,10 @@ const pages = [
 
 interface NavProps {
   current: string
-  userId: string 
 }
 
-function Nav({ current, userId }: NavProps) {
+function Nav({ current }: NavProps) {
+  const userId = "ac3a5447-1b6f-4324-8830-5ddc2d7b2c47"
   const navigate = useNavigate()
   const [user, setUser] = useState<User | null>(null)
 

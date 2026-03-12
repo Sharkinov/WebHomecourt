@@ -3,7 +3,7 @@ import Nav from '../components/Nav'
 function Agenda() {
   return (
     <div className="flex flex-col items-center justify-center  ">
-      <Nav current="Agenda" userId="c1998ce5-a357-4963-bda3-fde103393cdd"/>
+      <Nav current="Agenda" />
       <div className='px-14 py-5 bg-zinc-100 w-full '>
         <div className="w-full px-5 py-7 bg-violet-950 rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-black/25 flex justify-between items-center overflow-hidden">
             <h1 className="justify-start text-white title1">Agenda</h1>

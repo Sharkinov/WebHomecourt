@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { supabase } from "../lib/supabase"
 
 export type MarcadorReal = {
@@ -13,6 +12,7 @@ export type MarcadorReal = {
   opposing_score: number
   venue: string
   attended: number
+  home: boolean
 }
 
 export async function getScoreboard(): Promise<MarcadorReal | null> {

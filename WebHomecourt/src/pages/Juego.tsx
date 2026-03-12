@@ -13,7 +13,7 @@ function Juego() {
     <div className="flex flex-col items-center justify-center">
 
      
-      <Nav current="Juego" userId="c1998ce5-a357-4963-bda3-fde103393cdd"/>
+      <Nav current="Juego" />
       <h1 className="text-5xl font-bold mt-6">Juego</h1>
       <div className="mt-8 w-full flex justify-center">
         <Unity
