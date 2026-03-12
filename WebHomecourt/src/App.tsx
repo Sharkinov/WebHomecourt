@@ -1,5 +1,3 @@
-
-// ac3a5447-1b6f-4324-8830-5ddc2d7b2c47
 import 'leaflet/dist/leaflet.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
