@@ -109,7 +109,7 @@ function DisplayUserCards({ userId }: { userId: string }) {
                 <div
                     key={card.card_id}
                     className="bg-white rounded-md justify-center text-center px-2 py-3 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] w-[14.625rem] h-[20.5rem]">
-                    <h1 className="text-lg font-black ">{card.player_name}</h1>
+                    <h3 className="text-lg font-black ">{card.player_name}</h3>
                     <img src={card.web_url} alt={card.player_name} className="w-[10.75rem] h-max-[14.25rem] mx-auto" />
                     <p>Value: ${card.cost}</p>
                     <p>Unlocked: {card.unlocked ? "Yes" : "No"}</p>
