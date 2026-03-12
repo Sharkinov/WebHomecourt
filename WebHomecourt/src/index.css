@@ -1,1 +1,73 @@
 @import "tailwindcss";
+
+body {
+  font-family: 'Graphik', sans-serif;
+}
+
+.marcador{
+    font-size: 70px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: normal;
+}
+
+.title1 {
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 900;
+  line-height: normal;
+}
+
+.title2 {
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 700;
+  line-height: normal;
+}
+
+h1 {
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 600;
+  line-height: normal;
+}
+
+h2 {
+  font-size: clamp(22px, 2.5vw, 32px);
+  font-weight: 500;
+  line-height: normal;
+}
+
+h3 {
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 400;
+  line-height: normal;
+}
+
+h4 {
+  font-size: clamp(18px, 1.8vw, 24px);
+  font-weight: 400;
+  line-height: normal;
+}
+
+h5 {
+  font-size: clamp(16px, 1.5vw, 20px);
+  font-weight: 400;
+  line-height: normal;
+}
+
+p {
+  font-size: clamp(14px, 1.3vw, 18px);
+  font-weight: 400;
+  line-height: normal;
+}
+
+small {
+  font-size: clamp(13px, 1.2vw, 16px);
+  font-weight: 400;
+  line-height: normal;
+}
+
+a {
+  font-size: clamp(11px, 1vw, 12px);
+  font-weight: 400;
+  line-height: normal;
+  text-decoration: underline;
+}
