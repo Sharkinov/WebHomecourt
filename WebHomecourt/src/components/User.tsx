@@ -1,7 +1,7 @@
 import { supabase } from "../lib/supabase"
 import { useEffect, useState } from "react"
 
-type User = { 
+export type User = { 
     user_type: number 
     birthdate: string 
     nickname: string 
@@ -12,7 +12,8 @@ type User = {
     crowns: number 
     allow_lakers_court: boolean 
     notifications: boolean 
-    online: boolean }
+    online: boolean 
+  };
 
 export async function getUserById(userId: string): Promise<User | null> {
   if (!userId) {
