@@ -14,7 +14,7 @@ function Juego() {
 
       <Nav current="Juego" />
 
-      <h1 className="text-5xl font-bold mt-10 mb-10">Juego</h1>
+      <h1 className="text-5xl font-bold mt-10 mb-10">Game</h1>
 
       <div className="w-[90vw] max-w-[1600px] aspect-video">
         <Unity
