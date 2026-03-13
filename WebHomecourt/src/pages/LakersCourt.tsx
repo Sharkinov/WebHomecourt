@@ -14,14 +14,14 @@ function LakersCourt() {
         </div>
         
         <div>
-          <h1 className="text-2xl font-bold p-5">Eventos</h1>
+          <h1 className="text-2xl font-bold p-5">Events</h1>
           <div className="flex items-center justify-center">
           <NewEvent/>
           <ShowEvents/>
           </div>
         </div>
         <div>
-          <h1 className="text-2xl font-bold p-5">Mapa de canchas</h1>
+          <h1 className="text-2xl font-bold p-5">Court Maps</h1>
           <div className="flex items-center justify-center">
           <Map />
           </div>
