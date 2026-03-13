@@ -1,24 +1,24 @@
 name: CD — Deploy a QA
 
-on:
-  push:
-    branches: [main]
+# on:
+#   push:
+#     branches: [main]
 
-jobs:
-  deploy-qa:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+# jobs:
+#   deploy-qa:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - name: Build imagen Docker
-        run: docker build -t mi-app:${{ github.sha }} .
+#       - name: Build imagen Docker
+#         run: docker build -t mi-app:${{ github.sha }} .
 
-      - name: Push al registry
-        run: |
-          echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker tag mi-app:${{ github.sha }} ghcr.io/${{ github.repository }}:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+#       - name: Push al registry
+#         run: |
+#           echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+#           docker tag mi-app:${{ github.sha }} ghcr.io/${{ github.repository }}:${{ github.sha }}
+#           docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
 
-      - name: Llamar webhook de Coolify (QA)
-        run: |
-          curl -X GET "${{ secrets.COOLIFY_WEBHOOK_QA }}"
+#       - name: Llamar webhook de Coolify (QA)
+#         run: |
+#           curl -X GET "${{ secrets.COOLIFY_WEBHOOK_QA }}"
