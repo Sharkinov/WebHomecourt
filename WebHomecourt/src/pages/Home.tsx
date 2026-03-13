@@ -1,6 +1,7 @@
 import Nav from '../components/Nav'
 import { getScoreboard, type MarcadorReal, addPoints } from '../components/Marcador'
 import { useEffect, useState } from "react"
+import { supabase } from "../lib/supabase"
 import RealtimeChat from '../components/RealtimeChat'
 import SignInButton from '../components/botongoogle'
 function Home() {
@@ -14,6 +15,21 @@ function Home() {
       }
   
       loadUser()
+
+      const channel = supabase
+        .channel('realtime_marcador_home')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'simulacion_juego', table: 'team_player_stats' },
+          () => {
+            loadUser()
+          }
+        )
+        .subscribe()
+
+      return () => {
+        supabase.removeChannel(channel)
+      }
     }, [])
 
   return (
@@ -75,14 +91,26 @@ function Home() {
         </div>
         <div className="flex justify-center items-center gap-6 mt-6">
         <button
-          onClick={() => marcadorcito?.game_id && addPoints(marcadorcito.game_id, 1, 2)}
+          onClick={async () => {
+            if (marcadorcito?.game_id) {
+              await addPoints(marcadorcito.game_id, 1, 2);
+              const data = await getScoreboard();
+              setMarcador(data);
+            }
+          }}
           disabled={!marcadorcito?.game_id}
           className="px-8 py-4 bg-violet-950 text-white text-lg font-semibold rounded-lg hover:bg-violet-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           +2 Lakers
         </button>
         <button
-          onClick={() => marcadorcito?.game_id && addPoints(marcadorcito.game_id, 4, 2)}
+          onClick={async () => {
+            if (marcadorcito?.game_id) {
+              await addPoints(marcadorcito.game_id, 4, 2);
+              const data = await getScoreboard();
+              setMarcador(data);
+            }
+          }}
           disabled={!marcadorcito?.game_id}
           className="px-8 py-4 bg-violet-950 text-white text-lg font-semibold rounded-lg hover:bg-violet-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
