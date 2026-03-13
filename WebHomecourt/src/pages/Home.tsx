@@ -1,6 +1,7 @@
 import Nav from '../components/Nav'
 import { getScoreboard, type MarcadorReal, addPoints } from '../components/Marcador'
 import { useEffect, useState } from "react"
+import RealtimeChat from '../components/RealtimeChat'
 
 function Home() {
 
@@ -88,6 +89,7 @@ function Home() {
           +2 opponent
         </button>
         </div>
+        <RealtimeChat gameId={marcadorcito?.game_id ?? null} />
       </div>
       
     </div>
