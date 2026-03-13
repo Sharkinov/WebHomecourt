@@ -67,7 +67,8 @@ function Nav({ current }: NavProps) {
 
           <div className="flex justify-start items-center gap-7">
             <div className="p-2.5 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-black/25 flex justify-start items-center gap-3.5">
-              <MdPayments size={30} className="text-amber-400" />
+              <span className="material-symbols-outlined text-amber-400 text-[200px]">payments</span>
+                      
               <div className="justify-start text-black text-2xl font-normal font-['Graphik']">{user?.credits ?? 0}</div>
             </div>
 

@@ -12,7 +12,6 @@ function Store() {
         </div>
         <div className="px-14 py-3">
             <h1 className="justify-start text-2xl font-black font-['Graphik'] pb-2">Collection</h1>
-            
         </div>
       </div>
       <DisplayUserCards userId="ac3a5447-1b6f-4324-8830-5ddc2d7b2c47"></DisplayUserCards>
