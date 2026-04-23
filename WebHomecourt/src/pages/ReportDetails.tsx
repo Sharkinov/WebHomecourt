@@ -47,6 +47,14 @@ const ReportDetails = () => {
       }
       setReport(data)
 
+      //change status to reviewed if the report is opened, params takes in id of report opened
+      if (data.status === 'Pending') {
+        await supabase
+          .from('user_report')
+          .update({ status: 'Reviewed' })
+          .eq('ureport_id', id)
+      }
+
       const historyData = await getUserHistory(data.reported_user_id, data.ureport_id)
       setUserHistory(historyData)
     }
@@ -119,6 +127,7 @@ const ReportDetails = () => {
                 onBan={() => console.log('ban')}
               />
             </div>
+            {/* Right side */}
             <div className="w-0.5 bg-black/20 self-stretch -mr-6 -mb-10" />
             <UserHistory
               reportedUser={{
@@ -129,9 +138,10 @@ const ReportDetails = () => {
               }}
               history={userHistory.map((h) => ({
                 event: h.event?.event_name ?? 'N/A',
-                date: new Date(h.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                date: new Date(h.event?.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
                 rating: h.reported_user?.reputation ?? 0,
                 tags: h.key_words ?? [],
+                report_id: h.ureport_id,
               }))}
             />
           </div>
