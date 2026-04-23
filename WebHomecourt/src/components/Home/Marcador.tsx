@@ -67,6 +67,18 @@ export const useContadorTiempo = (startDate?: string) => {
   return segundos;
 };
 
+const formatTime = (seg: number) => {
+  const d = Math.floor(seg / 86400);
+  const h = Math.floor((seg % 86400) / 3600);
+  const m = Math.floor((seg % 3600) / 60);
+  const s = seg % 60;
+
+  if (d > 0) {
+    return `${d.toString().padStart(2, "0")}:${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  }
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+};
+
 type MarcadorActivoProps = {
   juego: MarcadorJuego;
 };
@@ -121,7 +133,7 @@ function MarcadorActivo({juego}:MarcadorActivoProps){
                 {isLive && (
                   <div className="flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-violet-950 text-sm">history</span>
-                    <p className="text-violet-950 text-[10px] md:text-xs">{segundos} elapsed</p>
+                    <p className="text-violet-950 text-[10px] md:text-xs">{formatTime(segundos)} elapsed</p>
                   </div>
                   )}
                 <div className="flex items-center gap-1.5">
