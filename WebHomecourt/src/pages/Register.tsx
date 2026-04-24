@@ -4,13 +4,20 @@ import { LeftSide, RightSide } from '../components/Registro/laterales'
 import Button from '../components/button.tsx'
 import { supabase } from "../lib/supabase"
 import GoogleButton from '../components/botongoogle.tsx'
+import StatusAlert from '../components/Messages/StatusAlert.tsx'
 
 function Register() {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading]   = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [emailError, setEmailError] = useState('');
   // const navigate = useNavigate();
+
+  const validateEmail = (value) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return regex.test(value)
+  }
 
   const handleRegister = async () => {
     setLoading(true)
@@ -54,10 +61,28 @@ function Register() {
               type="email"
               placeholder="Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="h-11 px-4 bg-white rounded-2xl text-zinc-500 focus:outline-2 focus:outline-morado-lakers"
+              onChange={(e) => {
+                const value = e.target.value
+                setEmail(value)
+
+                if (emailError && validateEmail(value)) {
+                  setEmailError("")
+                }
+              }}
+              onBlur={() => {
+                if (email && !validateEmail(email)) {
+                  setEmailError("Invalid email format")
+                }
+              }}
+              className={`h-11 px-4 bg-white rounded-2xl text-zinc-500 focus:outline-2 ${
+                emailError ? "outline-orange-800" : "focus:outline-morado-lakers"
+              }`}
             />
+            {emailError && (
+              <div className="mt-2">
+                <StatusAlert tone="warning" title={emailError}/>
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-1">
             <label>Password</label>
