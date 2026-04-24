@@ -30,7 +30,7 @@ function FGAvsFGMGraph({ stats }: { stats: PlayerStat[]}) {
         value={selectedPlayer}
         onChange={(e) =>
           setSelectedPlayer(
-            e.target.value === "all" ? "all" : Number(e.target.value)
+            e.target.value === "All" ? "all" : Number(e.target.value)
           )
         }
         className="px-2 py-2 gap-2 rounded-2xl border border-gray-400" 

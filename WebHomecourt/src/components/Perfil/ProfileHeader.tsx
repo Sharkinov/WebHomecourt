@@ -124,57 +124,71 @@ function ProfileHeader({ userId }: { userId: string }) {
     }
 
     return (
-        <div className="bg-morado-oscuro rounded-2xl p-6">
-            <div className="flex items-center gap-4 mb-4">
-                <img
-                    src={profile.photo_url || DEFAULT_AVATAR}
-                    alt={profile.nickname}
-                    className="w-[110px] h-[112px] rounded object-cover flex-shrink-0"
-                />
-                <div>
-                    <h1 className="text-white text-4xl font-bold">
-                        {profile.nickname}
-                    </h1>
-                    <div className="flex items-center gap-1 mt-1">
-                        <span className="material-symbols-outlined text-[#E7E6E8] text-base">
-                            groups
-                        </span>
-                        <span className="text-[#E7E6E8] text-sm">
-                            {stats.friendsCount} Friends
-                        </span>
+        <div className="bg-morado-oscuro rounded-2xl p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4">
+                <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                    <img
+                        src={profile.photo_url || DEFAULT_AVATAR}
+                        alt={profile.nickname}
+                        className="w-[80px] h-[80px] sm:w-[110px] sm:h-[112px] rounded object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1">
+                        <h1 className="text-white text-2xl sm:text-4xl font-bold">
+                            {profile.nickname}
+                        </h1>
+                        <div className="flex items-center gap-1 mt-1">
+                            <span className="material-symbols-outlined text-[#E7E6E8] text-base">
+                                groups
+                            </span>
+                            <span className="text-[#E7E6E8] text-sm">
+                                {stats.friendsCount} Friends
+                            </span>
+                        </div>
                     </div>
                 </div>
+
+                <button
+                    onClick={() => navigate("/editar-perfil")}
+                    className="ml-auto sm:hidden flex items-center justify-center gap-2 bg-morado-lakers hover:bg-morado-lakers/90 px-4 py-2 rounded-xl transition-colors"
+                >
+                    <span className="material-symbols-outlined text-xl text-[#F3F2F3] leading-none">
+                        edit
+                    </span>
+                    <span className="text-[#F3F2F3] font-['Graphik'] text-base font-medium leading-normal">
+                        Edit Profile
+                    </span>
+                </button>
             </div>
-            <div className="flex items-end justify-between gap-4 mt-4">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mt-4">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                     <div className="flex items-center gap-1">
                         <span className="material-symbols-outlined text-amarillo-lakers text-xl" style={{ fontVariationSettings: '"FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24' }}>
                             star
                         </span>
-                        <span className="text-amarillo-lakers text-[22px]">
+                        <span className="text-amarillo-lakers text-lg sm:text-[22px]">
                             {(profile.reputation ?? 0).toFixed(1)}
                         </span>
-                        <span className="text-[#9482A5] text-sm ml-1">
+                        <span className="text-[#9482A5] text-xs sm:text-sm ml-1">
                             Reputation
                         </span>
                     </div>
 
                     <StatDivider />
                     <div className="flex items-center gap-1">
-                        <span className="text-[#F3F2F3] text-[22px]">
+                        <span className="text-[#F3F2F3] text-lg sm:text-[22px]">
                             {profile.credits}
                         </span>
-                        <span className="text-[#9482A5] text-sm">
+                        <span className="text-[#9482A5] text-xs sm:text-sm">
                             Credits
                         </span>
                     </div>
 
                     <StatDivider />
                     <div className="flex items-center gap-1">
-                        <span className="text-[#F3F2F3] text-[22px]">
+                        <span className="text-[#F3F2F3] text-lg sm:text-[22px]">
                             {stats.eventsCreated}
                         </span>
-                        <span className="text-[#9482A5] text-sm">
+                        <span className="text-[#9482A5] text-xs sm:text-sm whitespace-nowrap">
                             Events Created
                         </span>
                     </div>
@@ -182,10 +196,10 @@ function ProfileHeader({ userId }: { userId: string }) {
                     <StatDivider />
 
                     <div className="flex items-center gap-1">
-                        <span className="text-[#F3F2F3] text-[22px]">
+                        <span className="text-[#F3F2F3] text-lg sm:text-[22px]">
                             {stats.eventsAttended}
                         </span>
-                        <span className="text-[#9482A5] text-sm">
+                        <span className="text-[#9482A5] text-xs sm:text-sm whitespace-nowrap">
                             Events Attended
                         </span>
                     </div>
@@ -193,10 +207,10 @@ function ProfileHeader({ userId }: { userId: string }) {
                     <StatDivider />
 
                     <div className="flex items-center gap-1">
-                        <span className="text-[#F3F2F3] text-[22px]">
+                        <span className="text-[#F3F2F3] text-lg sm:text-[22px]">
                             {stats.cardsCollected}
                         </span>
-                        <span className="text-[#9482A5] text-sm">
+                        <span className="text-[#9482A5] text-xs sm:text-sm whitespace-nowrap">
                             Cards collected
                         </span>
                     </div>
@@ -204,7 +218,7 @@ function ProfileHeader({ userId }: { userId: string }) {
 
                 <button
                     onClick={() => navigate("/editar-perfil")}
-                    className="flex items-center justify-center gap-2 bg-morado-lakers hover:bg-morado-lakers/90 px-6 py-2 rounded-xl transition-colors"
+                    className="hidden sm:flex items-center justify-center gap-2 bg-morado-lakers hover:bg-morado-lakers/90 px-6 py-2 rounded-xl transition-colors flex-shrink-0"
                 >
                     <span className="material-symbols-outlined text-2xl text-[#F3F2F3] leading-none">
                         edit

@@ -49,6 +49,14 @@ const EventReportDetails = () => {
       }
 
       setReport(data)
+
+      //change status to reviewed if the report is opened, params takes in id of report opened
+      if (data.status === 'Pending') {
+        await supabase
+          .from('event_report')
+          .update({ status: 'Reviewed' })
+          .eq('ereport_id', id)
+      }
     }
 
     fetchReport()

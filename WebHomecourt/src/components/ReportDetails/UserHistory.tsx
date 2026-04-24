@@ -13,6 +13,7 @@ interface UserHistoryProps {
     date: string
     rating: number
     tags: string[]
+    report_id: string
   }[]
 }
 
@@ -55,6 +56,7 @@ const UserHistory = ({ reportedUser, history }: UserHistoryProps) => {
               date={h.date}
               rating={h.rating}
               tags={h.tags ?? []}
+              reportId={h.report_id}
             />
           ))
         )}

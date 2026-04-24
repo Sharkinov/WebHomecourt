@@ -21,6 +21,7 @@ type PrivateChatProps = {
   onOpenCommunity?: () => void
 }
 
+// Este solamente tiene que ser para cuando se carga por primera ves
 async function getMessages(conversationId: number): Promise<Message[]> {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) throw new Error("No session found")
@@ -36,13 +37,12 @@ async function getMessages(conversationId: number): Promise<Message[]> {
 }
 
 function PrivateChat({ selectedChat, onBack }: PrivateChatProps) {
-  const { session } = useAuth()
+  const { session, nickname, photoUrl } = useAuth()
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [newMessage, setNewMessage] = useState("")
   const bottomRef = useRef<HTMLDivElement | null>(null)
-
   const loadMessages = useCallback(async () => {
     try {
       setIsLoading(true)
@@ -60,11 +60,22 @@ function PrivateChat({ selectedChat, onBack }: PrivateChatProps) {
   useEffect(() => {
     void loadMessages()
   }, [loadMessages])
-
+  //Para utilizar realtime
   useActualizarMessPriv({
     conversationId: selectedChat.conversation_id,
-    onMessageReceived: () => {
-      void loadMessages()
+    onMessageReceived: (payload) => {
+      const raw = payload.new
+      if (raw.user_id === session?.user.id) return
+      const incoming: Message = {
+        message_id: raw.message_id,
+        user_id: raw.user_id,
+        nickname: selectedChat.friend_nickname,
+        photo_url: selectedChat.friend_photo,
+        message: raw.message,
+        sent: raw.sent,
+        is_mine: false,
+      }
+      setMessages((prev) => [...prev, incoming])
     },
   })
 
@@ -76,21 +87,32 @@ function PrivateChat({ selectedChat, onBack }: PrivateChatProps) {
     e.preventDefault()
     const content = newMessage.trim()
     if (!content || !session) return
-
+    // Para mostrar que se envía sin esperar a que haga el post
+    const optimisticMsg: Message = {
+      message_id: Date.now(),
+      user_id: session.user.id,
+      nickname: nickname ?? "You",
+      photo_url: photoUrl,
+      message: content,
+      sent: new Date().toISOString(),
+      is_mine: true,
+    }
+    setMessages((prev) => [...prev, optimisticMsg])
+    setNewMessage("")
     try {
       setError(null)
-
+      // INSERT EN BASE DE DATOS
       const { error } = await supabase.from("message").insert({
         user_id: session.user.id,
         conversation_id: selectedChat.conversation_id,
         message: content,
-        sent: new Date().toISOString(),
+        sent: optimisticMsg.sent,
       })
 
-      if (error) throw new Error(error.message)
-
-      setNewMessage("")
-      void loadMessages()
+      if (error) {
+        setMessages((prev) => prev.filter((m) => m.message_id !== optimisticMsg.message_id))
+        throw new Error(error.message)
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "No se pudo enviar el mensaje"
       setError(message)
