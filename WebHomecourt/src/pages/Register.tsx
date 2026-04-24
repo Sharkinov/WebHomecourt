@@ -1,13 +1,109 @@
-//import { useState } from 'react'
-//import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { LeftSide, RightSide } from '../components/Registro/laterales'
+import { useNavigate } from 'react-router-dom'
+import Button from '../components/button.tsx'
+import { supabase } from "../lib/supabase"
+import GoogleButton from '../components/botongoogle.tsx'
 
 function Register() {
+  const [email, setEmail]       = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading]   = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+      //setError('');
+      setErrorMessage('');
+      // Checks fields are filled in
+      if (email == '' && password == '') {
+        // No credentials
+        setErrorMessage("Please provide your email and password");
+      } else if (email == '') {
+        setErrorMessage("Please provide your email");
+      } else if (password == '') {
+        setErrorMessage("Please provide your password");
+      } else {
+        // Filled everything in so tries to sign in now
+        setLoading(true);
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          //setError(error.message);
+          console.log(`Error iniciando sesión ${error}`);
+          setErrorMessage("Incorrect credentials");
+        } else {
+          console.log(`Sí inició sesión`);
+          //setUser(data.user); // Sets the user data 
+          navigate('/');
+        }
+      }
+    };
+
   return (
-    <div>
-        <h1>Registro</h1>
-        <a href="/login">Regresa a login</a>
+    <div className="relative min-h-screen bg-zinc-100 flex items-center justify-center overflow-hidden">
+      <div className="absolute top-0 right-0 hidden md:block">
+        <LeftSide />
+      </div>
+
+      <div className="absolute bottom-0 left-0 hidden md:block">
+        <RightSide />
+      </div>
+      <div className="relative flex flex-col items-center w-full max-w-sm px-8 py-10">
+        <img
+          src="/lakers_homecourt.png"
+          alt="Lakers Homecourt"
+          className="h-16 object-contain mb-6"
+        />
+        <h1 className="text-morado-lakers mb-1 text-center">Hi, new fan!</h1>
+        <p className="text-gray-600 mb-6">Become part of the Laker family.</p>
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col gap-1">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="h-11 px-4 bg-white rounded-2xl text-zinc-500 focus:outline-2 focus:outline-morado-lakers"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Create new password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="h-11 px-4 bg-white rounded-2xl text-zinc-500 focus:outline-2 focus:outline-morado-lakers"
+            />
+          </div>
+          <Button
+            text={loading ? "Signing-up" : "Continue"}
+            type="primary"
+            onClick={handleLogin}
+            className="w-full text-g !py-2"
+          />
+          <div className="flex items-center w-full my-4">
+            <div className="flex-1 h-px bg-gray-300"></div>
+
+            <span className="px-3 text-morado-lakers font-semibold text-sm">
+              Or
+            </span>
+
+            <div className="flex-1 h-px bg-gray-300"></div>
+          </div>
+          <GoogleButton></GoogleButton>
+        </div>
+        {errorMessage && <p className="text-center rounded-lg bg-red-100 text-red-800 outline-2 outline-red-800 mt-5 mb-1 px-2 py-3">{errorMessage}</p>}
+        <div className="inline-flex items-center gap-2.5 mt-4">
+          <p className="text-morado-lakers text-lg font-semibold">Already have an account?</p>
+          <a href="/login" className="text-morado-bajo text-lg font-semibold underline hover:text-morado-lakers">Sign In</a>
+        </div>
+      </div>
     </div>
   )
-};
+}
 
-export default Register;
+export default Register
