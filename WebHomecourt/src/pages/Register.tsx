@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { LeftSide, RightSide } from '../components/Registro/laterales'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import Button from '../components/button.tsx'
 import { supabase } from "../lib/supabase"
 import GoogleButton from '../components/botongoogle.tsx'
