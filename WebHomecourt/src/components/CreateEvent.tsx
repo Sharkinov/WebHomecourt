@@ -23,7 +23,7 @@ interface DatosEvento {
 async function createEvent(event: DatosEvento) {
   const payload = {
     event_name: event.event_name,
-    date: event.date && event.time ? `${event.date}T${event.time}:00` : event.date,
+    date: event.date && event.time ? `${event.date}T${event.time}:00-06:00` : event.date,
     court_id:       event.court_id      !== "" ? Number(event.court_id)      : null,
     min_age:        event.min_age       !== "" ? Number(event.min_age)        : null,
     max_age:        event.max_age       !== "" ? Number(event.max_age)        : null,
