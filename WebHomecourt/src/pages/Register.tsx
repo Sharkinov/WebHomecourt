@@ -10,34 +10,25 @@ function Register() {
   const [password, setPassword] = useState('');
   const [loading, setLoading]   = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const handleLogin = async () => {
-      //setError('');
-      setErrorMessage('');
-      // Checks fields are filled in
-      if (email == '' && password == '') {
-        // No credentials
-        setErrorMessage("Please provide your email and password");
-      } else if (email == '') {
-        setErrorMessage("Please provide your email");
-      } else if (password == '') {
-        setErrorMessage("Please provide your password");
-      } else {
-        // Filled everything in so tries to sign in now
-        setLoading(true);
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-          //setError(error.message);
-          console.log(`Error iniciando sesión ${error}`);
-          setErrorMessage("Incorrect credentials");
-        } else {
-          console.log(`Sí inició sesión`);
-          //setUser(data.user); // Sets the user data 
-          navigate('/');
-        }
-      }
-    };
+  const handleRegister = async () => {
+    setLoading(true)
+    setErrorMessage('')
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    })
+
+    if (error) {
+      setErrorMessage(`${error.message}`)
+    } else {
+      setErrorMessage('¡Registro exitoso! Revisa tu correo para confirmar tu cuenta.')
+    }
+
+    setLoading(false)
+  }
 
   return (
     <div className="relative min-h-screen bg-zinc-100 flex items-center justify-center overflow-hidden">
@@ -82,7 +73,7 @@ function Register() {
           <Button
             text={loading ? "Signing-up" : "Continue"}
             type="primary"
-            onClick={handleLogin}
+            onClick={handleRegister}
             className="w-full text-g !py-2"
           />
           <div className="flex items-center w-full my-4">
