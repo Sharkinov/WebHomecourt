@@ -19,9 +19,6 @@ export interface SkillLevel {
   description: string; // Texto del nivel (ej. Beginner, Intermediate).
 }
 
-type CourtTournamentRow = Omit<CourtTournament, "court_id" | "current_players"> & {
-  court_id: number | string; // Puede venir numerico o string desde BD.
-};
 
 interface UserEventRow {
   event_id: number | string | null;

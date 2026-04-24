@@ -1,30 +1,5 @@
 import { supabase } from '../lib/supabase'
-//Para lo que devuelve get_pending_rating
 
-type PendingRatingRow = {
-  user_event_id: number
-  event_id: number
-  event_name: string | null
-  event_date: string | null
-}
-
-// Para lo qe devuelve get_players_played_with
-type PlayedWithPlayer = {
-  user_id: string
-  nickname: string | null
-  username: string | null
-  photo_url: string | null
-  reputation: number | null
-  event_id: number | null
-  event_name: string | null
-  event_date: string | null
-}
-
-//para el rated_user_id que da user_event_raitirngs
-
-type UserEventRatingRow = {
-  rated_user_id: string
-}
 
 //Pa el frnt
 export type RatePlayer = {
@@ -67,7 +42,7 @@ export async function getPendingRatingPlayers(): Promise<PendingRateResponse | n
     courtDirection: data.court_direction,
     players: (data.players ?? []).map((p: any) => ({
       id:            p.user_id,
-      avatarUrl:     p.photo_url || 'https://i.pravatar.cc/150',
+      avatarUrl:     p.photo_url || null,
       playerName:    p.nickname || p.username || 'Jugador',
       playerTag:     `@${p.username || 'sin_usuario'}`,
       initialRating: 0,
