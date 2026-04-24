@@ -14,14 +14,20 @@ function Register() {
   const [emailError, setEmailError] = useState('');
   // const navigate = useNavigate();
 
-  const validateEmail = (value) => {
+  const validateEmail = (value: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return regex.test(value)
   }
 
   const handleRegister = async () => {
-    setLoading(true)
     setErrorMessage('')
+
+    if (!validateEmail(email)) {
+      setEmailError('Invalid email format')
+      return
+    }
+
+    setLoading(true)
 
     const { error } = await supabase.auth.signUp({
       email,
