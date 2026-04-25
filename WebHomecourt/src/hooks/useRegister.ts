@@ -148,6 +148,7 @@ export function useRegister(): UseRegisterReturn {
 
     const register = useCallback(async () => {
         if (loading) return
+        setSubmitted(true)
         setAlert(null)
 
         const validation = firstError([

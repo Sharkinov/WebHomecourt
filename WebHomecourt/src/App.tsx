@@ -16,6 +16,7 @@ import Register from './pages/Register'
 import UserSession from './pages/UserSession' // Ejemplo usando sesión de usuairo
 import EventReportDetails from './pages/EventReportDetails'
 import EditarPerfil from './pages/EditarPerfil';
+import CompleteRegister from './pages/CompleteRegister';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/session" element={<UserSession />} /> 
         <Route path="/editar-perfil" element={<EditarPerfil />} />
+        <Route path="/complete-register" element={<CompleteRegister />} />
       </Routes>
     </BrowserRouter>
   )
