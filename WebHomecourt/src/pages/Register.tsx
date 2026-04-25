@@ -1,47 +1,15 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 import { LeftSide, RightSide } from '../components/Registro/laterales'
 // import { useNavigate } from 'react-router-dom'
 import Button from '../components/button.tsx'
-import { supabase } from "../lib/supabase"
 import GoogleButton from '../components/botongoogle.tsx'
 import StatusAlert from '../components/Messages/StatusAlert.tsx'
+import { useRegister } from "../hooks/useRegister"
 
 function Register() {
-  const [email, setEmail]       = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading]   = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [emailError, setEmailError] = useState('');
+  const {email, setEmail, touchEmail, password, setPassword, touchPassword, confirmPassword, setConfirmPassword,
+           touchConfirmPassword, loading, alert, emailError, passwordError, register,} = useRegister()
   // const navigate = useNavigate();
-
-  const validateEmail = (value: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return regex.test(value)
-  }
-
-  const handleRegister = async () => {
-    setErrorMessage('')
-
-    if (!validateEmail(email)) {
-      setEmailError('Invalid email format')
-      return
-    }
-
-    setLoading(true)
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-
-    if (error) {
-      setErrorMessage(`${error.message}`)
-    } else {
-      setErrorMessage('¡Registro exitoso! Revisa tu correo para confirmar tu cuenta.')
-    }
-
-    setLoading(false)
-  }
 
   return (
     <div className="relative min-h-screen bg-zinc-100 flex items-center justify-center overflow-hidden">
@@ -67,19 +35,8 @@ function Register() {
               type="email"
               placeholder="Email"
               value={email}
-              onChange={(e) => {
-                const value = e.target.value
-                setEmail(value)
-
-                if (emailError && validateEmail(value)) {
-                  setEmailError("")
-                }
-              }}
-              onBlur={() => {
-                if (email && !validateEmail(email)) {
-                  setEmailError("Invalid email format")
-                }
-              }}
+              onChange={(e) => setEmail(e.target.value)}
+              onBlur={touchEmail}
               className={`h-11 px-4 bg-white rounded-2xl text-zinc-500 focus:outline-2 ${
                 emailError ? "outline-orange-800" : "focus:outline-morado-lakers"
               }`}
@@ -97,28 +54,49 @@ function Register() {
               placeholder="Create new password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onBlur={touchPassword}
               required
               className="h-11 px-4 bg-white rounded-2xl text-zinc-500 focus:outline-2 focus:outline-morado-lakers"
             />
           </div>
+          <div className="flex flex-col gap-1">
+            <label>Confirm password</label>
+            <input
+              type="password"
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onBlur={touchConfirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="h-11 px-4 bg-white rounded-2xl text-zinc-500 focus:outline-2 focus:outline-morado-lakers"
+            />
+            {passwordError && (
+              <div className="mt-2">
+                <StatusAlert tone="warning" title={passwordError} />
+              </div>
+            )}
+          </div>
           <Button
             text={loading ? "Signing-up" : "Continue"}
             type="primary"
-            onClick={handleRegister}
+            onClick={register}
             className="w-full text-g !py-2"
+            // disabled={!canSubmit}
           />
+          {alert && (
+            <div className="mt-2">
+              <StatusAlert tone={alert.tone} title={alert.message} />
+            </div>
+          )}
           <div className="flex items-center w-full my-4">
             <div className="flex-1 h-px bg-gray-300"></div>
-
             <span className="px-3 text-morado-lakers font-semibold text-sm">
               Or
             </span>
-
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
           <GoogleButton></GoogleButton>
         </div>
-        {errorMessage && <p className="text-center rounded-lg bg-red-100 text-red-800 outline-2 outline-red-800 mt-5 mb-1 px-2 py-3">{errorMessage}</p>}
         <div className="inline-flex items-center gap-2.5 mt-4">
           <p className="text-morado-lakers text-lg font-semibold">Already have an account?</p>
           <a href="/login" className="text-morado-bajo text-lg font-semibold underline hover:text-morado-lakers">Sign In</a>
