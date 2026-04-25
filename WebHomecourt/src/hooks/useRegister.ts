@@ -69,7 +69,7 @@ type UseRegisterReturn = {
     emailError: string
     passwordError: string
     canSubmit: boolean
-    register: () => Promise<void>
+    register: () => Promise<boolean>
     clearAlert: () => void
 }
 
@@ -147,7 +147,7 @@ export function useRegister(): UseRegisterReturn {
     }, [])
 
     const register = useCallback(async () => {
-        if (loading) return
+        if (loading) return false
         setSubmitted(true)
         setAlert(null)
 
@@ -167,31 +167,32 @@ export function useRegister(): UseRegisterReturn {
                 : null,
         ])
 
-        if(!validation.ok) {
+        if (!validation.ok) {
             setAlert({ tone: validation.tone, message: validation.message })
-            return
+            return false
         }
 
         setLoading(true)
         try {
-        const { data, error } = await supabase.auth.signUp({
-            email: cleanEmail,
-            password,
-        })
+            const { data, error } = await supabase.auth.signUp({
+                email: cleanEmail,
+                password,
+            })
 
-        if (error) {
-            setAlert({ tone: "error", message: error.message })
-            return
-        }
+            if (error) {
+                setAlert({ tone: "error", message: error.message })
+                return false
+            }
 
-        if (data.user && !data.session) {
-            setAlert({ tone: "success", message: "Check your email to confirm your account." })
-            return
-        }
+            if (data.user && !data.session) {
+                // setAlert({ tone: "success", message: "Check your email to confirm your account." })
+                return true
+            }
 
-        setAlert({ tone: "success", message: "Registro exitoso." })
+            setAlert({ tone: "success", message: "Registro exitoso." })
+            return true
         } finally {
-        setLoading(false)
+            setLoading(false)
         }
     }, [loading, cleanEmail, password, confirmPassword])
 

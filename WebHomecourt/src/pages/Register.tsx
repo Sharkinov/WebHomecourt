@@ -1,15 +1,19 @@
 // import { useState } from 'react'
 import { LeftSide, RightSide } from '../components/Registro/laterales'
-// import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Button from '../components/button.tsx'
 import GoogleButton from '../components/botongoogle.tsx'
 import StatusAlert from '../components/Messages/StatusAlert.tsx'
 import { useRegister } from "../hooks/useRegister"
 
 function Register() {
+  const navigate = useNavigate()
   const {email, setEmail, touchEmail, password, setPassword, touchPassword, confirmPassword, setConfirmPassword,
            touchConfirmPassword, loading, alert, emailError, passwordError, register,} = useRegister()
-  // const navigate = useNavigate();
+  const handleRegisterClick = async () => {
+    const ok = await register()
+    if (ok) navigate("/complete-register")
+  }
 
   return (
     <div className="relative min-h-screen bg-zinc-100 flex items-center justify-center overflow-hidden">
@@ -79,7 +83,7 @@ function Register() {
           <Button
             text={loading ? "Signing-up" : "Continue"}
             type="primary"
-            onClick={register}
+            onClick={handleRegisterClick}
             className="w-full text-g !py-2"
             // disabled={!canSubmit}
           />
