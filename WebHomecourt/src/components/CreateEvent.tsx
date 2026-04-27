@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
-import { getSkillLevels, type SkillLevel } from "../services/apiEvents";
+// import { getSkillLevels, type SkillLevel } from "../services/apiEvents";
 import { getCourts, type Court } from "../services/apiMAP";
 
 interface propsPopup {

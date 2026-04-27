@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { getUserHistory } from './Admin'
+import StatusAlert from '../components/Messages/StatusAlert'
 
 const formatDate = (dateStr: string) => {
   return new Intl.DateTimeFormat('es-MX', {
@@ -22,6 +23,24 @@ const ReportDetails = () => {
   const { id } = useParams()
   const [report, setReport] = useState<any>(null)
   const [userHistory, setUserHistory] = useState<any[]>([])
+  const [alert, setAlert] = useState<{ title: string, message?: string, tone: 'success' | 'error' | 'warning' | 'info' } | null>(null)
+
+   const handleAction = async (action: 'dismiss' | 'warning' | 'suspend' | 'ban') => {
+    await supabase
+      .from('user_report')
+      .update({ status: 'Resolved' })
+      .eq('ureport_id', report.ureport_id)
+
+    const messages = {
+      dismiss: { title: 'Report dismissed', message: 'The report has been dismissed.', tone: 'success' as const },
+      warning: { title: 'Warning sent', message: 'The user has been notified.', tone: 'success' as const },
+      suspend: { title: 'User suspended', message: 'The user has been suspended for 7 days.', tone: 'success' as const },
+      ban: { title: 'User banned', message: 'The user has been permanently banned.', tone: 'success' as const },
+    }
+
+    setAlert(messages[action])
+    setTimeout(() => { setAlert(null); navigate('/admin') }, 2000)
+  }
 
    useEffect(() => {
     const fetchReport = async () => {
@@ -61,8 +80,19 @@ const ReportDetails = () => {
     fetchReport()
   }, [id])
 
+  const handleWarning = async (warnTypeId: number, customMessage: string | null) => {
+    await supabase.from('warning').insert({
+      user_id: report.reported_user_id,
+      report_id: report.ureport_id,
+      warn_type_id: warnTypeId,
+      custom_message: customMessage
+    })
+    handleAction('warning')
+  }
+
   if (!report) return <div>Loading...</div>
 
+  //design
   return (
     <div className="flex flex-col min-h-screen bg-zinc-100">
       <Nav current="Admin" />
@@ -73,11 +103,10 @@ const ReportDetails = () => {
           <span className="material-symbols-outlined text-white" style={{ fontSize: '36px' }}>admin_panel_settings</span>
           <h1 className="text-white title1">Reports Administration</h1>
         </div>
-
-        {/* Report Details Card */}
+      
         <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
           
-          {/* Card Header */}
+          {/* Header */}
           <div className="bg-violet-950 px-5 py-4 flex justify-between items-center">
             <p className="text-white font-bold" style={{ fontSize: '26px' }}>Report Details</p>
             <button onClick={() => navigate('/admin')}
@@ -121,10 +150,45 @@ const ReportDetails = () => {
 
               {/* Action Buttons */}
               <ActionButtons
-                onDismiss={() => console.log('dismiss')}
-                onWarning={() => console.log('warning')}
-                onSuspend={() => console.log('suspend')}
-                onBan={() => console.log('ban')}
+                //dismiss button
+                onDismiss={async () => {
+                  await supabase
+                    .from('user_report')
+                    .update({ status: 'Resolved' })
+                    .eq('ureport_id', report.ureport_id)
+                  handleAction('dismiss')
+                }}
+
+                //warning button
+                onWarning={handleWarning}
+
+                //suspend button
+                onSuspend={async () => {
+                const suspendedUntil = new Date()
+                suspendedUntil.setDate(suspendedUntil.getDate() + 7)
+                await supabase
+                  .from('user_laker')
+                  .update({ banned_until: suspendedUntil.toISOString() })
+                  .eq('user_id', report.reported_user_id)
+                handleAction('suspend')
+              }}
+
+              //ban button
+              onBan={async () => {
+                const bannedUntil = new Date()
+                bannedUntil.setFullYear(bannedUntil.getFullYear() + 999)
+                await supabase
+                  .from('user_laker')
+                  .update({ banned_until: bannedUntil.toISOString() })
+                  .eq('user_id', report.reported_user_id)
+                handleAction('ban')
+              }}
+
+              user={{
+                name: report.reported_user?.username ?? 'N/A',
+                photo_url: report.reported_user?.photo_url ?? ''
+              }}
+              target="User"
               />
             </div>
             {/* Right side */}
@@ -147,6 +211,11 @@ const ReportDetails = () => {
           </div>
         </div>
       </div>
+      {alert && (
+        <div className="fixed bottom-6 right-6">
+          <StatusAlert tone={alert.tone} title={alert.title} message={alert.message} />
+        </div>
+      )}
     </div>
   )
 }

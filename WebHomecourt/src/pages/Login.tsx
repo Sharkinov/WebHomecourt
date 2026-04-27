@@ -36,9 +36,22 @@ function Login() {
         console.log(`Error iniciando sesión ${error}`);
         setErrorMessage("Incorrect credentials");
       } else {
-        console.log(`Sí inició sesión`);
-        //setUser(data.user); // Sets the user data 
-        navigate('/');
+        //check if user is banned or suspended, if so, sign out and show error message
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        const { data: userData } = await supabase
+          .from('user_laker')
+          .select('banned_until')
+          .eq('user_id', user?.id)
+          .single()
+
+        if (userData?.banned_until && new Date(userData.banned_until) > new Date()) {
+          await supabase.auth.signOut()
+          setErrorMessage('Your account is suspended or banned.')
+          return
+        }
+
+        navigate('/')
       }
     }
   };

@@ -18,6 +18,7 @@ export const getUserReports = async () => {
       reported_user:user_laker!reported_user_id(username, photo_url),
       event:event!event_id(event_name)
     `)
+    .neq('status', 'Resolved')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -85,7 +86,7 @@ export const getAdminStats = async () => {
     supabase.from('event_report').select('ereport_id', { count: 'exact' }).eq('status', 'Pending'),
     supabase.from('user_report').select('reported_user_id'),
     supabase.from('event_report').select('event_id'),
-    supabase.from('user_laker').select('user_id', { count: 'exact' }).eq('user_type', 2),
+    supabase.from('user_laker').select('user_id', { count: 'exact' }).not('banned_until', 'is', null).gt('banned_until', new Date().toISOString()),
   ])
 
   const uniqueFlaggedUsers = new Set(flaggedUsers.data?.map(r => r.reported_user_id)).size //remove duplicate user

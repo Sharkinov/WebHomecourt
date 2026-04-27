@@ -32,7 +32,7 @@ const UserHistory = ({ reportedUser, history }: UserHistoryProps) => {
             )}
           </div>
           <div>
-            <h2 className="font-medium" style={{ fontSize: '18px' }}>{reportedUser.name}</h2>
+            <h2 className="font-medium" style={{ fontSize: '18px' }}>@{reportedUser.name}</h2>
             <StarRating rating={reportedUser.rating} />
           </div>
         </div>
