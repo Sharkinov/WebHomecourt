@@ -3,6 +3,7 @@ import Nav from '../components/Nav'
 import ActionButtons from '../components/ReportDetails/ActionButtons'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import StatusAlert from '../components/Messages/StatusAlert'
 
 const formatDate = (dateStr: string) => {
   if (!dateStr) return 'N/A'
@@ -19,6 +20,25 @@ const EventReportDetails = () => {
   const navigate = useNavigate()
   const { id } = useParams()
   const [report, setReport] = useState<any>(null)
+  const [alert, setAlert] = useState<{ title: string, message?: string, tone: 'success' | 'error' | 'warning' | 'info' } | null>(null)
+
+   const handleAction = async (action: 'dismiss' | 'warning' | 'suspend' | 'ban') => {
+    await supabase
+      .from('event_report')
+      .update({ status: 'Resolved' })
+      .eq('ereport_id', report.ereport_id)
+
+    const messages = {
+      dismiss: { title: 'Report dismissed', message: 'The report has been dismissed.', tone: 'success' as const },
+      warning: { title: 'Warning sent', message: 'The user has been notified.', tone: 'success' as const },
+      suspend: { title: 'User suspended', message: 'The user has been suspended for 7 days.', tone: 'success' as const },
+      ban: { title: 'User banned', message: 'The user has been permanently banned.', tone: 'success' as const },
+    }
+
+    setAlert(messages[action])
+    setTimeout(() => { setAlert(null); navigate('/admin') }, 2000)
+  }
+
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -61,6 +81,16 @@ const EventReportDetails = () => {
 
     fetchReport()
   }, [id])
+
+    const handleWarning = async (warnTypeId: number, customMessage: string | null) => {
+      await supabase.from('warning').insert({
+        user_id: report.event?.created_user_id,
+        report_id: report.ereport_id,
+        warn_type_id: warnTypeId,
+        custom_message: customMessage
+      })
+      handleAction('warning')
+    }
 
   if (!report) return <div>Loading...</div>
 
@@ -137,16 +167,27 @@ const EventReportDetails = () => {
             </div>
 
             <ActionButtons
-                onDismiss={() => {}}
-                onWarning={() => {}}
-                onSuspend={() => {}}
-                onBan={() => {}}
-                suspendText="Suspend Event"
-                banText="Ban Event"
-                />
+              onDismiss={async () => { handleAction('dismiss') }}
+              onWarning={handleWarning}
+              onSuspend={async () => { handleAction('suspend') }}
+              onBan={async () => { handleAction('ban') }}
+              user={{
+                name: report.event?.created_user?.username ?? 'N/A',
+                photo_url: report.event?.created_user?.photo_url ?? ''
+              }}
+              
+              suspendText="Suspend Host"
+              banText="Ban Host"
+              target="Host"
+            />
           </div>
         </div>
       </div>
+      {alert && (
+        <div className="fixed bottom-6 right-6">
+          <StatusAlert tone={alert.tone} title={alert.title} message={alert.message} />
+        </div>
+      )}
     </div>
   )
 }
