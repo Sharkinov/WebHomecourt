@@ -1,9 +1,10 @@
 import Button from "../components/button"
 import { supabase } from "../lib/supabase"
-import { useState, useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 const AVATAR_DRAFT_KEY = "draft_avatar_url"
+const AVATAR_DRAFT_OWNER_KEY = "draft_avatar_user_id"
 
 export async function fetchDefaultAvatarUrls(): Promise<string[]> {
   const { data: files, error } = await supabase.storage
@@ -20,21 +21,88 @@ export async function fetchDefaultAvatarUrls(): Promise<string[]> {
   })
 }
 
-function saveAvatarDraft(url: string) {
+function saveAvatarDraft(url: string, userId: string) {
   sessionStorage.setItem(AVATAR_DRAFT_KEY, url)
+  sessionStorage.setItem(AVATAR_DRAFT_OWNER_KEY, userId)
 }
 
-function saveDraftAndReturn(url: string, navigate: ReturnType<typeof useNavigate>) {
-  saveAvatarDraft(url)
+function saveDraftAndReturn(url: string, userId: string, navigate: ReturnType<typeof useNavigate>) {
+  saveAvatarDraft(url, userId)
   navigate("/complete-register")
+}
+
+export async function uploadPhotoDefault(userId: string, file: File): Promise<string | null> {
+  const fileExt = file.name.split(".").pop() ?? "png"
+  const fileName = `${userId}-${Date.now()}.${fileExt}`
+  const filePath = `tempImages/${fileName}`
+
+  const { error: uploadError } = await supabase.storage
+    .from("user_images")
+    .upload(filePath, file, {
+      upsert: true,
+      contentType: file.type || undefined,
+    })
+
+  if (uploadError) {
+    console.error("Error uploading photo:", uploadError.message)
+    return null
+  }
+
+  const { data } = supabase.storage
+    .from("user_images")
+    .getPublicUrl(filePath)
+
+  return data.publicUrl
 }
 
 function EditAvatar() {
   const navigate = useNavigate()
   const [images, setImages] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
+  const [uploading, setUploading] = useState(false)
+  const [userId, setUserId] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  const handlePickUpload = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleUploadChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+
+    if (!file) return
+
+    setUploading(true)
+
+    try {
+      const { data: authData, error: authError } = await supabase.auth.getUser()
+      if (authError) throw authError
+
+      const userId = authData.user?.id
+      if (!userId) {
+        throw new Error("No active session found. Please sign in again.")
+      }
+
+      const uploadedUrl = await uploadPhotoDefault(userId, file)
+      if (!uploadedUrl) {
+        throw new Error("Upload failed. Please try again.")
+      }
+
+      saveDraftAndReturn(uploadedUrl, userId, navigate)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setUploading(false)
+      event.target.value = ""
+    }
+  }
 
   useEffect(() => {
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (error) return console.error(error)
+      setUserId(data.user?.id ?? null)
+    })
+
     let mounted = true
 
     const loadImages = async () => {
@@ -79,6 +147,36 @@ function EditAvatar() {
           />
         </div>
 
+        <button
+          type="button"
+          onClick={handlePickUpload}
+          disabled={uploading}
+          className="w-full rounded-3xl bg-gradient-to-r from-morado-lakers via-morado-lakers to-morado-oscuro shadow-2xl px-8 md:px-10 py-10 flex items-center justify-center gap-6 text-left"
+        >
+          <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl bg-white/20 flex items-center justify-center">
+            <span className="material-symbols-outlined text-white text-5xl">
+              {uploading ? "hourglass_top" : "photo_camera"}
+            </span>
+          </div>
+
+          <div className="flex flex-col">
+            <h2 className="text-white text-2xl md:text-4xl leading-10">
+              {uploading ? "Uploading image..." : "Upload your own image"}
+            </h2>
+            {/* <p className="text-white/80 text-sm md:text-base">
+              Select a file and we will save the public URL for you.
+            </p> */}
+          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleUploadChange}
+            className="hidden"
+          />
+        </button>
+
         <div className="w-full flex items-center gap-4">
           <div className="flex-1 h-px bg-gray-300" />
           <p className="text-gray-500 text-lg font-normal leading-7">Or</p>
@@ -95,8 +193,13 @@ function EditAvatar() {
               <button
                 key={url}
                 type="button"
-                onClick={() => saveDraftAndReturn(url, navigate)}
-                className="rounded-3xl overflow-hidden shadow-lg bg-white/0 ring-2 ring-transparent hover:ring-morado-lakers/40 transition"
+                onClick={() => {
+                  if (userId) {
+                    saveDraftAndReturn(url, userId, navigate)
+                  }
+                }}
+                disabled={!userId}
+                className="rounded-3xl overflow-hidden shadow-lg bg-white/0 ring-2 ring-transparent hover:ring-morado-lakers/40 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <img
                   src={url}

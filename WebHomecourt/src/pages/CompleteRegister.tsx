@@ -10,6 +10,7 @@ import { fetchDefaultAvatarUrls } from './EditAvatar'
 const AVATAR_DRAFT_KEY = "draft_avatar_url"
 const REGISTER_DRAFT_KEY = "complete_register_draft"
 const AVATAR_FALLBACK_CLASS = "w-full h-full rounded-3xl bg-white/80 border border-black/10 shadow-inner"
+const AVATAR_DRAFT_OWNER_KEY = "draft_avatar_user_id"
 
 type RegisterDraft = {
   username: string
@@ -29,9 +30,7 @@ const EMPTY_REGISTER_DRAFT: RegisterDraft = {
 
 function loadRegisterDraft(): RegisterDraft | null {
   const rawDraft = sessionStorage.getItem(REGISTER_DRAFT_KEY)
-
   if (!rawDraft) return null
-
   try {
     return JSON.parse(rawDraft) as RegisterDraft
   } catch {
@@ -81,32 +80,37 @@ async function fetchInitialRegisterData(): Promise<InitialRegisterData> {
   ])
 
   const draftAvatarUrl = sessionStorage.getItem(AVATAR_DRAFT_KEY)
+  const draftOwnerId = sessionStorage.getItem(AVATAR_DRAFT_OWNER_KEY)
 
-  if (draftAvatarUrl) {
+  const currentUserId = data.user?.id ?? null
+  const canUseDraftAvatar =
+    Boolean(draftAvatarUrl) &&
+    Boolean(draftOwnerId) &&
+    Boolean(currentUserId) &&
+    draftOwnerId === currentUserId
+
+  if (canUseDraftAvatar && draftAvatarUrl) {
     updateRegisterDraft({ avatarUrl: draftAvatarUrl })
     return {
       draft,
-      userId: data.user?.id ?? null,
+      userId: currentUserId,
       genders: genderData,
       avatarUrl: draftAvatarUrl,
     }
   }
 
-  if (draft.avatarUrl) {
-    return {
-      draft,
-      userId: data.user?.id ?? null,
-      genders: genderData,
-      avatarUrl: draft.avatarUrl,
-    }
+  if (draftAvatarUrl && !canUseDraftAvatar) {
+    sessionStorage.removeItem(AVATAR_DRAFT_KEY)
+    sessionStorage.removeItem(AVATAR_DRAFT_OWNER_KEY)
   }
 
   const randomAvatarUrl = defaultAvatarUrls.length
     ? defaultAvatarUrls[Math.floor(Math.random() * defaultAvatarUrls.length)]
     : null
 
-  if (randomAvatarUrl) {
+  if (randomAvatarUrl && currentUserId) {
     sessionStorage.setItem(AVATAR_DRAFT_KEY, randomAvatarUrl)
+    sessionStorage.setItem(AVATAR_DRAFT_OWNER_KEY, currentUserId)
     updateRegisterDraft({ avatarUrl: randomAvatarUrl })
   }
 
@@ -129,30 +133,19 @@ type ContinueRegistrationParams = {
 }
 
 async function continueRegistration(params: ContinueRegistrationParams): Promise<{ ok: boolean; error: string | null }> {
-  const {
-    userId,
-    saving,
-    username,
-    nickname,
-    birthdate,
-    gender,
-    avatarUrl,
-  } = params
-
+  const {userId, saving, username, nickname, birthdate, gender, avatarUrl,} = params
   if (!validateRegisterFormFields({ username, nickname, birthdate, gender })) {
     return {
       ok: false,
       error: 'Please complete all fields before continuing.',
     }
   }
-
   if (!userId || saving) {
     return {
       ok: false,
       error: 'There is no active session. Please sign in again and try once more.',
     }
   }
-
   const ok = await insertUser(
     userId,
     username,
@@ -161,28 +154,21 @@ async function continueRegistration(params: ContinueRegistrationParams): Promise
     gender,
     avatarUrl,
   )
-
   if (!ok) {
     return {
       ok: false,
       error: 'We could not complete the registration. Please try again in a moment.',
     }
   }
-
   return {
     ok: true,
     error: null,
   }
 }
 
-async function insertUser(
-  userId: string,
-  username: string,
-  nickname: string,
-  birthdate: string,
-  gender: number | null,
-  photoUrl: string | null,
-): Promise<boolean> {
+async function insertUser(userId: string,username: string,nickname: string,birthdate: string,gender: number | null,photoUrl: string | null,): Promise<boolean> {
+  const finalPhotoUrl = photoUrl ? await moveAvatarFromTemp(userId, photoUrl) : null
+
   const { error } = await supabase
     .from('user_laker')
     .insert({
@@ -191,15 +177,47 @@ async function insertUser(
       nickname,
       birthdate,
       gender, 
-      photo_url: photoUrl,
+      photo_url: finalPhotoUrl,
     })
 
    if (error) {
     console.error('Error insertando usuario:', error)
     return false
   }
-
   return true
+}
+
+async function moveAvatarFromTemp(userId: string, photoUrl: string): Promise<string>{
+  if (!photoUrl.includes('/tempImages/')) return photoUrl
+  const fileName = photoUrl.split('/tempImages/')[1]
+  if(!fileName) return photoUrl
+
+  const newPath = `avatars/${fileName}`
+  const {error: copyError} = await supabase.storage
+    .from('user_images')
+    .copy(`tempImages/${fileName}`, newPath)
+  if (copyError) {
+    console.error('Error copying avatar:', copyError)
+    return photoUrl
+  }
+  const {data: tempFiles, error: listError} = await supabase.storage
+    .from('user_images')
+    .list('tempImages')
+  if(listError){
+    console.error("Error listing temp images:", listError)
+  }else if(tempFiles?.length){
+    const pathsToRemove = tempFiles.filter((f) => f.name.startsWith(`${userId}-`))
+    .map((f) => `tempImages/${f.name}`)
+    if(pathsToRemove.length){
+      const {error: removeError} = await supabase.storage.from("user_images").remove(pathsToRemove)
+      if(removeError) console.error("Error removing temp images:", removeError)
+    }
+  }
+  const {data} = supabase.storage
+    .from('user_images')
+    .getPublicUrl(newPath)
+
+  return data.publicUrl
 }
 
 function CompleteRegister() {
@@ -237,24 +255,14 @@ function CompleteRegister() {
   const handleContinue = async () => {
     setFormError(null)
     setSaving(true)
-
-    const result = await continueRegistration({
-      userId,
-      saving,
-      username,
-      nickname,
-      birthdate,
-      gender,
-      avatarUrl,
-    })
-
+    const result = await continueRegistration({userId, saving, username, nickname, birthdate, gender, avatarUrl,})
     if (!result.ok) {
       setSaving(false)
       setFormError(result.error)
       return
     }
-
     sessionStorage.removeItem(AVATAR_DRAFT_KEY)
+    sessionStorage.removeItem(AVATAR_DRAFT_OWNER_KEY)
     sessionStorage.removeItem(REGISTER_DRAFT_KEY)
     setSaving(false)
     navigate('/')
@@ -392,7 +400,6 @@ function CompleteRegister() {
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>

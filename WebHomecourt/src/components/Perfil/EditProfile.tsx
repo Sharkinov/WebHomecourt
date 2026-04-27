@@ -62,6 +62,22 @@ export async function uploadPhoto(userId: string, file: File): Promise<string | 
     const fileName = `${userId}-${Date.now()}.${fileExt}`
     const filePath = `avatars/${fileName}`
 
+    const { data: existingFiles } = await supabase.storage
+        .from("user_images")
+        .list("avatars")
+
+    if (existingFiles && existingFiles.length > 0) {
+        const filesToDelete = existingFiles
+            .filter(f => f.name.startsWith(userId))
+            .map(f => `avatars/${f.name}`)
+
+        if (filesToDelete.length > 0) {
+            await supabase.storage
+                .from("user_images")
+                .remove(filesToDelete)
+        }
+    }
+
     const { error: uploadError } = await supabase.storage
         .from("user_images")
         .upload(filePath, file)
