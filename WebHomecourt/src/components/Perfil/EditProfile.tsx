@@ -2,8 +2,6 @@ import { supabase } from "../../lib/supabase"
 import { useEffect, useState } from "react"
 import { useAuth } from "../../hooks/Perfil/useAuth"
 const DEFAULT_AVATAR = "https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/object/public/user_images/profile_picture_default.png"
-
-
 // tipos
 export type Gender = {
     gender_id: number
@@ -59,7 +57,7 @@ async function updateUserData(userId: string, userData: Partial<UserData>): Prom
     return true
 }
 
-async function uploadPhoto(userId: string, file: File): Promise<string | null> {
+export async function uploadPhoto(userId: string, file: File): Promise<string | null> {
     const fileExt = file.name.split('.').pop()
     const fileName = `${userId}-${Date.now()}.${fileExt}`
     const filePath = `avatars/${fileName}`

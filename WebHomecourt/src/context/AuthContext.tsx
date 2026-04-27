@@ -38,7 +38,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       .from('user_laker')
       .select("user_type, nickname, photo_url")
       .eq('user_id', userId)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
         setUserType(data?.user_type ?? null);
         setNickname(data?.nickname ?? null);
