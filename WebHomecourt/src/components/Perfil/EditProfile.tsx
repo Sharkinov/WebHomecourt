@@ -5,7 +5,7 @@ const DEFAULT_AVATAR = "https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/obje
 
 
 // tipos
-type Gender = {
+export type Gender = {
     gender_id: number
     gender: string
 }
@@ -33,7 +33,7 @@ async function getUserData(userId: string): Promise<UserData | null> {
     return data
 }
 
-async function getGenders(): Promise<Gender[]> {
+export async function getGenders(): Promise<Gender[]> {
     const { data, error } = await supabase
         .from("gender")
         .select("gender_id, gender")
