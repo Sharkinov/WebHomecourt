@@ -39,7 +39,7 @@ export const getEventReports = async () => {
       created_at,
       event_id,
       reporter:user_laker!reporter_user_id(username, photo_url),
-      event:event!event_id(event_name, court:court!court_id(name))
+      event:event!event_id(event_name, date, court:court!court_id(name))
     `)
     .order('created_at', { ascending: false })
 
@@ -83,15 +83,18 @@ export const getAdminStats = async () => {
   const [pendingUserReports, pendingEventReports,flaggedUsers, flaggedEvents, suspendedUsers] = await Promise.all([
     supabase.from('user_report').select('ureport_id', { count: 'exact' }).eq('status', 'Pending'),
     supabase.from('event_report').select('ereport_id', { count: 'exact' }).eq('status', 'Pending'),
-    supabase.from('user_report').select('reported_user_id', { count: 'exact' }),
-    supabase.from('event_report').select('ereport_id', { count: 'exact' }),
+    supabase.from('user_report').select('reported_user_id'),
+    supabase.from('event_report').select('event_id'),
     supabase.from('user_laker').select('user_id', { count: 'exact' }).eq('user_type', 2),
   ])
 
+  const uniqueFlaggedUsers = new Set(flaggedUsers.data?.map(r => r.reported_user_id)).size //remove duplicate user
+  const uniqueFlaggedEvents = new Set(flaggedEvents.data?.map(r => r.event_id)).size //remove duplicate event
+
   return {
     reportsPending: (pendingUserReports.count ?? 0) + (pendingEventReports.count ?? 0),
-    usersFlagged: flaggedUsers.count ?? 0,
-    eventsFlagged: flaggedEvents.count ?? 0,
+    usersFlagged: uniqueFlaggedUsers,
+    eventsFlagged: uniqueFlaggedEvents,
     suspendedUsers: suspendedUsers.count ?? 0,
   }
 }

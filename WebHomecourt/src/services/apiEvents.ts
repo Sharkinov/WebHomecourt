@@ -19,9 +19,6 @@ export interface SkillLevel {
   description: string; // Texto del nivel (ej. Beginner, Intermediate).
 }
 
-type CourtTournamentRow = Omit<CourtTournament, "court_id" | "current_players"> & {
-  court_id: number | string; // Puede venir numerico o string desde BD.
-};
 
 interface UserEventRow {
   event_id: number | string | null;
@@ -51,54 +48,21 @@ async function getCurrentUserId(): Promise<string> {
   return user.id;
 }
 
+//Pase la logica que tenia de que primero llama event y ya con ese envio para ver los jugadores, lo hace en supabase
+//Se hace un selesvcet basciamente de todo event y count de user_event_id pa sabaer cuentos usuarios estan inscritos
+//COn el left join se traer todo
 export async function getCourtTournaments(): Promise<CourtTournament[]> {
-  const { data, error } = await supabase
-    .from("event")
-    .select(
-      "event_id, event_name, date, created_user_id, court_id, max_players, min_age, max_age, skill_level_id, allow_event"
-    )
-    .eq("allow_event", true)
-    .order("date", { ascending: true, nullsFirst: false });
+  const { data, error } = await supabase.rpc("get_available_events");
 
   if (error) {
     throw new Error("No se pudieron cargar los torneos");
   }
 
-  const rows = (data ?? []) as CourtTournamentRow[];
-  const normalizedRows = rows
-    .map((row) => ({
-      ...row,
-      court_id: Number(row.court_id),
-    }))
-    .filter((row) => !Number.isNaN(row.court_id));
-
-  if (normalizedRows.length === 0) {
-    return [];
-  }
-
-  // Mapa para acumular cuantos inscritos tiene cada evento.
-  const playersCountByEvent = new Map<number, number>();
-  const eventIds = normalizedRows.map((row) => row.event_id);
-
-  // Lee todas las filas de user_event asociadas a esos eventos.
-  const { data: userEventsData, error: userEventsError } = await supabase
-    .from("user_event")
-    .select("event_id")
-    .in("event_id", eventIds);
-
-  // Si la consulta no falla, se cuenta cuantas filas hay por cada event_id.
-  if (!userEventsError) {
-    ((userEventsData ?? []) as UserEventRow[]).forEach((row) => {
-      const eventId = Number(row.event_id);
-      if (Number.isNaN(eventId)) return;
-      playersCountByEvent.set(eventId, (playersCountByEvent.get(eventId) ?? 0) + 1);
-    });
-  }
-
-  return normalizedRows.map((row) => ({
+  return (data ?? []).map((row: any) => ({
     ...row,
-    current_players: playersCountByEvent.get(row.event_id) ?? 0,
-  }));
+    court_id: Number(row.court_id),
+    current_players: Number(row.current_players),
+  })).filter((row: any) => !Number.isNaN(row.court_id));
 }
 
 export async function getSkillLevels(): Promise<SkillLevel[]> {

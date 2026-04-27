@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { LuMapPin, LuPlus, LuSearch, LuTriangle, LuUsers } from "react-icons/lu";
-import NewEvent from "./NewEvent";
 import { getCourts, type Court } from "../services/apiMAP";
 import {
   getCourtTournaments,
@@ -13,6 +12,8 @@ import {
 } from "../services/apiEvents";
 import { useCourtTournamentFilters } from "../hooks/useCourtTournamentFilters";
 import { useAuth } from "../context/AuthContext";
+import CrearEvento from "./CreateEvent";
+
 
 interface CourtTournamentsProps {
   selectedCourtId: number | null;
@@ -66,7 +67,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
   const [tournaments, setTournaments] = useState<CourtTournament[]>([]);
   const [courts, setCourts] = useState<Court[]>([]);
   const [skillLevels, setSkillLevels] = useState<SkillLevel[]>([]);
-  const [showCreateEvent, setShowCreateEvent] = useState(false);
+  const [open,SetOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -319,7 +320,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
             </div>
             <button
               type="button"
-              onClick={() => setShowCreateEvent((prevState) => !prevState)}
+              onClick={() => SetOpen(true)}
               className="h-10.25 w-49.25 rounded-xl bg-amarillo-lakers text-[#11061A] text-[14px] font-medium flex items-center justify-center gap-2.5 shadow-[0_4px_6px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.1)] cursor-pointer"
             >
               <LuPlus size={16} />
@@ -329,11 +330,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
         </header>
 
         <div className="bg-white border-[0.8px] border-black/8 rounded-b-[15px] px-6 py-3.75 flex-1 min-h-0 flex flex-col gap-3.75">
-        {showCreateEvent ? (
-          <div className="rounded-[14px] border-[0.8px] border-[#E7E6E8] bg-[#F7F6F8] px-4 py-3">
-            <NewEvent />
-          </div>
-        ) : null}
+        <CrearEvento open={open} onClose={()=> SetOpen(false)}></CrearEvento>
 
         <label className="relative block h-11.25 w-full max-w-md">
           <LuSearch

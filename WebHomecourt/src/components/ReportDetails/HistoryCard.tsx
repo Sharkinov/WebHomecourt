@@ -1,4 +1,5 @@
 import StarRating from './StarRating'
+import { useNavigate } from 'react-router-dom'
 
 
 interface HistoryCardProps {
@@ -6,11 +7,17 @@ interface HistoryCardProps {
   date: string
   rating: number
   tags: string[]
+  reportId: string
 }
 
-const HistoryCard = ({ event, date, rating, tags }: HistoryCardProps) => {
+const HistoryCard = ({ event, date, rating, tags, reportId }: HistoryCardProps) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4">
+    <div 
+      className="bg-white border border-gray-200 rounded-xl p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+      onClick={() => navigate(`/admin/report/${reportId}`)}
+    >
       <div className="flex items-center gap-2 mb-1">
         <div className="w-7 h-7 rounded-full bg-morado-lakers flex items-center justify-center">
           <span className="material-symbols-outlined text-amarillo-lakers" style={{ fontSize: '16px' }}>emoji_events</span>

@@ -29,10 +29,10 @@ const EventReports = () => {
           <thead className="bg-morado-lakers text-white">
             <tr>
               <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Event ID</th>
+              <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Date</th>
               <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Event</th>
               <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Location</th>
               <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Host</th>
-              <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Reports</th>
               <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Priority</th>
               <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Status</th>
               <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Actions</th>
@@ -45,9 +45,9 @@ const EventReports = () => {
                 id={report.ereport_id}
                 event={report.event?.event_name ?? 'N/A'}
                 location={report.event?.court?.name ?? 'N/A'}
+                date={report.event?.date ? new Date(report.event.date).toLocaleDateString() : 'N/A'}
                 host={report.reporter?.username ?? 'N/A'}
                 pfp={report.reporter?.photo_url ?? ''}
-                reports={report.reportCount}
                 priority={report.priority}
                 status={report.status}
               />
