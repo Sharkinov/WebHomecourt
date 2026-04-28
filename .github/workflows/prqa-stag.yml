@@ -1,0 +1,26 @@
+name: PR QA → staging
+
+on:
+  push:
+    branches:
+      - QA
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name:  PR de QA a staging
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base staging \
+            --head QA \
+            --title "chore: promote QA → staging" \
+            --body "PR automático generado al mergear a \`QA\`." \
+          || echo "PR ya existe o no hay cambios nuevos"

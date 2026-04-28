@@ -1,7 +1,6 @@
- 
 // Prop for button
 interface ButtonProp {
-    type?: 'primary' | 'secondary' | 'tertiary' | 'primarydisable' | 'secondarydisable' | 'tertiarydisable'; // Add more if needed, will be string recieving type 
+    type?: 'primary' | 'secondary' | 'tertiary' | 'primarydisable'; //| 'secondarydisable' | 'tertiarydisable'; // Add more if needed, will be string recieving type 
     text: string; // What is shown in frontend
     onClick: () => void; // Function default does nothing
     className?: string // Lets add custom css o tailwind to button por si algn va a hacer algo más específico

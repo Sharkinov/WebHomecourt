@@ -1,4 +1,4 @@
-# Logs Comentaario para probar el autodeplooy Segundo intento del webhook
+# Logs a
 logs
 *.log
 npm-debug.log*
@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+dist
 dist-ssr
 *.local
 
@@ -24,3 +25,6 @@ dist-ssr
 
 #Database API
 .env
+
+dist
+cypress

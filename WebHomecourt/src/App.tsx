@@ -16,6 +16,8 @@ import Register from './pages/Register'
 import UserSession from './pages/UserSession' // Ejemplo usando sesión de usuairo
 import EventReportDetails from './pages/EventReportDetails'
 import EditarPerfil from './pages/EditarPerfil';
+import CompleteRegister from './pages/CompleteRegister';
+import EditAvatar from './pages/EditAvatar';
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/session" element={<UserSession />} /> 
         <Route path="/editar-perfil" element={<EditarPerfil />} />
+        <Route path="/complete-register" element={<CompleteRegister />} />
+        <Route path='/edit-avatar' element={<EditAvatar/>}></Route>
       </Routes>
     </BrowserRouter>
   )

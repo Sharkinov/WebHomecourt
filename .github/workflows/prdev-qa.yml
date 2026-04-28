@@ -1,0 +1,26 @@
+name: PR dev → QA
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name:  PR de dev a QA
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base QA \
+            --head dev \
+            --title "chore: promote dev → QA" \
+            --body "PR automático generado al hacer push a \`dev\`." \
+          || echo "PR ya existe o no hay cambios nuevos"

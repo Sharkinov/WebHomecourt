@@ -1,10 +1,10 @@
 import { supabase } from "../lib/supabase";
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-
+import type { User } from '@supabase/supabase-js'; // Para get rid of any warning
 
 function UserSession() {
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null >(null);
     const navigate = useNavigate();
 
     useEffect(() => {

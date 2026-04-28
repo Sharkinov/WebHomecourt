@@ -15,14 +15,14 @@ interface EventReportRowProps {
   id: string
   event: string
   location: string
+  date: string
   host: string
   pfp: string
-  reports: number
   priority: string
   status: string
 }
 
-const EventReportRow = ({ id, event, location, host, pfp, reports, priority, status }: EventReportRowProps) => {
+const EventReportRow = ({ id, event, location, date, host, pfp, priority, status }: EventReportRowProps) => {
   const navigate = useNavigate()
 
   return (
@@ -31,11 +31,15 @@ const EventReportRow = ({ id, event, location, host, pfp, reports, priority, sta
         <h2 style={{ fontSize: '18px' }}>#{id}</h2>
       </td>
       <td className="px-4 py-3 text-center">
+        <p>{date}</p>
+      </td>
+      <td className="px-4 py-3 text-center">
         <p>{event}</p>
       </td>
       <td className="px-4 py-3 text-center">
         <p>{location}</p>
       </td>
+      
       <td className="px-4 py-3 text-center">
         <div className="flex items-center gap-2 w-[140px] mx-auto">
           <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
@@ -47,9 +51,6 @@ const EventReportRow = ({ id, event, location, host, pfp, reports, priority, sta
           </div>
           <p>{host}</p>
         </div>
-      </td>
-      <td className="px-4 py-3 text-center">
-        <p className="font-medium">{reports}</p>
       </td>
       <td className="px-4 py-3 text-center">
         <span className={`inline-block w-24 py-1 rounded-full text-sm font-medium text-center ${priorityStyles[priority]}`}>

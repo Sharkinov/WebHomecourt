@@ -9,14 +9,14 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState(''); // Future allow username
   const [password, setPassword] = useState('');
-  const [, setError] = useState('');
+  //const [error, setError] = useState('');
   const navigate = useNavigate();
-  const [, setUser] = useState<any>(null);
+  //const [user, setUser] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState('');
 
   // Checks fields are filled in, and does the login w supabase 
   const handleLogin = async () => {
-    setError('');
+    //setError('');
     setErrorMessage('');
 
     // Checks fields are filled in
@@ -26,30 +26,35 @@ function Login() {
     } else if (email == '') {
       setErrorMessage("Please provide your email");
     } else if (password == '') {
-      setErrorMessage("Please provide your password")
+      setErrorMessage("Please provide your password");
     } else {
       // Filled everything in so tries to sign in now
       setLoading(true);
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        setError(error.message);
-        console.log(`Error iniciando sesión ${error.message}`);
+        //setError(error.message);
+        console.log(`Error iniciando sesión ${error}`);
         setErrorMessage("Incorrect credentials");
       } else {
-        console.log(`Sí inició sesión`);
-        setUser(data.user); // Sets the user data 
-        navigate('/');
+        //check if user is banned or suspended, if so, sign out and show error message
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        const { data: userData } = await supabase
+          .from('user_laker')
+          .select('banned_until')
+          .eq('user_id', user?.id)
+          .single()
+
+        if (userData?.banned_until && new Date(userData.banned_until) > new Date()) {
+          await supabase.auth.signOut()
+          setErrorMessage('Your account is suspended or banned.')
+          return
+        }
+
+        navigate('/')
       }
     }
   };
-
-  // Sends request to reset password
-  /*
-  const handleForgotten = async () => {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://example.com/update-password',
-    })
-  }*/
 
   return (
     // Uses relative so that it calcs diff layout positions to this main div */}
@@ -98,32 +103,40 @@ function Login() {
               className="h-11 px-4 bg-white rounded-2xl text-zinc-500 focus:outline-2 focus:outline-morado-lakers"
             />
           </div>
-
-          {/* No functionality */}
-          <div className="flex justify-between items-center font-semibold">
-            <label className="flex items-center text-morado-lakers gap-2 ">
-              <input type="checkbox" className="accent-morado-lakers" />
-              Remember me
-            </label>
-            <a href="#" className="text-morado-bajo hover:text-morado-lakers">Forgot Password?</a>
-          </div>
-
-          {/* Google button */}
-          <GoogleButton></GoogleButton>
-
           {/* Normal sign in button */}
           <Button
             text={loading ? "Signing-in" : "Sign-in"}
             type="primary"
             onClick={handleLogin}
-            className="text-lg"
+            className="text-lg !py-2"
           />
+
+          {/* No functionality */}
+          <div className="flex justify-center items-center font-semibold"> {/*"flex justify-between items-center font-semibold">*/}
+            <label className="flex items-center text-morado-lakers gap-2 ">
+              <input type="checkbox" className="accent-morado-lakers" />
+              Remember me
+            </label>
+            {/*<a href="#" className="text-morado-bajo hover:text-morado-lakers">Forgot Password?</a>*/}
+          </div>
+          <div className="flex items-center w-full my-4">
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <span className="px-3 text-morado-lakers font-semibold text-sm">
+              Or
+            </span>
+            <div className="flex-1 h-px bg-gray-300"></div>
+          </div>
+          {/* Google button */}
+          <GoogleButton variant="login" />
+
+          
         </div>
         {/* Error display*/}
         {errorMessage && <p className="text-center rounded-lg bg-red-100 text-red-800 outline-2 outline-red-800 mt-5 mb-1 px-2 py-3">{errorMessage}</p>}
-
-        <p className="mt-4 mb-2 text-morado-lakers font-semibold">Don't have an account yet?</p>
-        <a href="/register" className="text-morado-bajo font-semibold hover:text-morado-lakers">Sign Up Now</a>
+        <div className="inline-flex items-center gap-2.5 mt-4">
+          <p className="text-morado-lakers text-lg font-semibold">Don't have an account yet?</p>
+          <a href="/register" className="text-morado-bajo text-lg font-semibold underline hover:text-morado-lakers">Sign Up Now</a>
+        </div>
       </div>
     </div>
   )

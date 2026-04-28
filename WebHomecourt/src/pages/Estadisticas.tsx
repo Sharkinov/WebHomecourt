@@ -47,7 +47,7 @@ function Estadisticas() {
   
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center  ">
       <Nav current="Estadistica" />
       <div className='px-4 md:px-14 py-5 bg-zinc-100 w-full'>
         <div>

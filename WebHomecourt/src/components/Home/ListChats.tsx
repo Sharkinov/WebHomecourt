@@ -62,8 +62,21 @@ function ListChats({ onOpenCommunity, onOpenPrivateChat }: ListChatsProps) {
   // Escuchar cambios en mensajes privados y refrescar la lista
   useActualizarMessPriv({
     listenToAll: true,
-    onMessageReceived: () => {
-      fetchChats()
+    onMessageReceived: (payload) => {
+      const raw = payload.new
+      setData((prev) => {
+        const idx = prev.findIndex((c) => c.conversation_id == raw.conversation_id)
+        if (idx === -1) return prev
+        const updated: FriendChat = {
+          ...prev[idx],
+          last_message: raw.message,
+          last_message_sent: raw.sent,
+          last_message_sender_id: raw.user_id,
+        }
+        // mueve el chat actualizado al tope de la lista
+        const rest = prev.filter((_, i) => i !== idx)
+        return [updated, ...rest]
+      })
     },
   })
 

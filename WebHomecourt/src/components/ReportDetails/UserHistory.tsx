@@ -13,6 +13,7 @@ interface UserHistoryProps {
     date: string
     rating: number
     tags: string[]
+    report_id: string
   }[]
 }
 
@@ -31,7 +32,7 @@ const UserHistory = ({ reportedUser, history }: UserHistoryProps) => {
             )}
           </div>
           <div>
-            <h2 className="font-medium" style={{ fontSize: '18px' }}>{reportedUser.name}</h2>
+            <h2 className="font-medium" style={{ fontSize: '18px' }}>@{reportedUser.name}</h2>
             <StarRating rating={reportedUser.rating} />
           </div>
         </div>
@@ -55,6 +56,7 @@ const UserHistory = ({ reportedUser, history }: UserHistoryProps) => {
               date={h.date}
               rating={h.rating}
               tags={h.tags ?? []}
+              reportId={h.report_id}
             />
           ))
         )}

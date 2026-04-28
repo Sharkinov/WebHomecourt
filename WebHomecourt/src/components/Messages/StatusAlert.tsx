@@ -39,8 +39,8 @@ function StatusAlert({ title, message, tone }: StatusAlertProps) {
 
   return (
     <div
-      className={`w-fit max-w-xs rounded-lg px-3 py-3 outline outline-2 ${style.bg} ${style.text} ${style.outline}`}>
-      <div className="flex items-start gap-2 min-w-0">
+      className={`w-full rounded-xl px-3 py-2.5 outline outline-2 ${style.bg} ${style.text} ${style.outline}`}>
+      <div className="flex items-center gap-2 min-w-0">
         <span className="material-symbols-outlined text-sm shrink-0 mt-0.5">
           {style.icon}
         </span>

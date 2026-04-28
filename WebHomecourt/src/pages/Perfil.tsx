@@ -29,6 +29,8 @@ function Perfil() {
         const uid = userId
 
         async function loadData() {
+            if (!userId) return
+
             const { data: userData } = await supabase
                 .from('user_laker')
                 .select('user_id, nickname, photo_url')
@@ -43,8 +45,8 @@ function Perfil() {
                 })
             }
 
-           
-            const eventsData = await getUpcomingEvents(uid)
+
+            const eventsData = await getUpcomingEvents(userId)
             setEvents(eventsData)
         }
 
@@ -70,13 +72,13 @@ function Perfil() {
                 <Nav current="Perfil" />
             </div>
 
-            <div className="px-[60px] py-[20px] flex flex-col gap-[31px]">
+            <div className="px-4 sm:px-8 md:px-12 lg:px-[60px] py-4 sm:py-[20px] flex flex-col gap-4 sm:gap-6 md:gap-[31px]">
                 <ProfileHeader userId={userId} />
                 <FriendsList
                     userId={userId}
                     currentUser={currentUser}
                 />
-                <div className="grid grid-cols-2 gap-[31px]">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-[31px]">
                     <VotingActivity userId={userId} />
                     <UpcomingEvents events={events} />
                 </div>

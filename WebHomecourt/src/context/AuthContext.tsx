@@ -7,8 +7,11 @@ import { supabase } from "../lib/supabase";
 interface AuthContextType {
   session: Session | null; // Sesión actualizada del usuario autenticado
   user: User | null; // Información del usuario autenticado
-  userType: number | null; // NUEVOOO: Rol del usuario: null = visitante, 0 = usuario normal, 1 = admin
-  loading: boolean; // NUEVOOO: espera a que supabase confirme si hay sesión antes de cargar pantalla
+  userType: number | null; 
+  nickname: string | null;
+  photoUrl: string | null;
+  loading: boolean; 
+  gender: number | null;
   signIn: (email: string, password: string) => Promise<{ error: any } | undefined>; // Función para iniciar sesión
   signOut: () => Promise<void>; // Función para cerrar sesión
 }
@@ -26,46 +29,48 @@ type RequireSessionProps = {
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [userType, setUserType] = useState<number | null>(null); // NUEVOOO: Empieza en null hasta obtener el rol del usuario
-  const [loading, setLoading] = useState(true); // NUEVOOO: Empieza en true hasta que supabase confirme si hay sesión activa o no
+  const [userType, setUserType] = useState<number | null>(null); // Empieza en null hasta obtener el rol del usuario
+  const [nickname, setNickname] = useState<string | null>(null);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // Empieza en true hasta que supabase confirme si hay sesión activa o no
+  const [gender, setGender] = useState<number | null>(null);
 
+  const fetchUserData = (userId: string) => {
+    supabase
+      .from('user_laker')
+      .select("user_type, nickname, photo_url, gender")
+      .eq('user_id', userId)
+      .maybeSingle()
+      .then(({ data }) => {
+        setUserType(data?.user_type ?? null);
+        setNickname(data?.nickname ?? null);
+        setPhotoUrl(data?.photo_url ?? null);
+        setGender(data?.gender ?? null); 
+      });
+  };
   // Obtiene sesion actual y escucha cambios de autenticacion
   useEffect(() => {
     // Sesion actual de Supabase
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
-      setLoading(false); // NUEVOOO: no espera el query de userType
+      setLoading(false); 
 
-      // NUEVOOO: corre en background sin bloquear render
       if (data.session?.user) {
-        supabase
-          .from('user_laker')
-          .select('user_type')
-          .eq('user_id', data.session.user.id)
-          .single()
-          .then(({ data: userData }) => {
-            setUserType(userData?.user_type ?? null);
-          });
+        fetchUserData(data.session.user.id);
       }
     });
 
-    // Checa cambios en el estado de auth
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+  const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        supabase
-          .from('user_laker')
-          .select('user_type')
-          .eq('user_id', session.user.id)
-          .single()
-          .then(({ data: userData }) => {
-            setUserType(userData?.user_type ?? null);
-          });
+        fetchUserData(session.user.id);
       } else {
         setUserType(null);
+        setNickname(null);
+        setPhotoUrl(null);
       }
     });
 
@@ -87,7 +92,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, userType, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ session, user, userType, nickname, photoUrl, gender, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

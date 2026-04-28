@@ -76,7 +76,7 @@ export function useCourtTournamentFilters({
     });
   }
 
-  // Aplica filtros de cancha, edad, skill y texto en una sola pasada
+  // Aplica filtros de cancha, edad, skill y texto 
   const searchTerm = searchValue.trim().toLowerCase();
   const filteredTournaments = tournaments.filter((tournament) => {
     if (selectedCourtId !== null && tournament.court_id !== selectedCourtId) {

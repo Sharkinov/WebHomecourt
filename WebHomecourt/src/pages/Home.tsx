@@ -89,7 +89,7 @@ function Home() {
   const handleOpenPrivateList = () => {
     setChatView("private-list")
   }
-
+  // Esto ayuda a que no se necesite estar haciendo gets para la url y el nickname
   const handleOpenPrivateChat = (chat: FriendChat) => {
     setSelectedChat(chat)
     setChatView("private-chat")

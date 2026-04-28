@@ -1,6 +1,7 @@
-import { useNavigate } from 'react-router-dom'
-import type { GameItem } from '../../pages/Agenda' // Has to be a type cosa estupida
-import Button from '../button.tsx'
+import { useNavigate } from 'react-router-dom';
+import type { GameItem } from '../../pages/Agenda'; // Has to be a type cosa estupida
+import Button from '../button.tsx';
+//import { TZDate } from "@date-fns/tz"; // For time zones
 import { format, parseISO } from 'date-fns'; // For date formattings 
 
 // Prop for the game item

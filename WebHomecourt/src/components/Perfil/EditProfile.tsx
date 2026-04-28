@@ -2,10 +2,8 @@ import { supabase } from "../../lib/supabase"
 import { useEffect, useState } from "react"
 import { useAuth } from "../../hooks/Perfil/useAuth"
 const DEFAULT_AVATAR = "https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/object/public/user_images/profile_picture_default.png"
-
-
 // tipos
-type Gender = {
+export type Gender = {
     gender_id: number
     gender: string
 }
@@ -33,7 +31,7 @@ async function getUserData(userId: string): Promise<UserData | null> {
     return data
 }
 
-async function getGenders(): Promise<Gender[]> {
+export async function getGenders(): Promise<Gender[]> {
     const { data, error } = await supabase
         .from("gender")
         .select("gender_id, gender")
@@ -59,10 +57,26 @@ async function updateUserData(userId: string, userData: Partial<UserData>): Prom
     return true
 }
 
-async function uploadPhoto(userId: string, file: File): Promise<string | null> {
+export async function uploadPhoto(userId: string, file: File): Promise<string | null> {
     const fileExt = file.name.split('.').pop()
     const fileName = `${userId}-${Date.now()}.${fileExt}`
     const filePath = `avatars/${fileName}`
+
+    const { data: existingFiles } = await supabase.storage
+        .from("user_images")
+        .list("avatars")
+
+    if (existingFiles && existingFiles.length > 0) {
+        const filesToDelete = existingFiles
+            .filter(f => f.name.startsWith(userId))
+            .map(f => `avatars/${f.name}`)
+
+        if (filesToDelete.length > 0) {
+            await supabase.storage
+                .from("user_images")
+                .remove(filesToDelete)
+        }
+    }
 
     const { error: uploadError } = await supabase.storage
         .from("user_images")
@@ -109,6 +123,8 @@ function EditProfile({ userId: propUserId, onBack, onSave }: EditProfileProps) {
         if (!userId) return
         const uid = userId
         async function fetchData() {
+            if (!userId) return
+
             setLoading(true)
             const [userData, genderData] = await Promise.all([
                 getUserData(uid),
@@ -138,10 +154,8 @@ function EditProfile({ userId: propUserId, onBack, onSave }: EditProfileProps) {
     }
 
     const handleSave = async () => {
-        if (!userId) {
-            alert("User not authenticated")
-            return
-        }
+        if (!userId) return
+
         setSaving(true)
 
         let newPhotoUrl = photoUrl

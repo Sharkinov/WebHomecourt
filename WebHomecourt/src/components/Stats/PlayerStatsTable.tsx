@@ -1,5 +1,5 @@
 import type {PlayerStat} from "./getStatsByGameId"
-import { useState } from "react"
+import {useState } from "react"
 
 const COLUMNS = [
     { key: "minutes", label: "Minutes (MIN)", abbr: "MIN" },

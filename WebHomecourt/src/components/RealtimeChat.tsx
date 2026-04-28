@@ -25,16 +25,23 @@ export type ChatMessage = {
   created_at: string
   game_id: number | null
 }
-//Groserias coloquiales 
+//Groserias coloquiales lista vacia que sera llena por llamada a BD
 //Despues pasar a IA que identifique hasta sarcasmo en donde estan siendo groseros
-const CustomWords = [
-  "pendejo", "pendeja", "chingar", "chingada", "chingón",
-  "cabrón", "cabron", "pinche", "culero", "culera",
-  "mamón", "mamon", "puta", "puto", "verga",
-  "joto", "culiao", "hdp", "hijodeputa", "fundillo", "semen", "heil hitler", "67", "shittyass",
-  "chupaculos", "piruja", "pirujo", "slutface", "fuckerface", "slave",
-  "cotton picker", "cracker", "child toucher"
-]
+let CustomWords: string[] = []
+
+export async function loadCustomWords(): Promise<void> {
+  const { data, error } = await supabase
+    .from('bad_words')
+    .select('word')
+
+  if (error) {
+    console.error("Supabase error:", error.message);
+    return;
+  }
+
+  CustomWords = data?.map((row) => row.word) ?? []
+}
+
 //Checar groserias en ingles y español libreria 1
 const glinFilter = new Filter({
   replaceWith: "***",
@@ -135,7 +142,10 @@ function RealtimeChat({ gameId = null, isGameLoading = false, onOpenPrivateList 
 
       try {
         //obtiene nombre
-        const name = await getDisplayName(session)
+        const [name] = await Promise.all([
+          getDisplayName(session),
+          loadCustomWords(),
+        ])
         if (!isMounted) return
         setDisplayName(name)
 
