@@ -23,9 +23,9 @@ const ActionButtons = ({
   user,
   target,
   dismissText = 'Dismiss',
-  warningText = 'Send Warning',
-  suspendText = 'Suspend User',
-  banText = 'Ban User',
+  warningText = 'Warn ' + (target),
+  suspendText = 'Suspend ' + (target),
+  banText = 'Ban ' + (target),
 }: ActionButtonsProps) => {
   const [modal, setModal] = useState<'suspend' | 'ban' | 'warning' | null>(null)
 
@@ -39,7 +39,7 @@ const ActionButtons = ({
           accentColor="#D38B43"
           user={user}
           target={target}
-          onConfirm={() => { setModal(null); onSuspend() }}
+          onConfirm={() => { setModal(null); onSuspend?.() }}
           onCancel={() => setModal(null)}
         />
       )}

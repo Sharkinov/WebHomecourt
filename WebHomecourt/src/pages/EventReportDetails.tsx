@@ -7,7 +7,7 @@ import StatusAlert from '../components/Messages/StatusAlert'
 
 const formatDate = (dateStr: string) => {
   if (!dateStr) return 'N/A'
-  return new Intl.DateTimeFormat('es-MX', {
+  return new Intl.DateTimeFormat('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -121,7 +121,7 @@ const EventReportDetails = () => {
             </button>
           </div>
 
-          <div className="flex flex-col gap-6 p-6">
+          <div className="flex flex-col gap-6 p-6 mx-2">
             <h2>Event: {report.event?.event_name ?? 'N/A'}</h2>
 
             <div className="flex flex-wrap gap-10">
@@ -132,7 +132,7 @@ const EventReportDetails = () => {
                 <p>Location: {report.event?.court?.name ?? 'N/A'}</p>
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 mx-10">
                 <span className="material-symbols-outlined text-black text-[18px]">
                   groups
                 </span>
@@ -148,15 +148,16 @@ const EventReportDetails = () => {
                 <p>{formatDate(report.event?.date)}</p>
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 mx-7">
                 <span className="material-symbols-outlined text-black text-[18px]">
                   person
                 </span>
-                <p>Host: {report.event?.created_user?.username ?? 'N/A'}</p>
+                <p>Host: @{report.event?.created_user?.username ?? 'N/A'}</p>
               </div>
             </div>
 
             <hr className="border-amarillo-lakers border-t-2 my-4 -mx-12" />
+
 
             <h2 className="font-medium text-black text-[20px]">
               Report Comment
@@ -175,9 +176,6 @@ const EventReportDetails = () => {
                 name: report.event?.created_user?.username ?? 'N/A',
                 photo_url: report.event?.created_user?.photo_url ?? ''
               }}
-              
-              suspendText="Suspend Host"
-              banText="Ban Host"
               target="Host"
             />
           </div>

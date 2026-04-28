@@ -40,7 +40,7 @@ const UserReportRow = ({ id, event, reportedUser, pfp, priority, status }: UserR
               <div className="w-full h-full bg-gray-300" />
             )}
           </div>
-          <p>{reportedUser}</p>
+          <p>@{reportedUser}</p>
         </div>
       </td>
       <td className="px-4 py-3 text-center">

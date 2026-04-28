@@ -17,6 +17,7 @@ import UserSession from './pages/UserSession' // Ejemplo usando sesión de usuai
 import EventReportDetails from './pages/EventReportDetails'
 import EditarPerfil from './pages/EditarPerfil';
 import CompleteRegister from './pages/CompleteRegister';
+import Monitor from './pages/Monitor';
 import EditAvatar from './pages/EditAvatar';
 
 function App() {
@@ -39,6 +40,8 @@ function App() {
         <Route path="/session" element={<UserSession />} /> 
         <Route path="/editar-perfil" element={<EditarPerfil />} />
         <Route path="/complete-register" element={<CompleteRegister />} />
+        <Route path="/admin/monitor/:id" element={<Monitor />} />
+
         <Route path='/edit-avatar' element={<EditAvatar/>}></Route>
       </Routes>
     </BrowserRouter>
