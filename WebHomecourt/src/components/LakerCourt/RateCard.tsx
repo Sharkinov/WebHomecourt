@@ -6,7 +6,7 @@ interface RateCardProps {
   playerName: string;
   playerTag: string;
   initialRating?: number;
-  onReport: (playerId: string) => void;
+  onReport: (playerId: string, playerName: string) => void;
   onRatingChange?: (playerId: string, rating: number) => void;
 }
 
@@ -60,7 +60,7 @@ export default function RateCard({
 
       <button
         className="w-83 h-11 flex justify-center items-center py-3 px-5 gap-2.5 bg-transparent border-[3px] border-morado-lakers opacity-50 rounded-[15px] transition-all hover:bg-morado-lakers/10 hover:opacity-100"
-        onClick={() => onReport(id)}
+        onClick={() => onReport(id, playerName)}
         aria-label={`Reportar a ${playerName}`}
       >
         <span className="text-morado-lakers text-[18px] leading-5 font-normal">Report</span>

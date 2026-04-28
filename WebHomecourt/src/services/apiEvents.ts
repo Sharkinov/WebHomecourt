@@ -4,7 +4,9 @@ export interface CourtTournament {
   event_id: number; // ID unico del evento.
   event_name: string; // Nombre del evento.
   date: string | null; // Fecha/hora del evento (puede venir null).
+  women_only: boolean;
   created_user_id: string; // Usuario que creo el evento.
+  creator_nickname: string;
   court_id: number; // ID de la cancha.
   max_players: number; // Cupo maximo permitido.
   current_players: number; // Jugadores inscritos actualmente.
@@ -13,6 +15,7 @@ export interface CourtTournament {
   skill_level_id: number | null; // Nivel de skill requerido (o null).
   allow_event: boolean; // Bandera para mostrar/ocultar evento.
 }
+
 
 export interface SkillLevel {
   skill_level_id: number; // ID del nivel.
@@ -52,17 +55,16 @@ async function getCurrentUserId(): Promise<string> {
 //Se hace un selesvcet basciamente de todo event y count de user_event_id pa sabaer cuentos usuarios estan inscritos
 //COn el left join se traer todo
 export async function getCourtTournaments(): Promise<CourtTournament[]> {
-  const { data, error } = await supabase.rpc("get_available_events");
+  const userId = await getCurrentUserId();
+  const { data, error } = await supabase.rpc("get_available_events", {
+    p_user_id: userId ?? null
+  });
 
   if (error) {
     throw new Error("No se pudieron cargar los torneos");
   }
 
-  return (data ?? []).map((row: any) => ({
-    ...row,
-    court_id: Number(row.court_id),
-    current_players: Number(row.current_players),
-  })).filter((row: any) => !Number.isNaN(row.court_id));
+  return (data ?? []).filter((row: any) => row.court_id != null && !Number.isNaN(row.court_id));
 }
 
 export async function getSkillLevels(): Promise<SkillLevel[]> {

@@ -1,9 +1,9 @@
 import Nav from '../components/Nav'
-import Map from "../components/Map"
-import CourtTournaments from '../components/CourtTournaments'
-import RatePlayersPanel from '../components/RatePlayersPanel'
+import Map from "../components/LakerCourt/Map"
+import CourtTournaments from '../components/LakerCourt/CourtTournaments'
+import RatePlayersPanel from '../components/LakerCourt/RatePlayersPanel'
 import YourActivityCard from '../components/YourActivityCard'
-import ActiveModerationCard from '../components/ActiveModerationCard'
+import ActiveModerationCard from '../components/LakerCourt/ActiveModerationCard'
 import { useEffect, useState } from 'react'
 import {
   getPendingRatingPlayers,
@@ -20,6 +20,7 @@ function LakersCourt() {
   const [submittingRatings, setSubmittingRatings] = useState(false)
   const [playersError, setPlayersError] = useState<string | null>(null)
   const [pendingUserEventId, setPendingUserEventId] = useState<number | null>(null)
+  const [pendingEventId, setPendingEventId] = useState<number | null>(null)
   const [pendingCourtSubtitle, setPendingCourtSubtitle] = useState('Cancha no disponible')
   const [selectedRatings, setSelectedRatings] = useState<Record<string, number>>({})
   const [selectedCourtId, setSelectedCourtId] = useState<number | null>(null)
@@ -51,6 +52,7 @@ function LakersCourt() {
 
       if (!pendingRating) {
         setPendingUserEventId(null)
+        setPendingEventId(null)
         setPendingCourtSubtitle('Cancha no disponible')
         setPlayers([])
         setSelectedRatings({})
@@ -58,6 +60,7 @@ function LakersCourt() {
       }
 
       setPendingUserEventId(pendingRating.userEventId)
+      setPendingEventId(pendingRating.eventId)
       const subtitleParts = [pendingRating.courtName, pendingRating.courtDirection].filter(
         (value): value is string => Boolean(value && value.trim().length > 0)
       )
@@ -79,6 +82,7 @@ function LakersCourt() {
       })
     } catch (error) {
       setPendingUserEventId(null)
+      setPendingEventId(null) 
       setPendingCourtSubtitle('Cancha no disponible')
       setPlayers([])
       setSelectedRatings({})
@@ -182,7 +186,9 @@ function LakersCourt() {
             submitDisabled={submittingRatings || !allPlayersRated}
             submittingRatings={submittingRatings}
             onRatingChange={handlePlayerRating}
-            onReportPlayer={(id) => console.log('Reportado:', id)}
+            eventId={pendingEventId ?? 0
+              
+            }
           />
         </div>}
         <div className="w-full max-w-315 mx-auto mt-10">

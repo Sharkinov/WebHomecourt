@@ -99,7 +99,7 @@ function Register() {
             </span>
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
-          <GoogleButton></GoogleButton>
+          <GoogleButton variant="register" />
         </div>
         <div className="inline-flex items-center gap-2.5 mt-4">
           <p className="text-morado-lakers text-lg font-semibold">Already have an account?</p>

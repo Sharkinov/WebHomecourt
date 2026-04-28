@@ -18,6 +18,7 @@ import EventReportDetails from './pages/EventReportDetails'
 import EditarPerfil from './pages/EditarPerfil';
 import CompleteRegister from './pages/CompleteRegister';
 import Monitor from './pages/Monitor';
+import EditAvatar from './pages/EditAvatar';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path="/complete-register" element={<CompleteRegister />} />
         <Route path="/admin/monitor/:id" element={<Monitor />} />
 
+        <Route path='/edit-avatar' element={<EditAvatar/>}></Route>
       </Routes>
     </BrowserRouter>
   )

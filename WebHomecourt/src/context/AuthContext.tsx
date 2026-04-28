@@ -11,6 +11,7 @@ interface AuthContextType {
   nickname: string | null;
   photoUrl: string | null;
   loading: boolean; 
+  gender: number | null;
   signIn: (email: string, password: string) => Promise<{ error: any } | undefined>; // Función para iniciar sesión
   signOut: () => Promise<void>; // Función para cerrar sesión
 }
@@ -32,17 +33,19 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [nickname, setNickname] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // Empieza en true hasta que supabase confirme si hay sesión activa o no
+  const [gender, setGender] = useState<number | null>(null);
 
   const fetchUserData = (userId: string) => {
     supabase
       .from('user_laker')
-      .select("user_type, nickname, photo_url")
+      .select("user_type, nickname, photo_url, gender")
       .eq('user_id', userId)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
         setUserType(data?.user_type ?? null);
         setNickname(data?.nickname ?? null);
         setPhotoUrl(data?.photo_url ?? null);
+        setGender(data?.gender ?? null); 
       });
   };
   // Obtiene sesion actual y escucha cambios de autenticacion
@@ -89,7 +92,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, userType, nickname, photoUrl, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ session, user, userType, nickname, photoUrl, gender, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,15 +1,20 @@
 import { supabase } from "../lib/supabase";
 import { useState } from "react";
 
-const GoogleButton = () => {
+type GoogleButtonProps = {
+  variant?: "login" | "register";
+};
+
+const GoogleButton =  ({ variant = "login" }: GoogleButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const signIn = async () => {
     setIsLoading(true);
+    const redirectPath = variant === "register" ? "/complete-register" : "/";
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/`, // TEMPORARY REDIRECT
+        redirectTo: `${window.location.origin}${redirectPath}`, // TEMPORARY REDIRECT
       },
     });
 

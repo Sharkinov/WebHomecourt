@@ -103,6 +103,13 @@ function Login() {
               className="h-11 px-4 bg-white rounded-2xl text-zinc-500 focus:outline-2 focus:outline-morado-lakers"
             />
           </div>
+          {/* Normal sign in button */}
+          <Button
+            text={loading ? "Signing-in" : "Sign-in"}
+            type="primary"
+            onClick={handleLogin}
+            className="text-lg !py-2"
+          />
 
           {/* No functionality */}
           <div className="flex justify-center items-center font-semibold"> {/*"flex justify-between items-center font-semibold">*/}
@@ -112,23 +119,24 @@ function Login() {
             </label>
             {/*<a href="#" className="text-morado-bajo hover:text-morado-lakers">Forgot Password?</a>*/}
           </div>
-
+          <div className="flex items-center w-full my-4">
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <span className="px-3 text-morado-lakers font-semibold text-sm">
+              Or
+            </span>
+            <div className="flex-1 h-px bg-gray-300"></div>
+          </div>
           {/* Google button */}
-          <GoogleButton></GoogleButton>
+          <GoogleButton variant="login" />
 
-          {/* Normal sign in button */}
-          <Button
-            text={loading ? "Signing-in" : "Sign-in"}
-            type="primary"
-            onClick={handleLogin}
-            className="text-lg"
-          />
+          
         </div>
         {/* Error display*/}
         {errorMessage && <p className="text-center rounded-lg bg-red-100 text-red-800 outline-2 outline-red-800 mt-5 mb-1 px-2 py-3">{errorMessage}</p>}
-
-        <p className="mt-4 mb-2 text-morado-lakers font-semibold">Don't have an account yet?</p>
-        <a href="/register" className="text-morado-bajo font-semibold hover:text-morado-lakers">Sign Up Now</a>
+        <div className="inline-flex items-center gap-2.5 mt-4">
+          <p className="text-morado-lakers text-lg font-semibold">Don't have an account yet?</p>
+          <a href="/register" className="text-morado-bajo text-lg font-semibold underline hover:text-morado-lakers">Sign Up Now</a>
+        </div>
       </div>
     </div>
   )
