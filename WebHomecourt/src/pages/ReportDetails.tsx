@@ -9,7 +9,7 @@ import { getUserHistory } from './Admin'
 import StatusAlert from '../components/Messages/StatusAlert'
 
 const formatDate = (dateStr: string) => {
-  return new Intl.DateTimeFormat('es-MX', {
+  return new Intl.DateTimeFormat('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -118,7 +118,7 @@ const ReportDetails = () => {
           <div className="flex flex-col md:flex-row gap-6 mb-10">
             
             {/* Left side */}
-            <div className="flex-1 flex flex-col gap-6 p-6 ">
+            <div className="flex-1 flex flex-col gap-6 p-6 mx-2">
               
               <h2>Event: {report.event?.event_name}</h2>
 
@@ -170,6 +170,10 @@ const ReportDetails = () => {
                   .from('user_laker')
                   .update({ banned_until: suspendedUntil.toISOString() })
                   .eq('user_id', report.reported_user_id)
+                await supabase
+                  .from('event_participant')
+                  .delete()
+                  .eq('user_id', report.reported_user_id)  
                 handleAction('suspend')
               }}
 
@@ -180,6 +184,10 @@ const ReportDetails = () => {
                 await supabase
                   .from('user_laker')
                   .update({ banned_until: bannedUntil.toISOString() })
+                  .eq('user_id', report.reported_user_id)
+                await supabase
+                  .from('event_participant')
+                  .delete()
                   .eq('user_id', report.reported_user_id)
                 handleAction('ban')
               }}

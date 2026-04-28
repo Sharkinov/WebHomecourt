@@ -16,7 +16,7 @@ const warnTypes = [
   { warn_type_id: 6, warn_type: 'Other' },
 ]
 
-const WarningPopup = ({ user, target = 'user', onConfirm, onCancel }: WarningPopupProps) => {
+const WarningPopup = ({ user, target, onConfirm, onCancel }: WarningPopupProps) => {
   const [selected, setSelected] = useState<number | null>(null)
   const [customMessage, setCustomMessage] = useState('')
 
@@ -37,7 +37,7 @@ const WarningPopup = ({ user, target = 'user', onConfirm, onCancel }: WarningPop
             <div className="rounded-full p-1 flex items-center justify-center" style={{ backgroundColor: '#FFD796' }}>
               <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#794E07' }}>exclamation</span>
             </div>
-            <p className="text-white font-semibold">Send Warning</p>
+            <p className="text-white font-semibold">Warn {target}</p>
           </div>
           <button onClick={onCancel} className="text-white">
             <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>close</span>
@@ -103,7 +103,7 @@ const WarningPopup = ({ user, target = 'user', onConfirm, onCancel }: WarningPop
               className="flex-1 py-2 rounded-lg text-black font-semibold hover:brightness-90 disabled:opacity-50"
               style={{ backgroundColor: '#FFD796' }}
             >
-              Send Warning
+              Warn {target}
             </button>
           </div>
         </div>
