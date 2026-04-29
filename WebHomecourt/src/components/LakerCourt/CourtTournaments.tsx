@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import { LuPlus, LuSearch} from "react-icons/lu";
+import { LuPlus, LuSearch } from "react-icons/lu";
 import { getCourts, type Court } from "../../services/apiMAP";
-import {getCourtTournaments,getCurrentUserJoinedEventIds,getSkillLevels,leaveTournament,signUpTournament,type CourtTournament,type SkillLevel,} from "../../services/apiEvents";
+import { getCourtTournaments, getCurrentUserJoinedEventIds, getSkillLevels, leaveTournament, signUpTournament, type CourtTournament, type SkillLevel, } from "../../services/apiEvents";
 import { useCourtTournamentFilters } from "../../hooks/useCourtTournamentFilters";
 import { useAuth } from "../../hooks/Perfil/useAuth";
 import CrearEvento from "./CreateEvent";
 import ReportEventPopUp from "./ReportEvent";
 import StatusAlert from "../Messages/StatusAlert";
 import TournamentCard from "./TournamentCard";
-
+import ListPlayerPopUp from "./LisPlayerPopUP";
 interface CourtTournamentsProps {
   selectedCourtId: number | null;
 }
@@ -16,7 +16,7 @@ interface CourtTournamentsProps {
 
 
 export default function CourtTournaments({ selectedCourtId }: CourtTournamentsProps) {
-  useAuth();
+  const { user } = useAuth();
   const [tournaments, setTournaments] = useState<CourtTournament[]>([]);
   const [reportEventTarget, setReportEventTarget] = useState<{ id: number; name: string } | null>(null)
   const [courts, setCourts] = useState<Court[]>([]);
@@ -27,18 +27,27 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
   const [actionError, setActionError] = useState<string | null>(null);
   const [joinedEventIds, setJoinedEventIds] = useState<Set<number>>(new Set());
   const [submittingEventId, setSubmittingEventId] = useState<number | null>(null);
+  const [listPlayersTarget, setListPlayersTarget] = useState<{
+    id: number;
+    name: string;
+    location: string;
+    date: string;
+    time: string;
+    spots: string;
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     async function loadTournamentData() {
+      if (!user?.id) return;
       setLoading(true);
       setLoadError(null);
       setActionError(null);
 
       try {
         const [eventsData, courtsData, skillLevelsData] = await Promise.all([
-          getCourtTournaments(),
+          getCourtTournaments(user.id),
           getCourts(),
           getSkillLevels(),
         ]);
@@ -51,6 +60,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
 
         try {
           const joinedIds = await getCurrentUserJoinedEventIds(
+            user.id,
             eventsData.map((event) => event.event_id)
           );
 
@@ -82,7 +92,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [user]);
 
   const courtNamesById = useMemo(
     () =>
@@ -109,9 +119,13 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
     currentPlayers: number,
     safeMaxPlayers: number
   ) => {
+
+    if (!user?.id) return;
+
     const eventId = tournament.event_id;
     const isJoined = joinedEventIds.has(eventId);
     const isFull = safeMaxPlayers === 0 || currentPlayers >= safeMaxPlayers;
+
 
     if (!isJoined && isFull) {
       setActionError("Este evento ya esta lleno");
@@ -123,7 +137,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
 
     try {
       if (isJoined) {
-        await leaveTournament(eventId);
+        await leaveTournament(user.id, eventId);
         setJoinedEventIds((prev) => {
           const next = new Set(prev);
           next.delete(eventId);
@@ -141,7 +155,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
         return;
       }
 
-      await signUpTournament(eventId);
+      await signUpTournament(user.id, eventId);
       setJoinedEventIds((prev) => {
         const next = new Set(prev);
         next.add(eventId);
@@ -175,7 +189,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
   return (
     <div className="w-full max-w-313.75 mx-auto flex flex-col gap-3.75">
       <div className="w-full rounded-[15px] border-[0.8px] border-black/8 bg-white px-[24.8px] pt-[16.8px] pb-5 shadow-[0_4px_4px_rgba(0,0,0,0.08)]">
-        <p className="text-[14px] leading-5.25 text-[#11061A]">Filters</p>
+        <p className="text-[14px] leading-5.25 text-texto-oscuro">Filters</p>
 
         <div className="mt-3 grid grid-cols-1 xl:grid-cols-2 gap-3">
           <div className="bg-Background rounded-xl px-4 pt-3 pb-2.5">
@@ -219,7 +233,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
                 />
               </div>
 
-              <p className="text-[13px] leading-[19.5px] text-[#11061A] whitespace-nowrap">{`${filters.currentMinAge ?? '0'} - ${filters.currentMaxAge ?? '-'}`}</p>
+              <p className="text-[13px] leading-[19.5px] text-texto-oscuro whitespace-nowrap">{`${filters.currentMinAge ?? '0'} - ${filters.currentMaxAge ?? '-'}`}</p>
             </div>
           </div>
 
@@ -237,7 +251,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
                     className={[
                       "h-6.5 rounded-lg px-3 text-[12px] leading-4.5 font-medium whitespace-nowrap",
                       isActive
-                        ? "bg-morado-lakers text-[#F3F2F3]"
+                        ? "bg-morado-lakers text-texto-claro"
                         : "bg-[#E7E6E8] text-Gris-Oscuro",
                     ].join(" ")}
                   >
@@ -253,13 +267,13 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
       <section className="w-full h-166.75 flex flex-col">
         <header className="bg-morado-oscuro rounded-t-[15px] h-20 px-6 py-0 flex items-center">
           <div className="w-full flex items-center justify-between gap-4">
-            <div className="text-[#F3F2F3] text-[20px] leading-7.5 font-normal text-left">
+            <div className="text-texto-claro text-[20px] leading-7.5 font-normal text-left">
               Available Events
             </div>
             <button
               type="button"
               onClick={() => SetOpen(true)}
-              className="h-10.25 w-49.25 rounded-xl bg-amarillo-lakers text-[#11061A] text-[14px] font-medium flex items-center justify-center gap-2.5 shadow-[0_4px_6px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.1)] cursor-pointer"
+              className="h-10.25 w-49.25 rounded-xl bg-amarillo-lakers text-texto-oscuro text-[14px] font-medium flex items-center justify-center gap-2.5 shadow-[0_4px_6px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.1)] cursor-pointer"
             >
               <LuPlus size={16} />
               CREATE NEW EVENT
@@ -280,7 +294,7 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
               placeholder="Search courts, events..."
               value={filters.searchValue}
               onChange={(event) => filters.setSearchValue(event.target.value)}
-              className="h-full w-full rounded-2xl border-[0.8px] border-[#E7E6E8] bg-white pl-10 pr-4 text-[16px] text-[#11061A] outline-none"
+              className="h-full w-full rounded-2xl border-[0.8px] border-[#E7E6E8] bg-white pl-10 pr-4 text-[16px] text-texto-oscuro outline-none"
             />
           </label>
 
@@ -326,6 +340,14 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
                   getSkillLabel={filters.getSkillLabel}
                   onSignUp={handleToggleSignUp}
                   onReport={() => setReportEventTarget({ id: tournament.event_id, name: tournament.event_name })}
+                  onListPlayers={() => setListPlayersTarget({        // ← AGREGAR
+                    id: tournament.event_id,
+                    name: tournament.event_name,
+                    location: courtNamesById.get(tournament.court_id) ?? `Cancha ${tournament.court_id}`,
+                    date: tournament.date ?? "Por definir",
+                    time: tournament.date?.includes("T") ? tournament.date.split("T")[1].slice(0, 5) : "--:--",
+                    spots: `${Math.min(tournament.current_players, tournament.max_players)}/${tournament.max_players}`,
+                  })}
                 />
               ))}
             </div>
@@ -337,6 +359,17 @@ export default function CourtTournaments({ selectedCourtId }: CourtTournamentsPr
           eventId={reportEventTarget.id}
           eventName={reportEventTarget.name}
           onClose={() => setReportEventTarget(null)}
+        />
+      )}
+      {listPlayersTarget && (
+        <ListPlayerPopUp
+          eventId={listPlayersTarget.id}
+          eventName={listPlayersTarget.name}
+          eventLocation={listPlayersTarget.location}
+          eventDate={listPlayersTarget.date}
+          eventTime={listPlayersTarget.time}
+          spotsAvailable={listPlayersTarget.spots}
+          onClose={() => setListPlayersTarget(null)}
         />
       )}
     </div>

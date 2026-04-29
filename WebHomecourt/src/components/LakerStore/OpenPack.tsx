@@ -204,7 +204,7 @@ function OpenPack(prop: OpenPackProp) {
                         <button
                             type="button"
                             onClick={prop.onClose}
-                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                            className="text-white hover:text-gray-400 transition-colors"
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -229,7 +229,7 @@ function OpenPack(prop: OpenPackProp) {
                     <div className="w-150 h-auto px-6">
                         <div className="flex flex-col w-full rounded-lg bg-zinc-100 items-center justify-center mb-4">
                             {imageURL ? (
-                                <img src={imageURL} className="h-75 md:h-75 w-auto" onClick={openEnabled ? () => opening() : () => {}} />
+                                <img src={imageURL} className="h-75 md:h-75 w-auto animate-[pulse_0.75s_ease-in-out_2]" onClick={openEnabled ? () => opening() : () => {}} />
                             ) : (
                                 <div className="flex flex-col w-150 h-75 max-h-72 text-center items-center justify-start overflow-y-auto py-4 px-2 gap-y-4">
                                     {wonCards.length > 0 ? (
@@ -265,7 +265,7 @@ function OpenPack(prop: OpenPackProp) {
                     <div className="w-full px-10 pb-4">
                         <Button
                             text="Close"
-                            type="reddestructive"
+                            type="secondary"
                             onClick={prop.onClose}
                             className="w-full"
                         />

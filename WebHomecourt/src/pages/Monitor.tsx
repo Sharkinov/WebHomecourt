@@ -95,7 +95,7 @@ const Monitor = () => {
 
   return (
     
-    <div className="flex flex-col min-h-screen bg-zinc-100">
+    <div >
       {showWarning && (
         <WarningPopup
           user={{ name: event?.created_user?.username ?? 'N/A', photo_url: event?.created_user?.photo_url ?? '' }}

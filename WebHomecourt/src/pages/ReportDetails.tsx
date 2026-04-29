@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import Nav from '../components/Nav'
+import Nav from '../components/Nav/Nav'
 import UserHistory from '../components/ReportDetails/UserHistory'
 import ActionButtons from '../components/ReportDetails/ActionButtons'
 import { useLocation } from 'react-router-dom'
@@ -95,7 +95,7 @@ const ReportDetails = () => {
 
   //design
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-100">
+    <div >
       <Nav current="Admin" />
 
       <div className="px-4 md:px-14 py-5 mb-10">

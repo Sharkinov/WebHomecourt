@@ -1,4 +1,4 @@
-import Nav from '../components/Nav'
+import Nav from '../components/Nav/Nav'
 import { Unity, useUnityContext } from "react-unity-webgl";
 
 function Juego() {
@@ -10,7 +10,7 @@ function Juego() {
   });
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen">
+    <div>
 
       <Nav current="Juego" />
 

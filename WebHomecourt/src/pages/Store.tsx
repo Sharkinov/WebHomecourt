@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from "../lib/supabase"
-import Nav from '../components/Nav'
+import Nav from '../components/Nav/Nav.tsx'
 import StoreRow from '../components/LakerStore/StoreRow.tsx'
 import { useStoreUser } from '../hooks/useStoreUser.ts'; // Hook for store user
 import type { StorePacks } from "../hooks/storeTypes.ts"; // Types
@@ -83,7 +83,7 @@ function Store() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div>
       <Nav current="Store" creditsOverride={storeUser?.credits} />
       <div className="px-4 py-5 md:px-14 md:py-5 bg-Background w-full">
         {/* Title comp */}
