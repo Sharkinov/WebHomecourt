@@ -5,9 +5,10 @@ type Props = {
   genders: Gender[]
   value: number | null
   onChange: (value: number) => void
+  hasError?: boolean
 }
 
-export default function GenderSelect({ genders, value, onChange }: Props) {
+export default function GenderSelect({ genders, value, onChange, hasError }: Props) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -22,7 +23,7 @@ export default function GenderSelect({ genders, value, onChange }: Props) {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  const selected = genders.find(g => g.gender_id === value)
+  const selected = genders.find((g) => g.gender_id === value)
 
   return (
     <div className="flex flex-col gap-2" ref={ref}>
@@ -31,23 +32,27 @@ export default function GenderSelect({ genders, value, onChange }: Props) {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="h-12 w-full px-4 rounded-2xl bg-white text-zinc-700 
-                   outline outline-1 outline-black/10 
-                   focus:outline-2 focus:outline-morado-lakers
-                   flex items-center justify-between"
+        className={[
+          "h-12 w-full px-4 rounded-2xl bg-white text-zinc-700",
+          "outline outline-1 focus:outline-2",
+          "flex items-center justify-between",
+          hasError ? "outline-orange-800" : "outline-black/10 focus:outline-morado-lakers",
+        ].join(" ")}
       >
         <span className={value !== null ? "" : "text-zinc-400"}>
           {selected?.gender || "Select"}
         </span>
 
         <span
-          className={`material-symbols-outlined transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          }`}
+          className={[
+            "material-symbols-outlined transition-transform duration-200",
+            open ? "rotate-180" : "",
+          ].join(" ")}
         >
           expand_more
         </span>
       </button>
+
       {open && (
         <div className="mt-2 w-full bg-white rounded-2xl shadow-lg border border-black/10 overflow-hidden">
           {genders.map((g) => (
@@ -58,9 +63,10 @@ export default function GenderSelect({ genders, value, onChange }: Props) {
                 onChange(g.gender_id)
                 setOpen(false)
               }}
-              className={`w-full text-left px-4 py-3 hover:bg-zinc-100 transition-colors
-                ${value === g.gender_id ? "bg-zinc-100 font-medium" : ""}
-              `}
+              className={[
+                "w-full text-left px-4 py-3 hover:bg-zinc-100 transition-colors",
+                value === g.gender_id ? "bg-zinc-100 font-medium" : "",
+              ].join(" ")}
             >
               {g.gender}
             </button>
