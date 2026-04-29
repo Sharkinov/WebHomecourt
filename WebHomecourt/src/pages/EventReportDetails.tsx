@@ -1,4 +1,5 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Nav from '../components/Nav'
 import ActionButtons from '../components/ReportDetails/ActionButtons'
 import { useEffect, useState } from 'react'
@@ -18,7 +19,9 @@ const formatDate = (dateStr: string) => {
 
 const EventReportDetails = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const location = useLocation()
+  const id = location.state?.id
+
   const [report, setReport] = useState<any>(null)
   const [alert, setAlert] = useState<{ title: string, message?: string, tone: 'success' | 'error' | 'warning' | 'info' } | null>(null)
 
@@ -56,7 +59,7 @@ const EventReportDetails = () => {
             event_name,
             date,
             max_players,
-            created_user:user_laker!created_user_id(username, photo_url),
+            created_user:user_laker!created_user_id(user_id, username, photo_url),
             court:court!court_id(name)
           )
         `)
@@ -84,7 +87,7 @@ const EventReportDetails = () => {
 
     const handleWarning = async (warnTypeId: number, customMessage: string | null) => {
       await supabase.from('warning').insert({
-        user_id: report.event?.created_user_id,
+        user_id: report.event?.created_user?.user_id,
         report_id: report.ereport_id,
         warn_type_id: warnTypeId,
         custom_message: customMessage
@@ -124,34 +127,21 @@ const EventReportDetails = () => {
           <div className="flex flex-col gap-6 p-6 mx-2">
             <h2>Event: {report.event?.event_name ?? 'N/A'}</h2>
 
-            <div className="flex flex-wrap gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-12 w-fit">
               <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-black text-[18px]">
-                  location_on
-                </span>
+                <span className="material-symbols-outlined text-black text-[18px]">location_on</span>
                 <p>Location: {report.event?.court?.name ?? 'N/A'}</p>
               </div>
-
-              <div className="flex items-center gap-1 mx-10">
-                <span className="material-symbols-outlined text-black text-[18px]">
-                  groups
-                </span>
+              <div className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-black text-[18px]">groups</span>
                 <p>Participants: {report.event?.max_players ?? 'N/A'}</p>
               </div>
-            </div>
-
-            <div className="flex flex-wrap gap-10 items-center">
               <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-black text-[18px]">
-                  calendar_today
-                </span>
+                <span className="material-symbols-outlined text-black text-[18px]">calendar_today</span>
                 <p>{formatDate(report.event?.date)}</p>
               </div>
-
-              <div className="flex items-center gap-1 mx-7">
-                <span className="material-symbols-outlined text-black text-[18px]">
-                  person
-                </span>
+              <div className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-black text-[18px]">person</span>
                 <p>Host: @{report.event?.created_user?.username ?? 'N/A'}</p>
               </div>
             </div>
@@ -177,6 +167,7 @@ const EventReportDetails = () => {
                 photo_url: report.event?.created_user?.photo_url ?? ''
               }}
               target="Host"
+              scope="event"
             />
           </div>
         </div>

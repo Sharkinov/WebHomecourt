@@ -59,6 +59,7 @@ const ActiveEvents= () => {
             host={event.created_user?.username ?? 'N/A'}
             location={event.court?.name ?? 'N/A'}
             players={event.max_players}
+            date={event.date ? new Date(event.date).toLocaleDateString() : 'N/A'}
           />
         ))}
       </div>

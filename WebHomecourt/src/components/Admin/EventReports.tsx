@@ -25,8 +25,9 @@ const EventReports = () => {
       </div>
 
       <div className="overflow-x-auto">
+        <div className="max-h-[500px] overflow-y-auto">
         <table className="w-full min-w-[640px]">
-          <thead className="bg-morado-lakers text-white">
+          <thead className="bg-morado-lakers text-white  sticky top-0 z-10">
             <tr>
               <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Event ID</th>
               <th className="px-4 py-3 text-center font-medium" style={{ fontSize: '20px' }}>Date</th>
@@ -46,8 +47,8 @@ const EventReports = () => {
                 event={report.event?.event_name ?? 'N/A'}
                 location={report.event?.court?.name ?? 'N/A'}
                 date={report.event?.date ? new Date(report.event.date).toLocaleDateString() : 'N/A'}
-                host={report.reporter?.username ?? 'N/A'}
-                pfp={report.reporter?.photo_url ?? ''}
+                host={report.event?.created_user?.username ?? 'N/A'}
+                pfp={report.event?.created_user?.photo_url ?? ''}
                 priority={report.priority}
                 status={report.status}
               />
@@ -55,6 +56,7 @@ const EventReports = () => {
           </tbody>
         </table>
       </div>
+    </div>
     </div>
   )
 }
