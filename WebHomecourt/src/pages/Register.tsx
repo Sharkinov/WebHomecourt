@@ -27,6 +27,9 @@ function Register() {
     register,
   } = useRegister()
 
+  const validationMessage = alert?.tone === "warning" ? alert.message : (emailError || passwordError || "")
+  const visibleAlert = alert?.tone === "warning" ? null : alert
+
   const handleRegisterClick = async () => {
     const ok = await register()
     if (ok) navigate("/complete-register")
@@ -101,11 +104,6 @@ function Register() {
                 emailError ? "outline-orange-800" : "focus:outline-morado-lakers"
               }`}
             />
-            {emailError && (
-              <div className="mt-2">
-                <StatusAlert tone="warning" title={emailError} />
-              </div>
-            )}
           </div>
 
           <div className="flex flex-col gap-1">
@@ -150,12 +148,6 @@ function Register() {
               required
               className="h-11 px-4 bg-white rounded-2xl text-zinc-500 focus:outline-2 focus:outline-morado-lakers"
             />
-
-            {passwordError && (
-              <div className="mt-2">
-                <StatusAlert tone="warning" title={passwordError} />
-              </div>
-            )}
           </div>
 
           <Button
@@ -166,9 +158,15 @@ function Register() {
             // disabled={!canSubmit}
           />
 
-          {alert && (
+          {(validationMessage || visibleAlert) && (
             <div className="mt-2">
-              <StatusAlert tone={alert.tone} title={alert.message} />
+              {validationMessage ? (
+                <StatusAlert tone="warning" title={validationMessage} />
+              ) : (
+                visibleAlert && (
+                  <StatusAlert tone={visibleAlert.tone} title={visibleAlert.message} />
+                )
+              )}
             </div>
           )}
 
