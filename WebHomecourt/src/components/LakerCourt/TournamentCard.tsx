@@ -9,6 +9,7 @@ interface TournamentCardProps {
     getSkillLabel: (id: number | null) => string;
     onSignUp: (tournament: CourtTournament, currentPlayers: number, safeMaxPlayers: number) => void;
     onReport: () => void;
+    onListPlayers: () => void;
 }
 
 // AGREGAR en TournamentCard.tsx, antes del componente
@@ -25,7 +26,7 @@ function formatTournamentDateParts(value: string | null) {
     };
 }
 
-export default function TournamentCard({ tournament, courtName, isJoined, isSubmitting, getSkillLabel, onSignUp, onReport }: TournamentCardProps) {
+export default function TournamentCard({ tournament, courtName, isJoined, isSubmitting, getSkillLabel, onSignUp, onReport, onListPlayers }: TournamentCardProps) {
     const { dateLabel, timeLabel } = formatTournamentDateParts(tournament.date);
     const safeMaxPlayers = Math.max(0, tournament.max_players);
     const currentPlayers = Math.min(tournament.current_players, safeMaxPlayers);
@@ -42,7 +43,7 @@ export default function TournamentCard({ tournament, courtName, isJoined, isSubm
             <div className="flex flex-col">
                 <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                        <div className="text-[16px] leading-6 font-normal text-[#11061A] ">
+                        <div className="text-[16px] leading-6 font-normal text-texto-oscuro ">
                             {tournament.event_name}
                         </div>
                         <div className="mt-2 flex items-center gap-1.5 text-[12px] leading-4.5 text-Gris-Oscuro">
@@ -51,7 +52,7 @@ export default function TournamentCard({ tournament, courtName, isJoined, isSubm
                         </div>
                     </div>
                     <div className="text-right shrink-0">
-                        <div className="text-[14px] leading-5.25 text-[#11061A]">{dateLabel}</div>
+                        <div className="text-[14px] leading-5.25 text-texto-oscuro">{dateLabel}</div>
                         <div className="text-[12px] leading-4.5 text-Gris-Oscuro">{timeLabel}</div>
                     </div>
                 </div>
@@ -59,7 +60,7 @@ export default function TournamentCard({ tournament, courtName, isJoined, isSubm
                 <div className="mt-4 flex flex-col gap-1.5">
                     <div className="flex items-center justify-between text-[13px] leading-[19.5px]">
                         <span className="text-Gris-Oscuro">Players</span>
-                        <span className="text-[#11061A]">
+                        <span className="text-texto-oscuro">
                             {currentPlayers}/{safeMaxPlayers}
                         </span>
                     </div>
@@ -88,7 +89,7 @@ export default function TournamentCard({ tournament, courtName, isJoined, isSubm
                             "h-11 flex-1 rounded-xl text-[13px] leading-[19.5px] font-medium shadow-[0_4px_6px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.1)] transition-colors",
                             isJoined
                                 ? "bg-[#E7E6E8] text-morado-lakers cursor-pointer"
-                                : "bg-morado-lakers text-[#F3F2F3] cursor-pointer",
+                                : "bg-morado-lakers text-texto-claro cursor-pointer",
                             !isJoined && isFull ? "bg-[#D6D4D8] text-[#8A8690] cursor-not-allowed shadow-none" : "",
                         ].join(" ")}
                     >
@@ -96,6 +97,7 @@ export default function TournamentCard({ tournament, courtName, isJoined, isSubm
                     </button>
                     <button
                         type="button"
+                        onClick={onListPlayers}
                         className="h-11 w-11 rounded-xl bg-[#E7E6E8] text-morado-lakers flex items-center justify-center cursor-pointer"
                         aria-label="Ver jugadores"
                     >

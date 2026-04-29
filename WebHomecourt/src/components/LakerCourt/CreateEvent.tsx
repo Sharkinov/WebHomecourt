@@ -57,8 +57,8 @@ export default function CrearEvento({ open, onClose }: propsPopup) {
     court_id: "",
     date: "",
     time: "",
-    max_players: "",
-    min_age: "",
+    max_players: 2,
+    min_age: 15,
     max_age: "",
     skill_level_id: null,
     female_event: false,
@@ -90,14 +90,43 @@ export default function CrearEvento({ open, onClose }: propsPopup) {
     e.preventDefault()
     setError(null)
     setSuccess(false)
+
+    // Validar campos requeridos
+    if (!formData.event_name || formData.court_id === "" || !formData.date || !formData.time) {
+      setError("Please complete all required fields (*)")
+      return
+    }
+
+    // Validar que la fecha y hora no sean pasadas
+    const now = new Date()
+    const eventDateTime = new Date(`${formData.date}T${formData.time}`)
+    if (eventDateTime <= now) {
+      setError("Event date and time cannot be in the past")
+      return
+    }
+
+    // Validar max_players está presente y es mínimo 2
+    if (formData.max_players === "" || Number(formData.max_players) < 2) {
+      setError("Maximum number of players must be at least 2")
+      return
+    }
+
+    // Validar que max_age sea mayor o igual a min_age
+    if (formData.min_age !== "" && formData.max_age !== "") {
+      if (Number(formData.max_age) < Number(formData.min_age)) {
+        setError("Maximum age cannot be less than minimum age")
+        return
+      }
+    }
+
     try {
       await createEvent(formData)
       setSuccess(true)
-      //   window.location.reload() Es mejor el navigate pq no recarga desde 0 la pagina
-      navigate(0)
+        window.location.reload() //Es mejor el navigate pq no recarga desde 0 la pagina, pero con vercel me da error porbare window
+      // navigate(0)
       // onClose()
     } catch {
-      setError("No se pudo crear el evento. Intenta de nuevo.")
+      setError("Failed to create event. Please try again.")
     }
   }
 
@@ -176,6 +205,7 @@ export default function CrearEvento({ open, onClose }: propsPopup) {
                 value={formData.date}
                 onChange={handleChange}
                 placeholder="DD/MM/YY"
+                min={new Date().toISOString().split('T')[0]}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder:text-disabled"
               />
             </div>
@@ -197,11 +227,12 @@ export default function CrearEvento({ open, onClose }: propsPopup) {
           {/* Max Players */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Max Players
+              Max Players <span className="text-red-500">*</span>
             </label>
             <input
               name="max_players"
               type="number"
+              min={2}
               value={formData.max_players}
               onChange={handleChange}
               placeholder="10"
@@ -219,7 +250,7 @@ export default function CrearEvento({ open, onClose }: propsPopup) {
                 <input
                   name="min_age"
                   type="number"
-                  min={0}
+                  min={15}
                   max={99}
                   value={formData.min_age}
                   onChange={handleChange}
@@ -234,7 +265,7 @@ export default function CrearEvento({ open, onClose }: propsPopup) {
                 <input
                   name="max_age"
                   type="number"
-                  min={0}
+                  min={15}
                   max={99}
                   value={formData.max_age}
                   onChange={handleChange}
@@ -278,7 +309,7 @@ export default function CrearEvento({ open, onClose }: propsPopup) {
           )}
           {/* Buttons */}
           {error && <StatusAlert tone="error" title={error} />}
-          {success && <StatusAlert tone="success" title="¡Evento creado correctamente!" />}
+          {success && <StatusAlert tone="success" title="Event created successfully!" />}
           <div className="flex gap-3 pt-2">
             <button
               type="button"
@@ -289,7 +320,8 @@ export default function CrearEvento({ open, onClose }: propsPopup) {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+              disabled={!formData.event_name || formData.court_id === "" || !formData.date || !formData.time || formData.max_players === ""}
+              className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               Create Event
             </button>
