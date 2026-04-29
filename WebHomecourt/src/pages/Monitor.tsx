@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import Nav from '../components/Nav'
+import Nav from '../components/Nav/Nav'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import StatusAlert from '../components/Messages/StatusAlert'
@@ -93,7 +93,7 @@ const Monitor = () => {
 
   return (
     
-    <div className="flex flex-col min-h-screen bg-zinc-100">
+    <div >
       {showWarning && (
         <WarningPopup
           user={{ name: event?.created_user?.username ?? 'N/A', photo_url: event?.created_user?.photo_url ?? '' }}

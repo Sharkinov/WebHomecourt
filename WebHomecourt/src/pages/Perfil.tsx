@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import Nav from '../components/Nav'
+import Nav from '../components/Nav/Nav'
 import ProfileHeader from "../components/Perfil/ProfileHeader"
 import FriendsList from "../components/Perfil/FriendsList"
 import VotingActivity from "../components/Perfil/VotingActivity"
@@ -72,7 +72,7 @@ function Perfil() {
 
     return (
         <div className="min-h-screen bg-[#F3F2F5]">
-            <div className="flex flex-col items-center justify-center">
+            <div >
                 <Nav current="Perfil" />
             </div>
 

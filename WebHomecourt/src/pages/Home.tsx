@@ -1,4 +1,4 @@
-import Nav from '../components/Nav'
+import Nav from '../components/Nav/Nav.tsx'
 import { useEffect, useState } from "react"
 import { supabase } from "../lib/supabase"
 import MarcadorActivo, {getMarcadorActivo, type MarcadorJuego} from '../components/Home/Marcador'

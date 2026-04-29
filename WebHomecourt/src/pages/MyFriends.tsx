@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Nav from '../components/Nav';
+import Nav from '../components/Nav/Nav';
 import Button from '../components/button';
 import { useAuth } from '../hooks/Perfil/useAuth';
 import { getFriendsList, sendFriendRequest, getPendingRequests, acceptFriendRequest, denyFriendRequest, removeFriend, type Friend, type FriendRequest } from '../lib/Perfil/friends';
@@ -123,7 +123,7 @@ export default function MyFriends() {
 
   return (
     <div className="min-h-screen bg-Background">
-      <div className="flex flex-col items-center justify-center">
+      <div>
         <Nav current="Perfil" />
       </div>
 
