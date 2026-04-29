@@ -246,7 +246,7 @@ function RealtimeChat({ gameId = null, isGameLoading = false, onOpenPrivateList 
             activeTab="community"
             onOpenPrivate={onOpenPrivateList}
           >
-            <div className="flex flex-1 items-center justify-center h-full">
+            <div className="flex flex-1 items-start justify-center h-full px-2 py-2">
             <StatusAlert
               tone="info"
               title="Realtime chat is available only when there is a live game."
