@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import { type User } from '../User'
 
 // const DEFAULT_AVATAR = "https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/object/public/user_images/profile_picture_default.png"
  
@@ -8,12 +7,10 @@ interface SidebarProps {
   onClose: () => void
   navPages: { label: string; path: string }[]
   current: string
-  user: User | null
-  credits: number
   navHeight?: number
 }
  
-function Sidebar({ isOpen, onClose, navPages, current, user, credits, navHeight = 72 }: SidebarProps) {
+function Sidebar({ isOpen, onClose, navPages, current, navHeight = 72 }: SidebarProps) {
   const navigate = useNavigate()
  
   const handleNavigate = (path: string) => {

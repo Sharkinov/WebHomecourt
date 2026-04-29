@@ -122,8 +122,6 @@ function Nav({ current, creditsOverride }: NavProps) {
         onClose={() => setSidebarOpen(false)}
         navPages={navPages}
         current={current}
-        user={user}
-        credits={credits}
         navHeight={navHeight}
       />
     </>
