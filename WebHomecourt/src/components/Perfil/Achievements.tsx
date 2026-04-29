@@ -27,7 +27,7 @@ export default function Achievements({ userId }: Props) {
   return (
     <div className="bg-white rounded-[15px] overflow-hidden border border-black/8 shadow-[0_4px_4px_rgba(0,0,0,0.08)]">
       <div className="h-[63px] bg-morado-oscuro flex items-center px-6">
-        <span className="text-[#F3F2F3] text-[20px]">
+        <span className="text-[#F3F2F3] text-[18px]">
           Achievements
         </span>
       </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Nav from '../components/Nav'
+import { useNavigate, useParams } from 'react-router-dom'
+import Nav from '../components/Nav/Nav'
 import ProfileHeader from "../components/Perfil/ProfileHeader"
 import FriendsList from "../components/Perfil/FriendsList"
 import VotingActivity from "../components/Perfil/VotingActivity"
@@ -19,21 +19,26 @@ type CurrentUser = {
 
 function Perfil() {
     const navigate = useNavigate()
-    const { userId, loading: authLoading } = useAuth()
-    
+    const { userId: authUserId, loading: authLoading } = useAuth()
+    const { userId: urlUserId } = useParams<{ userId: string }>()
+    const profileUserId = urlUserId || authUserId
+
+    //determina si esta viendo su propio perfil 
+    const isOwnProfile = !urlUserId || urlUserId === authUserId
+
     const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
     const [events, setEvents] = useState<EventItem[]>([])
 
     useEffect(() => {
-        if (!userId) return
+        if (!profileUserId) return
 
         async function loadData() {
-            if (!userId) return
+            if (!profileUserId) return
 
             const { data: userData } = await supabase
                 .from('user_laker')
                 .select('user_id, nickname, photo_url')
-                .eq('user_id', userId)
+                .eq('user_id', profileUserId)
                 .single()
 
             if (userData) {
@@ -45,12 +50,12 @@ function Perfil() {
             }
 
 
-            const eventsData = await getUpcomingEvents(userId)
+            const eventsData = await getUpcomingEvents(profileUserId)
             setEvents(eventsData)
         }
 
         loadData()
-    }, [userId])
+    }, [profileUserId])
 
     if (authLoading) {
         return (
@@ -60,29 +65,30 @@ function Perfil() {
         )
     }
 
-    if (!userId) {
+    if (!profileUserId && !urlUserId) {
         navigate('/login')
         return null
     }
 
     return (
         <div className="min-h-screen bg-[#F3F2F5]">
-            <div className="flex flex-col items-center justify-center">
+            <div >
                 <Nav current="Perfil" />
             </div>
 
             <div className="px-4 sm:px-8 md:px-12 lg:px-[60px] py-4 sm:py-[20px] flex flex-col gap-4 sm:gap-6 md:gap-[31px]">
-                <ProfileHeader userId={userId} />
+                <ProfileHeader userId={profileUserId!} isOwnProfile={isOwnProfile} />
                 <FriendsList
-                    userId={userId}
+                    userId={profileUserId!}
                     currentUser={currentUser}
+                    isOwnProfile={isOwnProfile}
                 />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-[31px]">
-                    <VotingActivity userId={userId} />
+                    <VotingActivity userId={profileUserId!} />
                     <UpcomingEvents events={events} />
                 </div>
-                <Achievements userId={userId} />
-                <SettingsSection />
+                <Achievements userId={profileUserId!} />
+                {isOwnProfile && <SettingsSection />}
             </div>
         </div>
     )

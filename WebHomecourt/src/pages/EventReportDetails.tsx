@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import Nav from '../components/Nav'
+import Nav from '../components/Nav/Nav'
 import ActionButtons from '../components/ReportDetails/ActionButtons'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
@@ -7,7 +7,7 @@ import StatusAlert from '../components/Messages/StatusAlert'
 
 const formatDate = (dateStr: string) => {
   if (!dateStr) return 'N/A'
-  return new Intl.DateTimeFormat('es-MX', {
+  return new Intl.DateTimeFormat('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -95,10 +95,10 @@ const EventReportDetails = () => {
   if (!report) return <div>Loading...</div>
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-100">
+    <div >
       <Nav current="Admin" />
 
-      <div className="px-4 md:px-14 py-5 mb-10">
+      <div className="px-4 md:px-14 py-5 mb-10 w-full">
         <div className="w-full px-5 py-7 bg-violet-950 rounded-2xl flex items-center gap-3 mb-6">
           <span className="material-symbols-outlined text-white" style={{ fontSize: '36px' }}>
             admin_panel_settings
@@ -121,7 +121,7 @@ const EventReportDetails = () => {
             </button>
           </div>
 
-          <div className="flex flex-col gap-6 p-6">
+          <div className="flex flex-col gap-6 p-6 mx-2">
             <h2>Event: {report.event?.event_name ?? 'N/A'}</h2>
 
             <div className="flex flex-wrap gap-10">
@@ -132,7 +132,7 @@ const EventReportDetails = () => {
                 <p>Location: {report.event?.court?.name ?? 'N/A'}</p>
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 mx-10">
                 <span className="material-symbols-outlined text-black text-[18px]">
                   groups
                 </span>
@@ -148,15 +148,16 @@ const EventReportDetails = () => {
                 <p>{formatDate(report.event?.date)}</p>
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 mx-7">
                 <span className="material-symbols-outlined text-black text-[18px]">
                   person
                 </span>
-                <p>Host: {report.event?.created_user?.username ?? 'N/A'}</p>
+                <p>Host: @{report.event?.created_user?.username ?? 'N/A'}</p>
               </div>
             </div>
 
             <hr className="border-amarillo-lakers border-t-2 my-4 -mx-12" />
+
 
             <h2 className="font-medium text-black text-[20px]">
               Report Comment
@@ -175,9 +176,6 @@ const EventReportDetails = () => {
                 name: report.event?.created_user?.username ?? 'N/A',
                 photo_url: report.event?.created_user?.photo_url ?? ''
               }}
-              
-              suspendText="Suspend Host"
-              banText="Ban Host"
               target="Host"
             />
           </div>

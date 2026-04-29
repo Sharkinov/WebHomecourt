@@ -49,7 +49,7 @@ const EventReportRow = ({ id, event, location, date, host, pfp, priority, status
               <div className="w-full h-full bg-gray-300" />
             )}
           </div>
-          <p>{host}</p>
+          <p>@{host}</p>
         </div>
       </td>
       <td className="px-4 py-3 text-center">

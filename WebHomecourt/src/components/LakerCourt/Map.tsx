@@ -4,8 +4,8 @@ import "leaflet/dist/leaflet.css";
 import "./Map.css"; // solo para leaflet overrides + markers
 import { useEffect, useState } from "react";
 import type { LatLng, Map as LeafletMap } from "leaflet";
-import type { Court } from "../services/apiMAP";
-import { getCiudad, getCourts } from "../services/apiMAP";
+import type { Court } from "../../services/apiMAP";
+import { getCiudad, getCourts } from "../../services/apiMAP";
 
 interface MapProps {
   selectedCourtId?: number | null;

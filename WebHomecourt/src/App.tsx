@@ -17,7 +17,9 @@ import UserSession from './pages/UserSession' // Ejemplo usando sesión de usuai
 import EventReportDetails from './pages/EventReportDetails'
 import EditarPerfil from './pages/EditarPerfil';
 import CompleteRegister from './pages/CompleteRegister';
+import Monitor from './pages/Monitor';
 import EditAvatar from './pages/EditAvatar';
+import MyFriends from './pages/MyFriends';
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
         <Route path="/juego" element={<Juego />} />
         <Route path="/store" element={<Store />} />
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/perfil/:userId" element={<Perfil />} />
+        <Route path="/my-friends" element={<MyFriends />} />
         <Route path="/admin" element={<Admin/>} />
         <Route path="/admin/report/:id" element={<ReportDetails />} />
         <Route path="/admin/event/:id" element={<EventReportDetails />} />
@@ -39,6 +43,8 @@ function App() {
         <Route path="/session" element={<UserSession />} /> 
         <Route path="/editar-perfil" element={<EditarPerfil />} />
         <Route path="/complete-register" element={<CompleteRegister />} />
+        <Route path="/admin/monitor/:id" element={<Monitor />} />
+
         <Route path='/edit-avatar' element={<EditAvatar/>}></Route>
       </Routes>
     </BrowserRouter>

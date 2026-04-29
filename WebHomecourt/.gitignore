@@ -27,3 +27,6 @@ dist-ssr
 .env
 
 dist
+cypress
+.vercel
+.env*.local

@@ -28,12 +28,6 @@ function UpcomingEvents({ events }: Props) {
                 <span className="text-[#F3F2F3] text-[18px]">
                     Upcoming Events
                 </span>
-                <span className="text-amarillo-lakers text-[13px] font-medium cursor-pointer hover:underline flex items-center gap-1">
-                    View all
-                    <span className="material-symbols-outlined text-[16px]">
-                        chevron_right
-                    </span>
-                </span>
             </div>
 
    

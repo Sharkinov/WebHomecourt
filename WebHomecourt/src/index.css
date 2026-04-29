@@ -78,12 +78,20 @@ a {
 @theme {
   --color-morado-oscuro:    #3B195C;
   --color-morado-lakers:    #542581;
-  --color-morado-bajo:      #9482A5; 
+  --color-morado-bajo:      #9482A5;
   --color-morado-disabled:  #AD96C3;
   --color-amarillo-oscuro:  #B36F00;
   --color-amarillo-lakers:  #FCB136;
   --color-Background:       #F3F2F5;
   --color-Gris-Oscuro:      #6F6975;
+  --color-gris-disabled: #A09CA4;
   --color-disabled: #AD96C3;
+  --color-morado-fosfo: #7E57D7;
+  --color-rojo-claro: #EF7474;
+  --color-rojo-oscuro: #BC3737; 
+  --color-texto-oscuro:     #11061A; /* lo uso en MyFriends.tsx */
+  --color-texto-claro:      #F3F2F3; /* lo uso en MyFriends.tsx */
+  --color-morado-hover:     #7E57D7; /* lo uso en MyFriends.tsx */
+  --color-rojo-error:       #BC3737; /* lo uso en MyFriends.tsx */
+  --color-rojo-error-hover: #a02d2d; /* lo uso en MyFriends.tsx */
 }
-

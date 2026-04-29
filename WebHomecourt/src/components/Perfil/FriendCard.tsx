@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 type Friend = {
     user_id: string
     nickname: string
@@ -11,9 +13,12 @@ type FriendCardProps = {
 }
 
 function FriendCard({ friend, isOnline }: FriendCardProps) {
+    const navigate = useNavigate()
+
     return (
-        <div 
-            className="flex flex-col items-center flex-shrink-0"
+        <div
+            onClick={() => navigate(`/perfil/${friend.user_id}`)}
+            className="flex flex-col items-center flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
             style={{ width: '64px', height: '88.5px', gap: '8px' }}
         >
             <div className="relative">
@@ -25,8 +30,8 @@ function FriendCard({ friend, isOnline }: FriendCardProps) {
                         style={{ width: '60px', height: '60px', border: '2px solid #A09CA4' }}
                     />
                 ) : (
-                    <div 
-                        className="rounded-full flex items-center justify-center text-white font-semibold"
+                    <div
+                        className="rounded-[15px] flex items-center justify-center text-white font-semibold"
                         style={{
                             width: '60px',
                             height: '60px',

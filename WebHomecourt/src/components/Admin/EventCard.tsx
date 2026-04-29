@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 const statusStyles: Record<string, string> = {
   Upcoming: 'bg-[#28924F]/26 text-[#083C1B]',
   Scheduled: 'bg-[#FCB136]/49 text-[#4E3204]',
@@ -13,7 +15,9 @@ interface EventCardProps {
   players: number
 }
 
-const EventCard = ({ name, status, pfp, host, location, players }: EventCardProps) => {
+const EventCard = ({ id, name, status, pfp, host, location, players }: EventCardProps) => {
+  const navigate = useNavigate()
+
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 flex flex-col justify-between h-full">
       
@@ -32,7 +36,7 @@ const EventCard = ({ name, status, pfp, host, location, players }: EventCardProp
               <div className="w-full h-full bg-gray-300" />
             )}
           </div>
-        <p className="font-medium">{host}</p>
+        <p className="font-medium">@{host}</p>
       </div>
 
       <div className="flex justify-between items-center gap-2 pt-2">
@@ -47,7 +51,9 @@ const EventCard = ({ name, status, pfp, host, location, players }: EventCardProp
           </div>
         </div>
 
-        <button className="bg-morado-lakers text-white px-5 py-2 rounded-lg font-medium hover:bg-morado-oscuro transition-colors">
+        <button 
+          onClick={() => navigate(`/admin/monitor/${id}`)}
+          className="bg-morado-lakers text-white px-5 py-2 rounded-lg font-medium hover:bg-morado-oscuro transition-colors">
           Monitor
         </button>
       </div>
