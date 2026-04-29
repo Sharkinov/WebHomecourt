@@ -40,8 +40,9 @@ export const getEventReports = async () => {
       created_at,
       event_id,
       reporter:user_laker!reporter_user_id(username, photo_url),
-      event:event!event_id(event_name, date, court:court!court_id(name))
+      event:event!event_id(event_name, date, created_user:user_laker!created_user_id(username, photo_url), court:court!court_id(name))
     `)
+    .neq('status', 'Resolved')
     .order('created_at', { ascending: false })
 
   if (error) {

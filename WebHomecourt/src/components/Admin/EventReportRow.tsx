@@ -67,7 +67,7 @@ const EventReportRow = ({ id, event, location, date, host, pfp, priority, status
       </td>
       <td className="px-4 py-3 text-center">
         <button
-          onClick={() => navigate(`/admin/event/${id}`)}
+          onClick={() => navigate('/admin/event', { state: { id: id } })}
           className="w-28 border border-morado-lakers text-morado-lakers px-4 py-1 rounded-lg text-sm font-medium hover:bg-morado-lakers hover:text-white transition-colors"
         >
           {status === 'Pending' ? 'Review' : 'View'}

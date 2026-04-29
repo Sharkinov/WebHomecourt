@@ -1,4 +1,5 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Nav from '../components/Nav/Nav'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
@@ -36,7 +37,8 @@ const formatGender = (gender: number) => {
 
 const Monitor = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const location = useLocation()
+  const id = location.state?.id
   const [event, setEvent] = useState<any>(null)
   const [alert, setAlert] = useState<{ title: string, message?: string, tone: 'success' | 'error' | 'warning' | 'info' } | null>(null)
 
@@ -98,6 +100,7 @@ const Monitor = () => {
         <WarningPopup
           user={{ name: event?.created_user?.username ?? 'N/A', photo_url: event?.created_user?.photo_url ?? '' }}
           target="Host"
+          scope="event"
           onConfirm={(warnTypeId, customMessage) => {
             setShowWarning(false)
             handleWarning(warnTypeId, customMessage)
@@ -177,7 +180,7 @@ const Monitor = () => {
             <hr className="border-amarillo-lakers border-t-2 my-4 -mx-12" />
 
             {/* Host */}
-            <div className="flex flex-wrap gap-10 items-start">
+            <div className="flex flex-col xl:flex-row gap-10 items-start">
                 <div key={event?.created_user?.user_id} className="flex flex-col items-start gap-4 bg-morado-bajo/30 rounded-xl px-10 py-7">
                 
                 <div className="flex items-center gap-1">
@@ -204,7 +207,7 @@ const Monitor = () => {
                   </div>
                   
                 </div>
-                <button className="mt-3 w-full bg-morado-lakers text-white py-1.5 rounded-lg font-medium hover:bg-morado-oscuro transition-colors" style={{ fontSize: '14px' }}>
+                <button onClick={() => navigate(`/perfil/${event?.created_user?.user_id}`)} className="mt-3 w-full bg-morado-lakers text-white py-1.5 rounded-lg font-medium hover:bg-morado-oscuro transition-colors" style={{ fontSize: '14px' }}>
                   View Profile
                 </button>
                 </div>
@@ -254,7 +257,7 @@ const Monitor = () => {
                         <span
                           className="material-symbols-outlined text-amarillo-lakers cursor-pointer hover:opacity-70 transition-opacity"
                           style={{ fontSize: '20px' }}
-                          onClick={() => navigate(`/admin/report/${latestActiveReport.ureport_id}`)}
+                          onClick={() => navigate('/admin/report', { state: { id: latestActiveReport.ureport_id } })}
                         >
                           flag
                         </span>
