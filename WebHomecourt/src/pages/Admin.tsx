@@ -67,10 +67,12 @@ export const getActiveEvents = async () => {
       max_players,
       allow_event,
       date,
+      event_status_id,
       created_user:user_laker!created_user_id(username, photo_url),
       court:court!court_id(name)
     `)
     .eq('allow_event', true)
+    .eq('event_status_id', 1)
     .order('date', { ascending: true })
 
   if (error) {
