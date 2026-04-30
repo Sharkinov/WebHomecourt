@@ -25,9 +25,13 @@ import { useAuth } from './context/AuthContext'
 import { Navigate } from 'react-router-dom'
 
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const { userType, loading } = useAuth()
-  if (loading) return <div>Loading...</div>
+  const { userType, loading, user } = useAuth()
+  
+  if (loading) return null
+  if (!user) return <Navigate to="/" replace />
+  if (userType === null) return null //espera a que fetch user termine
   if (userType !== 1) return <Navigate to="/" replace />
+  
   return <>{children}</>
 }
 

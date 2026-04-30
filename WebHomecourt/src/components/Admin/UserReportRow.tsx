@@ -44,7 +44,7 @@ const UserReportRow = ({ id, event, reportedUser, pfp, priority, status }: UserR
         </div>
       </td>
       <td className="px-4 py-3 text-center">
-        <span className={`inline-block w-24 py-1 rounded-full text-sm font-medium text-center ${priorityStyles[priority]}`}>
+        <span className={`inline-block w-24 py-1 rounded-full text-sm font-medium text-center ${priorityStyles[priority?.charAt(0).toUpperCase() + priority?.slice(1).toLowerCase()]}`}>
           {priority}
         </span>
       </td>

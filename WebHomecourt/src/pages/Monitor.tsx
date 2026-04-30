@@ -91,7 +91,7 @@ const Monitor = () => {
   }
   
 
-  if (!event) return <div>Loading...</div>
+  if (!event) return null
 
   return (
     

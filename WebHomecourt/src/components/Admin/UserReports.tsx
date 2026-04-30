@@ -10,8 +10,9 @@ const UserReportsTable = () => {
   useEffect(() => {
     const fetchReports = async () => {
       const data = await getUserReports()
+      const normalize = (p: string) => p?.charAt(0).toUpperCase() + p?.slice(1).toLowerCase()
       const sorted = [...data].sort((a, b) =>
-        (priorityOrder[a.priority] ?? 99) - (priorityOrder[b.priority] ?? 99)
+        (priorityOrder[normalize(a.priority)] ?? 99) - (priorityOrder[normalize(b.priority)] ?? 99)
       )
       setReports(sorted)
     }

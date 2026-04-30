@@ -53,8 +53,8 @@ const EventReportRow = ({ id, event, location, date, host, pfp, priority, status
         </div>
       </td>
       <td className="px-4 py-3 text-center">
-        <span className={`inline-block w-24 py-1 rounded-full text-sm font-medium text-center ${priorityStyles[priority]}`}>
-          {priority}
+        <span className={`inline-block w-24 py-1 rounded-full text-sm font-medium text-center ${priorityStyles[priority?.charAt(0).toUpperCase() + priority?.slice(1).toLowerCase()]}`}>
+          {priority?.charAt(0).toUpperCase() + priority?.slice(1).toLowerCase()}
         </span>
       </td>
       <td className="px-4 py-3 text-center">

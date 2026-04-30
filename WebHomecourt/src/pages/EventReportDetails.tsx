@@ -5,6 +5,7 @@ import ActionButtons from '../components/ReportDetails/ActionButtons'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import StatusAlert from '../components/Messages/StatusAlert'
+import StarRating from '../components/ReportDetails/StarRating'
 
 const formatDate = (dateStr: string) => {
   if (!dateStr) return 'N/A'
@@ -16,6 +17,22 @@ const formatDate = (dateStr: string) => {
     minute: '2-digit',
   }).format(new Date(dateStr))
 }
+
+const calculateAge = (birthdate: string) => {
+  if (!birthdate) return 'N/A'
+  const today = new Date()
+  const birth = new Date(birthdate)
+  let age = today.getFullYear() - birth.getFullYear()
+  const m = today.getMonth() - birth.getMonth()
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+  return age
+}
+
+const formatGender = (gender: number) => {
+  const map: Record<number, string> = { 0: 'Female', 1: 'Male', 2: 'Other' }
+  return map[gender] ?? 'N/A'
+}
+
 
 const EventReportDetails = () => {
   const navigate = useNavigate()
@@ -54,12 +71,13 @@ const EventReportDetails = () => {
           status,
           created_at,
           event_id,
+          key_words,
           reporter:user_laker!reporter_user_id(username, photo_url),
           event:event!event_id(
             event_name,
             date,
             max_players,
-            created_user:user_laker!created_user_id(user_id, username, photo_url),
+            created_user:user_laker!created_user_id(user_id, username, nickname, photo_url, reputation, birthdate, gender),
             court:court!court_id(name)
           )
         `)
@@ -95,7 +113,7 @@ const EventReportDetails = () => {
       handleAction('warning')
     }
 
-  if (!report) return <div>Loading...</div>
+  if (!report) return null
 
   return (
     <div >
@@ -141,20 +159,72 @@ const EventReportDetails = () => {
                 <p>{formatDate(report.event?.date)}</p>
               </div>
               <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-black text-[18px]">person</span>
-                <p>Host: @{report.event?.created_user?.username ?? 'N/A'}</p>
+                  <span className="material-symbols-outlined text-black text-[18px]">assignment_ind</span>
+                  <p>Reported by: @{report.reporter?.username ?? 'N/A'}</p>
               </div>
             </div>
 
             <hr className="border-amarillo-lakers border-t-2 my-4 -mx-12" />
 
+            <div className="flex flex-col xl:flex-row gap-10 items-start">
+              
+              {/* Host card */}
+              <div className="flex flex-col items-start gap-4 bg-morado-bajo/30 rounded-xl px-10 py-7">
+                <div className="flex items-center gap-1">
+                  <span className="material-symbols-outlined text-morado-lakers" style={{ fontSize: '30px' }}>crown</span>
+                  <h4 style={{ fontWeight: '600' }}>Host</h4>
+                </div>
+                <div className="flex flex-row items-start gap-2">
+                  <div className="w-18 h-18 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 -mt-1">
+                    {report.event?.created_user?.photo_url && (
+                      <img src={report.event.created_user.photo_url} className="w-full h-full object-cover" />
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="font-medium" style={{ fontWeight: '500' }}>{report.event?.created_user?.nickname}</p>
+                    <p className="font-medium text-gray-600 mb-3">@{report.event?.created_user?.username ?? 'N/A'}</p>
+                    <div className="flex gap-3 text-sm text-gray-600">
+                      <p className="text-morado-lakers">Age: <span className="text-black">{calculateAge(report.event?.created_user?.birthdate)}</span></p>
+                      <p className="text-morado-lakers">Gender: <span className="text-black">{formatGender(report.event?.created_user?.gender)}</span></p>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <p className="text-morado-lakers">Reputation: <span className="text-black">{report.event?.created_user?.reputation ?? 'N/A'}</span></p>
+                      <StarRating rating={report.event?.created_user?.reputation} />
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigate(`/perfil/${report.event?.created_user?.user_id}`)}
+                  className="mt-3 w-full bg-morado-lakers text-white py-1.5 rounded-lg font-medium hover:bg-morado-oscuro transition-colors"
+                  style={{ fontSize: '14px' }}
+                >
+                  View Profile
+                </button>
+              </div>
 
-            <h2 className="font-medium text-black text-[20px]">
-              Report Comment
-            </h2>
+              {/* Report Comment */}
+              <div className="flex flex-col gap-3 flex-1">
+                <div className="grid gap-10" style={{ gridTemplateColumns: '2fr 1fr' }}>
+                  <div className="flex flex-col gap-3">
+                    <h2 className="font-medium text-black" style={{ fontSize: '20px' }}>Report Comment</h2>
+                    <div className="bg-[#9382A5]/50 border border-gray-200 rounded-xl p-4 min-h-[150px]">
+                      <p className="text-black">{report.comment ?? 'No comment'}</p>
+                    </div>
+                  </div>
+                  {/* AI Analysis */}
+                  <div className="flex flex-col gap-3">
+                    <h2 className="font-medium text-black" style={{ fontSize: '20px' }}>AI Analysis</h2>
+                    <div className="flex flex-wrap gap-3">
+                      {report.key_words?.map((kw: string) => (
+                        <span key={kw} className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-base">
+                          {kw}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-            <div className="bg-[#9382A5]/50 border border-gray-200 rounded-xl p-4 min-h-[150px]">
-              <p className="text-black">{report.comment ?? 'No comment'}</p>
             </div>
 
             <ActionButtons
