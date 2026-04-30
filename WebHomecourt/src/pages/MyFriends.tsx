@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Nav from '../components/Nav/Nav';
-import Button from '../components/button';
-import { useAuth } from '../hooks/Perfil/useAuth';
+import ProfileButton from '../components/Perfil/ProfileButton';
+import { useAuth } from '../context/AuthContext';
 import { getFriendsList, sendFriendRequest, getPendingRequests, acceptFriendRequest, denyFriendRequest, removeFriend, type Friend, type FriendRequest } from '../lib/Perfil/friends';
 import AddFriendTab from '../components/Perfil/MyFriends/AddFriendTab';
 import PendingRequestsTab from '../components/Perfil/MyFriends/PendingRequestsTab';
@@ -129,10 +129,10 @@ export default function MyFriends() {
 
       <div className="px-4 sm:px-8 md:px-12 lg:px-[60px] py-4 sm:py-[20px]">
         <div className="bg-morado-oscuro w-full h-[138px] flex flex-col justify-center px-8 rounded-2xl mb-6">
-          <h1 className="text-white text-[40px] font-black leading-normal mb-0.5" style={{ fontFamily: 'Graphik' }}>
+          <h1 className="text-white text-[40px] font-black leading-normal mb-2" style={{ fontFamily: 'Graphik' }}>
             My Friends
           </h1>
-          <p className="text-texto-claro text-[24px] leading-[1.2]" style={{ fontFamily: 'Graphik' }}>
+          <p className="text-texto-claro text-2xl leading-[1.2]" style={{ fontFamily: 'Graphik' }}>
             Connect, share, and stay in touch with your community
           </p>
         </div>
@@ -217,12 +217,12 @@ export default function MyFriends() {
               Are you sure you want to remove <strong>{friendToRemove.nickname}</strong> from your friends list? This action cannot be undone.
             </p>
             <div className="flex gap-4">
-              <Button
+              <ProfileButton
                 type={removingFriend ? 'primarydisable' : 'secondary'}
                 text={removingFriend ? 'Removing...' : 'Yes, remove friend'}
                 onClick={removingFriend ? () => {} : handleRemoveFriend}
               />
-              <Button
+              <ProfileButton
                 type="secondary"
                 text="Cancel"
                 onClick={() => setFriendToRemove(null)}

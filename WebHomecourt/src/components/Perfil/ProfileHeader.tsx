@@ -3,8 +3,9 @@ import { getFriendshipStatus, removeFriend } from "../../lib/Perfil/friends"
 import type { FriendshipStatus } from "../../lib/Perfil/friends"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import Button from "../button"
+import ProfileButton from "./ProfileButton"
 import { format } from "date-fns"
+import StatusAlert from "../Messages/StatusAlert"
 
 const DEFAULT_AVATAR = "https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/object/public/user_images/profile_picture_default.png"
 
@@ -125,6 +126,7 @@ function ProfileHeader({ userId, isOwnProfile = true }: { userId: string; isOwnP
     const [friendshipStatus, setFriendshipStatus] = useState<FriendshipStatus>("no_friend")
     const [showRemoveModal, setShowRemoveModal] = useState(false)
     const [removingFriend, setRemovingFriend] = useState(false)
+    const [showSuccessToast, setShowSuccessToast] = useState(false)
 
     useEffect(() => {
         async function fetchData() {
@@ -172,6 +174,12 @@ function ProfileHeader({ userId, isOwnProfile = true }: { userId: string; isOwnP
             await removeFriend(userId)
             setFriendshipStatus("no_friend")
             setShowRemoveModal(false)
+            setShowSuccessToast(true)
+
+            // Ocultar el toast después de 3 segundos
+            setTimeout(() => {
+                setShowSuccessToast(false)
+            }, 3000)
         } catch (e) {
             console.error('Error removing friend:', e)
             alert('Error al remover el amigo. Por favor intenta de nuevo.')
@@ -192,7 +200,20 @@ function ProfileHeader({ userId, isOwnProfile = true }: { userId: string; isOwnP
     }
 
     return (
-        <div className="bg-morado-oscuro rounded-2xl p-4 sm:p-6">
+        <>
+            {/* Toast de éxito */}
+            {showSuccessToast && (
+                <div className="fixed top-24 right-8 z-[9999] animate-slide-in">
+                    <div className="w-96">
+                        <StatusAlert
+                            tone="success"
+                            title="Successfully removed friend"
+                        />
+                    </div>
+                </div>
+            )}
+
+            <div className="bg-morado-oscuro rounded-2xl p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4">
                 <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
                     <img
@@ -207,7 +228,7 @@ function ProfileHeader({ userId, isOwnProfile = true }: { userId: string; isOwnP
                         <p className="text-[#9482A5] text-sm sm:text-base leading-relaxed mt-1">
                             @{profile.username}
                         </p>
-                        <div className="flex items-center gap-1 mt-3">
+                        <div className="flex items-center gap-1 mt-5">
                             <span className="material-symbols-outlined text-[#E7E6E8]" style={{ fontSize: '16px' }}>calendar_today</span>
                             <span className="text-[#E7E6E8] text-sm" style={{ fontFamily: 'Graphik' }}>Member since {format(new Date(profile.created_at), 'MMMM yyyy')}</span>
                         </div>
@@ -302,12 +323,12 @@ function ProfileHeader({ userId, isOwnProfile = true }: { userId: string; isOwnP
                             Are you sure you want to remove <strong>{profile.nickname}</strong> from your friends list? This action cannot be undone.
                         </p>
                         <div className="flex gap-4">
-                            <Button
+                            <ProfileButton
                                 type={removingFriend ? 'primarydisable' : 'secondary'}
                                 text={removingFriend ? 'Removing...' : 'Yes, remove friend'}
                                 onClick={removingFriend ? () => {} : confirmRemoveFriend}
                             />
-                            <Button
+                            <ProfileButton
                                 type="secondary"
                                 text="Cancel"
                                 onClick={() => setShowRemoveModal(false)}
@@ -316,7 +337,8 @@ function ProfileHeader({ userId, isOwnProfile = true }: { userId: string; isOwnP
                     </div>
                 </div>
             )}
-        </div>
+            </div>
+        </>
     )
 }
 

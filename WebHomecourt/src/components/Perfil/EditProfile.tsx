@@ -1,6 +1,6 @@
 import { supabase } from "../../lib/supabase"
 import { useEffect, useState } from "react"
-import { useAuth } from "../../hooks/Perfil/useAuth"
+import { useAuth } from "../../context/AuthContext"
 const DEFAULT_AVATAR = "https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/object/public/user_images/profile_picture_default.png"
 // tipos
 export type Gender = {
@@ -101,18 +101,19 @@ interface EditProfileProps {
 }
 
 function EditProfile({ onBack, onSave }: EditProfileProps) {
-    const { userId } = useAuth()
+    const { user } = useAuth()
+    const userId = user?.id
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [genders, setGenders] = useState<Gender[]>([])
-    
+
     // estados del forms
     const [username, setUsername] = useState("")
     const [nickname, setNickname] = useState("")
     const [photoUrl, setPhotoUrl] = useState<string | null>(null)
     const [gender, setGender] = useState<number | null>(null)
     const [birthdate, setBirthdate] = useState("")
-    
+
     // photo upload state
     const [photoFile, setPhotoFile] = useState<File | null>(null)
     const [photoPreview, setPhotoPreview] = useState<string | null>(null)

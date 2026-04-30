@@ -18,7 +18,7 @@ export default function PendingRequestsTab({
   onDeny
 }: PendingRequestsTabProps) {
   return (
-    <div className="bg-white rounded-[15px] p-8">
+    <>
       {showSuccessAlert && (
         <div className="mb-6 flex justify-center">
           <StatusAlert
@@ -32,19 +32,11 @@ export default function PendingRequestsTab({
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-morado-lakers"></div>
         </div>
       ) : pendingRequests.length === 0 ? (
-        <>
-          <h3
-            className="text-texto-oscuro text-[22px] font-semibold mb-6 pb-4 border-b border-morado-oscuro/20"
-            style={{ fontFamily: 'Graphik' }}
-          >
-            Pending Requests
-          </h3>
-          <div className="text-center py-8 text-Gris-Oscuro" style={{ fontFamily: 'Graphik' }}>
-            No pending friend requests
-          </div>
-        </>
+        <div className="text-center py-8 text-Gris-Oscuro" style={{ fontFamily: 'Graphik' }}>
+          No pending friend requests
+        </div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-4">
           {pendingRequests.map((request) => (
             <PendingRequestCard
               key={request.friend_request_id}
@@ -55,6 +47,6 @@ export default function PendingRequestsTab({
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

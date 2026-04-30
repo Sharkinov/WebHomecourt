@@ -232,20 +232,21 @@ function OpenPack(prop: OpenPackProp) {
                                 <img src={imageURL} className="h-75 md:h-75 w-auto animate-[pulse_0.75s_ease-in-out_2]" onClick={openEnabled ? () => opening() : () => {}} />
                             ) : (
                                 <div className="flex flex-col w-150 h-75 max-h-72 text-center items-center justify-start overflow-y-auto py-4 px-2 gap-y-4">
-                                    {wonCards.length > 0 ? (
+                                    {/*{wonCards.length > 0 ? (
                                     wonCards.map((card) => (
                                         // Usando key composed de slot and then the actual id pq duplicate cards give error
+                                        
                                         <div key={`${card.card_slot}_${card.won_card_id}`} className="rounded-lg bg-white px-3 py-4">
                                             <p className="text-xs">{card.card_slot}. Card {card.won_card_id}</p>
                                             <p>featuring {card.player_name} type {card.card_rarity_id}</p>
                                         </div>
                                         )
                                     )) 
-                                    : 
+                                    : */}
                                     <p></p>
-                                }
                                     
-                                </div>)
+                                </div>
+                            )
                             }
                             {/* Open manually via button */}
                             <div className="w-full px-4 md:px-4 pb-4">

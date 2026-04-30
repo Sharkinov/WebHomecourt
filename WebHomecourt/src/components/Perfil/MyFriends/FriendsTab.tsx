@@ -15,6 +15,60 @@ export default function FriendsTab({ friends, loading, onRemove }: FriendsTabPro
   const [friendsFilter, setFriendsFilter] = useState('all');
   const [friendsSearchQuery, setFriendsSearchQuery] = useState('');
 
+  // funcion para verificar si el usuario estuvo en linea recientemente (ultimas 24 horas)
+  const wasOnlineRecently = (lastSeen: string | null | undefined): boolean => {
+    if (!lastSeen) return false;
+    const now = new Date();
+    const lastSeenDate = new Date(lastSeen);
+    const hoursDiff = (now.getTime() - lastSeenDate.getTime()) / (1000 * 60 * 60);
+    return hoursDiff <= 24; // ultimas 24 horas
+  };
+
+  // funcion para formatear "last active"
+  const formatLastActive = (lastSeen: string | null | undefined): string => {
+    if (!lastSeen) return 'Never';
+
+    const now = new Date();
+    const lastSeenDate = new Date(lastSeen);
+    const diffMs = now.getTime() - lastSeenDate.getTime();
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 60) return `${diffMinutes} ${diffMinutes === 1 ? 'minute' : 'minutes'} ago`;
+    if (diffHours < 24) return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+    if (diffDays < 7) return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
+
+    return lastSeenDate.toLocaleDateString();
+  };
+
+  // filtrar y ordenar amigos
+  let filteredFriends = friends.filter(friend => {
+    // aplicar filtro de busqueda
+    const searchLower = friendsSearchQuery.toLowerCase().trim();
+    if (searchLower) {
+      const matchesNickname = friend.nickname.toLowerCase().includes(searchLower);
+      const matchesUsername = friend.username.toLowerCase().includes(searchLower);
+      if (!matchesNickname && !matchesUsername) return false;
+    }
+
+    if (friendsFilter === 'online') {
+      return wasOnlineRecently(friend.last_seen);
+    }
+
+    return true;
+  });
+
+  // ordenar segun el filtro
+  if (friendsFilter === 'recent') {
+    filteredFriends = [...filteredFriends].sort((a, b) => {
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateB - dateA; // mas reciente primero
+    });
+  }
+
   return (
     <div>
       {/*FILTEER*/}
@@ -48,12 +102,6 @@ export default function FriendsTab({ friends, loading, onRemove }: FriendsTabPro
             className="bg-Background text-texto-oscuro px-5 py-2 rounded-[10px] placeholder:text-morado-bajo focus:outline-none focus:ring-2 focus:ring-morado-oscuro border-[2px] border-morado-bajo"
             style={{ fontFamily: 'Graphik' }}
           />
-          <button
-            className="bg-morado-oscuro hover:bg-morado-hover text-white px-6 py-2 rounded-[10px] transition-colors"
-            style={{ fontFamily: 'Graphik' }}
-          >
-            Go
-          </button>
         </div>
       </div>
 
@@ -63,7 +111,7 @@ export default function FriendsTab({ friends, loading, onRemove }: FriendsTabPro
         </div>
       ) : (
         <div className="space-y-4">
-          {friends.map((friend) => (
+          {filteredFriends.map((friend) => (
             <div
               key={friend.user_id}
               className="bg-white rounded-[15px] p-6 flex items-center justify-between shadow-sm"
@@ -75,14 +123,17 @@ export default function FriendsTab({ friends, loading, onRemove }: FriendsTabPro
                 <img
                   src={friend.photo_url || DEFAULT_AVATAR}
                   alt="Profile"
-                  className="w-16 h-16 rounded-full object-cover"
+                  className="w-20 h-20 rounded-full object-cover"
                 />
                 <div>
-                  <h4 className="text-texto-oscuro mb-1" style={{ fontFamily: 'Graphik' }}>
+                  <h4 className="text-texto-oscuro text-sm font-medium mb-1" style={{ fontFamily: 'Graphik' }}>
                     {friend.nickname}
                   </h4>
-                  <p className="text-Gris-Oscuro" style={{ fontFamily: 'Graphik' }}>
+                  <p className="text-texto-oscuro text-xs mb-2" style={{ fontFamily: 'Graphik' }}>
                     @{friend.username}
+                  </p>
+                  <p className="text-Gris-Oscuro text-xs" style={{ fontFamily: 'Graphik' }}>
+                    Last active: {formatLastActive(friend.last_seen)}
                   </p>
                 </div>
               </div>
@@ -102,6 +153,20 @@ export default function FriendsTab({ friends, loading, onRemove }: FriendsTabPro
               style={{ fontFamily: 'Graphik' }}
             >
               You don't have any friends yet. Start adding some!
+            </div>
+          )}
+
+          {friends.length > 0 && filteredFriends.length === 0 && (
+            <div
+              className="text-center py-12 text-Gris-Oscuro"
+              style={{ fontFamily: 'Graphik' }}
+            >
+              {friendsSearchQuery
+                ? `No friends found matching "${friendsSearchQuery}"`
+                : friendsFilter === 'online'
+                ? "No friends online recently"
+                : "No friends found"
+              }
             </div>
           )}
         </div>

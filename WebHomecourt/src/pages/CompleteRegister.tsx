@@ -54,15 +54,6 @@ function updateRegisterDraft(patch: Partial<RegisterDraft>) {
   })
 }
 
-function validateRegisterFormFields(fields: Pick<RegisterDraft, 'username' | 'nickname' | 'birthdate' | 'gender'>): boolean {
-  const hasUsername = fields.username.trim().length > 0
-  const hasNickname = fields.nickname.trim().length > 0
-  const hasBirthdate = fields.birthdate.trim().length > 0
-  const hasGender = fields.gender !== null
-
-  return hasUsername && hasNickname && hasBirthdate && hasGender
-}
-
 type InitialRegisterData = {
   draft: RegisterDraft
   userId: string | null
@@ -132,41 +123,45 @@ type ContinueRegistrationParams = {
   avatarUrl: string | null
 }
 
-async function continueRegistration(params: ContinueRegistrationParams): Promise<{ ok: boolean; error: string | null }> {
-  const {userId, saving, username, nickname, birthdate, gender, avatarUrl,} = params
-  if (!validateRegisterFormFields({ username, nickname, birthdate, gender })) {
+async function continueRegistration(
+  params: ContinueRegistrationParams
+): Promise<{ ok: boolean; error: string | null }> {
+  const { userId, saving, username, nickname, birthdate, gender, avatarUrl } = params
+
+  if (!username.trim() || !nickname.trim() || !birthdate.trim() || gender === null) {
     return {
       ok: false,
       error: 'Please complete all fields before continuing.',
     }
   }
+
   if (!userId || saving) {
     return {
       ok: false,
       error: 'There is no active session. Please sign in again and try once more.',
     }
   }
-  const ok = await insertUser(
-    userId,
-    username,
-    nickname,
-    birthdate,
-    gender,
-    avatarUrl,
-  )
+
+  const ok = await insertUser(userId, username, nickname, birthdate, gender, avatarUrl)
+
   if (!ok) {
     return {
       ok: false,
       error: 'We could not complete the registration. Please try again in a moment.',
     }
   }
-  return {
-    ok: true,
-    error: null,
-  }
+
+  return { ok: true, error: null }
 }
 
-async function insertUser(userId: string,username: string,nickname: string,birthdate: string,gender: number | null,photoUrl: string | null,): Promise<boolean> {
+async function insertUser(
+  userId: string,
+  username: string,
+  nickname: string,
+  birthdate: string,
+  gender: number | null,
+  photoUrl: string | null,
+): Promise<boolean> {
   const finalPhotoUrl = photoUrl ? await moveAvatarFromTemp(userId, photoUrl) : null
 
   const { error } = await supabase
@@ -176,62 +171,90 @@ async function insertUser(userId: string,username: string,nickname: string,birth
       username,
       nickname,
       birthdate,
-      gender, 
+      gender,
       photo_url: finalPhotoUrl,
     })
 
-   if (error) {
+  if (error) {
     console.error('Error insertando usuario:', error)
     return false
   }
   return true
 }
 
-async function moveAvatarFromTemp(userId: string, photoUrl: string): Promise<string>{
+async function moveAvatarFromTemp(userId: string, photoUrl: string): Promise<string> {
   if (!photoUrl.includes('/tempImages/')) return photoUrl
   const fileName = photoUrl.split('/tempImages/')[1]
-  if(!fileName) return photoUrl
+  if (!fileName) return photoUrl
 
   const newPath = `avatars/${fileName}`
-  const {error: copyError} = await supabase.storage
+  const { error: copyError } = await supabase.storage
     .from('user_images')
     .copy(`tempImages/${fileName}`, newPath)
+
   if (copyError) {
     console.error('Error copying avatar:', copyError)
     return photoUrl
   }
-  const {data: tempFiles, error: listError} = await supabase.storage
+
+  const { data: tempFiles, error: listError } = await supabase.storage
     .from('user_images')
     .list('tempImages')
-  if(listError){
+
+  if (listError) {
     console.error("Error listing temp images:", listError)
-  }else if(tempFiles?.length){
-    const pathsToRemove = tempFiles.filter((f) => f.name.startsWith(`${userId}-`))
-    .map((f) => `tempImages/${f.name}`)
-    if(pathsToRemove.length){
-      const {error: removeError} = await supabase.storage.from("user_images").remove(pathsToRemove)
-      if(removeError) console.error("Error removing temp images:", removeError)
+  } else if (tempFiles?.length) {
+    const pathsToRemove = tempFiles
+      .filter((f) => f.name.startsWith(`${userId}-`))
+      .map((f) => `tempImages/${f.name}`)
+
+    if (pathsToRemove.length) {
+      const { error: removeError } = await supabase.storage
+        .from("user_images")
+        .remove(pathsToRemove)
+
+      if (removeError) console.error("Error removing temp images:", removeError)
     }
   }
-  const {data} = supabase.storage
+
+  const { data } = supabase.storage
     .from('user_images')
     .getPublicUrl(newPath)
 
   return data.publicUrl
 }
 
+type FieldFlags = {
+  username: boolean
+  nickname: boolean
+  birthdate: boolean
+  gender: boolean
+}
+
+const EMPTY_FIELD_FLAGS: FieldFlags = {
+  username: false,
+  nickname: false,
+  birthdate: false,
+  gender: false,
+}
+
 function CompleteRegister() {
   const navigate = useNavigate()
   const [userId, setUserId] = useState<string | null>(null)
+
   const [username, setUsername] = useState("")
   const [nickname, setNickname] = useState("")
   const [birthdate, setBirthdate] = useState("")
   const [gender, setGender] = useState<number | null>(null)
+
   const [genders, setGenders] = useState<Gender[]>([])
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [avatarLoading, setAvatarLoading] = useState(true)
+
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
+
+  const [fieldFlags, setFieldFlags] = useState<FieldFlags>(EMPTY_FIELD_FLAGS)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -252,21 +275,60 @@ function CompleteRegister() {
     fetchData()
   }, [])
 
+  const validateAndMarkFields = (): boolean => {
+    const nextFlags: FieldFlags = {
+      username: username.trim().length === 0,
+      nickname: nickname.trim().length === 0,
+      birthdate: birthdate.trim().length === 0,
+      gender: gender === null,
+    }
+
+    setFieldFlags(nextFlags)
+
+    const hasAnyError = Object.values(nextFlags).some(Boolean)
+    if (hasAnyError) {
+      setFormError("Please complete the highlighted fields.")
+      return false
+    }
+
+    return true
+  }
+
   const handleContinue = async () => {
     setFormError(null)
+
+    const okUI = validateAndMarkFields()
+    if (!okUI) return
+
     setSaving(true)
-    const result = await continueRegistration({userId, saving, username, nickname, birthdate, gender, avatarUrl,})
+    const result = await continueRegistration({
+      userId,
+      saving,
+      username,
+      nickname,
+      birthdate,
+      gender,
+      avatarUrl,
+    })
+
     if (!result.ok) {
       setSaving(false)
       setFormError(result.error)
       return
     }
+
     sessionStorage.removeItem(AVATAR_DRAFT_KEY)
     sessionStorage.removeItem(AVATAR_DRAFT_OWNER_KEY)
     sessionStorage.removeItem(REGISTER_DRAFT_KEY)
+
     setSaving(false)
     navigate('/')
   }
+
+  const inputClass = (hasError: boolean) =>
+    `h-12 w-full px-4 rounded-2xl bg-white text-zinc-700 outline outline-1 focus:outline-2 ${
+      hasError ? "outline-orange-800" : "outline-black/10 focus:outline-morado-lakers"
+    }`
 
   return (
     <div className="min-h-screen bg-zinc-100 flex items-center justify-center px-4 py-10">
@@ -278,8 +340,13 @@ function CompleteRegister() {
                 src="/lakers_homecourt.png"
                 className="h-10 object-contain mb-6"
               />
-              <h1 className="text-morado-lakers mb-1 text-center md:text-left">More about you</h1>
-              <p className="text-gray-600 mb-6 text-center md:text-left">How would you be known?</p>
+              <h1 className="text-morado-lakers mb-1 text-center md:text-left">
+                More about you
+              </h1>
+              <p className="text-gray-600 mb-6 text-center md:text-left">
+                How would you be known?
+              </p>
+
               <div className="md:hidden w-full flex justify-center mb-6">
                 <div className="relative w-60 h-60">
                   {avatarLoading ? (
@@ -305,13 +372,12 @@ function CompleteRegister() {
                   </button>
                 </div>
               </div>
+
               <div className="flex flex-col gap-5 w-full">
                 {formError && (
-                  <StatusAlert
-                    tone="error"
-                    title={formError}
-                  />
+                  <StatusAlert tone="error" title={formError} />
                 )}
+
                 <div className="flex flex-col gap-2">
                   <label>Username</label>
                   <input
@@ -320,12 +386,14 @@ function CompleteRegister() {
                       const nextValue = e.target.value
                       setUsername(nextValue)
                       setFormError(null)
+                      setFieldFlags((prev) => ({ ...prev, username: false }))
                       updateRegisterDraft({ username: nextValue })
                     }}
                     placeholder="@username"
-                    className="h-12 w-full px-4 rounded-2xl bg-white text-zinc-700 outline outline-1 outline-black/10 focus:outline-2 focus:outline-morado-lakers"
+                    className={inputClass(fieldFlags.username)}
                   />
                 </div>
+
                 <div className="flex flex-col gap-2">
                   <label>Preferred name</label>
                   <input
@@ -334,12 +402,14 @@ function CompleteRegister() {
                       const nextValue = e.target.value
                       setNickname(nextValue)
                       setFormError(null)
+                      setFieldFlags((prev) => ({ ...prev, nickname: false }))
                       updateRegisterDraft({ nickname: nextValue })
                     }}
                     placeholder="Preferred name"
-                    className="h-12 w-full px-4 rounded-2xl bg-white text-zinc-700 outline outline-1 outline-black/10 focus:outline-2 focus:outline-morado-lakers"
+                    className={inputClass(fieldFlags.nickname)}
                   />
                 </div>
+
                 <div className="flex flex-col gap-2">
                   <label>Date of birth</label>
                   <input
@@ -349,20 +419,25 @@ function CompleteRegister() {
                       const nextValue = e.target.value
                       setBirthdate(nextValue)
                       setFormError(null)
+                      setFieldFlags((prev) => ({ ...prev, birthdate: false }))
                       updateRegisterDraft({ birthdate: nextValue })
                     }}
-                    className="h-12 w-full px-4 rounded-2xl bg-white text-zinc-700 outline outline-1 outline-black/10 focus:outline-2 focus:outline-morado-lakers"
+                    className={inputClass(fieldFlags.birthdate)}
                   />
                 </div>
+
                 <GenderSelect
                   genders={genders}
                   value={gender}
+                  hasError={fieldFlags.gender}
                   onChange={(nextGender) => {
                     setGender(nextGender)
                     setFormError(null)
+                    setFieldFlags((prev) => ({ ...prev, gender: false }))
                     updateRegisterDraft({ gender: nextGender })
                   }}
                 />
+
                 <button
                   type="button"
                   onClick={handleContinue}
@@ -374,6 +449,7 @@ function CompleteRegister() {
               </div>
             </div>
           </div>
+
           <div className="w-full hidden md:flex justify-end">
             <div className="relative w-full max-w-sm">
               {avatarLoading ? (
@@ -400,6 +476,7 @@ function CompleteRegister() {
               </button>
             </div>
           </div>
+
         </div>
       </div>
     </div>

@@ -13,15 +13,21 @@ export default function PendingRequestCard({ request, onAccept, onDeny }: Pendin
   const navigate = useNavigate();
 
   return (
-    <div>
+    <div className="bg-white rounded-[15px] p-6 border border-morado-oscuro/10">
       <h3
-        className="text-texto-oscuro text-[20px] font-medium mb-4"
-        style={{ fontFamily: 'Graphik' }}
+        className="mb-4 pb-3 border-b border-morado-oscuro/10"
+        style={{ 
+          color: '#11061A',
+          fontFamily: 'Graphik',
+          fontSize: '18px',
+          fontWeight: 500,
+          lineHeight: '27px'
+        }}
       >
         Request from {request.nickname}
       </h3>
 
-      <div className="flex items-center justify-between p-6 border border-morado-oscuro/10 rounded-[15px]">
+      <div className="flex items-center justify-between">
         <div
           className="flex items-center gap-4 cursor-pointer"
           onClick={() => navigate(`/perfil/${request.sender_id}`)}
@@ -29,13 +35,16 @@ export default function PendingRequestCard({ request, onAccept, onDeny }: Pendin
           <img
             src={request.photo_url || DEFAULT_AVATAR}
             alt="Profile"
-            className="w-[80px] h-[80px] rounded-full object-cover"
+            className="w-16 h-16 rounded-full object-cover"
           />
           <div>
-            <p className="text-texto-oscuro text-[18px] font-medium mb-1" style={{ fontFamily: 'Graphik' }}>
+            <p className="text-texto-oscuro text-sm font-medium mb-1" style={{ fontFamily: 'Graphik' }}>
               {request.nickname}
             </p>
-            <p className="text-Gris-Oscuro text-[14px]" style={{ fontFamily: 'Graphik' }}>
+            <p className="text-Gris-Oscuro text-xs mb-2" style={{ fontFamily: 'Graphik' }}>
+              @{request.username}
+            </p>
+            <p className="text-Gris-Oscuro text-xs" style={{ fontFamily: 'Graphik' }}>
               Request sent {new Date(request.created_at).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',
@@ -59,8 +68,8 @@ export default function PendingRequestCard({ request, onAccept, onDeny }: Pendin
                 alert('error al aceptar la solicitud.');
               }
             }}
-            className="h-[44px] px-6 bg-white border-[3px] border-morado-oscuro text-morado-oscuro hover:bg-morado-hover hover:border-morado-hover hover:text-white rounded-[10px] transition-all"
-            style={{ fontFamily: 'Graphik', fontSize: '16px' }}
+            className="h-11 px-6 bg-white border-2 border-morado-oscuro text-morado-oscuro hover:bg-morado-hover hover:border-morado-hover hover:text-white rounded-[10px] transition-all text-sm"
+            style={{ fontFamily: 'Graphik' }}
           >
             Accept Friend
           </button>
@@ -68,8 +77,8 @@ export default function PendingRequestCard({ request, onAccept, onDeny }: Pendin
             onClick={async () => {
               await onDeny(request.friend_request_id);
             }}
-            className="h-[44px] px-6 bg-white border-[3px] border-morado-oscuro text-morado-oscuro hover:bg-morado-hover hover:border-morado-hover hover:text-white rounded-[10px] transition-all"
-            style={{ fontFamily: 'Graphik', fontSize: '16px' }}
+            className="h-11 px-6 bg-white border-2 border-morado-oscuro text-morado-oscuro hover:bg-morado-hover hover:border-morado-hover hover:text-white rounded-[10px] transition-all text-sm"
+            style={{ fontFamily: 'Graphik' }}
           >
             Deny
           </button>

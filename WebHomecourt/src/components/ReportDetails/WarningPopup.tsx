@@ -1,26 +1,36 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { supabase } from '../../lib/supabase'
 
 interface WarningPopupProps {
   user?: { name: string, photo_url: string }
   target?: string
   onConfirm: (warnTypeId: number, customMessage: string | null) => void
   onCancel: () => void
+  scope?: 'user' | 'event'
 }
 
-const warnTypes = [
-  { warn_type_id: 1, warn_type: 'Toxic behavior' },
-  { warn_type_id: 2, warn_type: 'Harassment' },
-  { warn_type_id: 3, warn_type: 'Inappropriate Content' },
-  { warn_type_id: 4, warn_type: 'Spam / Duplicate' },
-  { warn_type_id: 5, warn_type: 'Unsportsmanlike Conduct' },
-  { warn_type_id: 6, warn_type: 'Other' },
-]
-
-const WarningPopup = ({ user, target, onConfirm, onCancel }: WarningPopupProps) => {
+const WarningPopup = ({ user, target, onConfirm, onCancel, scope = 'user' }: WarningPopupProps) => {
   const [selected, setSelected] = useState<number | null>(null)
   const [customMessage, setCustomMessage] = useState('')
+  const [warnTypes, setWarnTypes] = useState<{ warn_type_id: number, warn_type: string }[]>([])
 
-  const isOtherSelected = selected === 6
+  useEffect(() => {
+    const fetchWarnTypes = async () => {
+      const { data, error } = await supabase
+        .from('warn_type')
+        .select('warn_type_id, warn_type')
+        .eq('scope', scope)
+
+      if (!error && data) {
+        setWarnTypes(data)
+      }
+    }
+
+    fetchWarnTypes()
+  }, [scope])
+
+  const selectedType = warnTypes.find(w => w.warn_type_id === selected)
+  const isOtherSelected = selectedType?.warn_type === 'Other'
 
   const handleConfirm = () => {
     if (!selected) return
@@ -67,17 +77,17 @@ const WarningPopup = ({ user, target, onConfirm, onCancel }: WarningPopupProps) 
           <p className="font-semibold">Warning Type</p>
           <div className="grid grid-cols-2 gap-2 mb-5">
             {warnTypes.map(w => (
-              <button
+            <button
                 key={w.warn_type_id}
                 onClick={() => setSelected(w.warn_type_id)}
-                className={`px-4 py-2 rounded-lg text-sm text-left border hover:brightness-95 transition-all ${selected === w.warn_type_id ? 'brightness-90' : ''}`} 
+                className={`px-4 py-2 rounded-lg text-sm text-left border hover:brightness-95 transition-all ${selected === w.warn_type_id ? 'brightness-90' : ''}`}
                 style={{
-                  backgroundColor:  '#F3F4F6',
-                  borderColor: selected === w.warn_type_id ? '#6F697530' : 'transparent',
+                backgroundColor: '#F3F4F6',
+                borderColor: selected === w.warn_type_id ? '#6F697530' : 'transparent',
                 }}
-              >
+            >
                 {w.warn_type}
-              </button>
+            </button>
             ))}
           </div>
 

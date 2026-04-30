@@ -13,6 +13,8 @@ interface ActionButtonsProps {
   warningText?: string
   suspendText?: string
   banText?: string
+  scope?: 'user' | 'event'
+
 }
 
 const ActionButtons = ({
@@ -26,6 +28,7 @@ const ActionButtons = ({
   warningText = 'Warn ' + (target),
   suspendText = 'Suspend ' + (target),
   banText = 'Ban ' + (target),
+  scope = 'user',
 }: ActionButtonsProps) => {
   const [modal, setModal] = useState<'suspend' | 'ban' | 'warning' | null>(null)
 
@@ -39,7 +42,7 @@ const ActionButtons = ({
           accentColor="#D38B43"
           user={user}
           target={target}
-          onConfirm={() => { setModal(null); onSuspend?.() }}
+          onConfirm={() => { setModal(null); onSuspend() }}
           onCancel={() => setModal(null)}
         />
       )}
@@ -59,6 +62,7 @@ const ActionButtons = ({
 
       {modal === 'warning' && (
         <WarningPopup
+          scope={scope}
           user={user}
           target={target}
           onConfirm={(warnTypeId, customMessage) => { setModal(null); onWarning(warnTypeId, customMessage) }}

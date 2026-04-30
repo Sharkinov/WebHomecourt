@@ -13,9 +13,10 @@ interface EventCardProps {
   host: string
   location: string
   players: number
+  date: string
 }
 
-const EventCard = ({ id, name, status, pfp, host, location, players }: EventCardProps) => {
+const EventCard = ({ id, name, status, pfp, host, location, players, date }: EventCardProps) => {
   const navigate = useNavigate()
 
   return (
@@ -40,7 +41,11 @@ const EventCard = ({ id, name, status, pfp, host, location, players }: EventCard
       </div>
 
       <div className="flex justify-between items-center gap-2 pt-2">
-        <div className="flex flex-col gap-1 min-w-0">
+        <div className="flex flex-col gap-2 min-w-0">
+          <div className="flex items-center gap-1">
+            <span className="material-symbols-outlined text-gray-500" style={{ fontSize: '18px' }}>calendar_today</span>
+            <p>{date}</p>
+          </div>
           <div className="flex items-center gap-1">
             <span className="material-symbols-outlined text-gray-500" style={{ fontSize: '18px' }}>location_on</span>
             <p className="truncate">{location}</p>
@@ -49,10 +54,11 @@ const EventCard = ({ id, name, status, pfp, host, location, players }: EventCard
             <span className="material-symbols-outlined text-gray-500" style={{ fontSize: '18px' }}>groups</span>
             <p>{players}</p>
           </div>
+      
         </div>
 
         <button 
-          onClick={() => navigate(`/admin/monitor/${id}`)}
+          onClick={() => navigate('/admin/monitor', { state: { id: id } })}
           className="bg-morado-lakers text-white px-5 py-2 rounded-lg font-medium hover:bg-morado-oscuro transition-colors">
           Monitor
         </button>

@@ -5,6 +5,8 @@ export type Friend = {
     nickname: string
     username: string
     photo_url: string | null
+    created_at?: string
+    last_seen?: string
 }
 
 export type FriendRequest = {
@@ -19,6 +21,13 @@ export type FriendRequest = {
 //PARA FUNCION GET FRIENDSHIP STATUS
 export type FriendshipStatus = "no_friend" | "pending" | "friend";
 
+export type UserSearchResult = {
+    user_id: string
+    nickname: string
+    username: string
+    photo_url: string | null
+}
+
 //FUNCION GET FRIENDS LIST
 export async function getFriendsList(userId: string): Promise<Friend[]> {
     if (!userId) return []
@@ -26,11 +35,13 @@ export async function getFriendsList(userId: string): Promise<Friend[]> {
     const { data: friendsAsUser1, error: error1 } = await supabase
         .from('friendship')
         .select(`
+            created_at,
             user2:user_laker!friendship_user2_fkey (
                 user_id,
                 nickname,
                 username,
-                photo_url
+                photo_url,
+                last_seen
             )
         `)
         .eq('user1', userId)
@@ -42,11 +53,13 @@ export async function getFriendsList(userId: string): Promise<Friend[]> {
     const { data: friendsAsUser2, error: error2 } = await supabase
         .from('friendship')
         .select(`
+            created_at,
             user1:user_laker!friendship_user1_fkey (
                 user_id,
                 nickname,
                 username,
-                photo_url
+                photo_url,
+                last_seen
             )
         `)
         .eq('user2', userId)
@@ -64,7 +77,9 @@ export async function getFriendsList(userId: string): Promise<Friend[]> {
                 user_id: friend.user_id,
                 nickname: friend.nickname || friend.username || 'Usuario',
                 username: friend.username || '',
-                photo_url: friend.photo_url
+                photo_url: friend.photo_url,
+                created_at: (item as any).created_at,
+                last_seen: friend.last_seen
             })
         }
     })
@@ -76,7 +91,9 @@ export async function getFriendsList(userId: string): Promise<Friend[]> {
                 user_id: friend.user_id,
                 nickname: friend.nickname || friend.username || 'Usuario',
                 username: friend.username || '',
-                photo_url: friend.photo_url
+                photo_url: friend.photo_url,
+                created_at: (item as any).created_at,
+                last_seen: friend.last_seen
             })
         }
     })
@@ -253,4 +270,26 @@ export async function removeFriend(friendId: string): Promise<void> {
         console.error("error removing friend:", error.message)
         throw new Error("failed to remove friend")
     }
+}
+
+// FUNCION SEARCH USERS
+export async function searchUsers(searchQuery: string): Promise<UserSearchResult[]> {
+    if (!searchQuery.trim()) return []
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    const { data, error } = await supabase
+        .from("user_laker")
+        .select("user_id, nickname, username, photo_url")
+        .or(`username.ilike.%${searchQuery}%,nickname.ilike.%${searchQuery}%`)
+        .neq("user_id", user.id) // Excluir al usuario actual
+        .limit(10)
+
+    if (error) {
+        console.error("error searching users:", error.message)
+        return []
+    }
+
+    return data || []
 }

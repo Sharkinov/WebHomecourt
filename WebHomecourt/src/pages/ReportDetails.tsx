@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import Nav from '../components/Nav/Nav'
 import UserHistory from '../components/ReportDetails/UserHistory'
 import ActionButtons from '../components/ReportDetails/ActionButtons'
-import { useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { getUserHistory } from './Admin'
@@ -20,7 +20,8 @@ const formatDate = (dateStr: string) => {
 
 const ReportDetails = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const location = useLocation()
+  const id = location.state?.id
   const [report, setReport] = useState<any>(null)
   const [userHistory, setUserHistory] = useState<any[]>([])
   const [alert, setAlert] = useState<{ title: string, message?: string, tone: 'success' | 'error' | 'warning' | 'info' } | null>(null)
@@ -207,6 +208,7 @@ const ReportDetails = () => {
                 photo_url: report.reported_user?.photo_url ?? '',
                 rating: report.reported_user?.reputation ?? 0,
                 totalReports: userHistory.length,
+                userId: report.reported_user_id,
               }}
               history={userHistory.map((h) => ({
                 event: h.event?.event_name ?? 'N/A',

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import Button from '../button'
+import ProfileButton from './ProfileButton'
 
 function SettingsSection() {
     const navigate = useNavigate()
@@ -115,12 +115,12 @@ function SettingsSection() {
                             Are you sure you want to log out of your account?
                         </p>
                         <div className="flex gap-4">
-                            <Button
+                            <ProfileButton
                                 type={loggingOut ? 'primarydisable' : 'secondary'}
                                 text={loggingOut ? 'Logging out...' : 'Yes, log out'}
                                 onClick={loggingOut ? () => {} : handleLogout}
                             />
-                            <Button
+                            <ProfileButton
                                 type="secondary"
                                 text="Cancel"
                                 onClick={() => setShowLogoutModal(false)}

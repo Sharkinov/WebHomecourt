@@ -5,9 +5,10 @@ import VotingActivityItem from './VotingActivityItem'
 
 type VotingActivityProps = {
     userId: string
+    isOwnProfile?: boolean
 }
 
-function VotingActivity({ userId }: VotingActivityProps) {
+function VotingActivity({ userId, isOwnProfile = true }: VotingActivityProps) {
     const [votes, setVotes] = useState<VoteActivity[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -63,10 +64,11 @@ function VotingActivity({ userId }: VotingActivityProps) {
             ) : (
                 <div>
                     {votes.map((vote, index) => (
-                        <VotingActivityItem 
-                            key={vote.id} 
-                            vote={vote} 
+                        <VotingActivityItem
+                            key={vote.id}
+                            vote={vote}
                             isLast={index === votes.length - 1}
+                            isOwnProfile={isOwnProfile}
                         />
                     ))}
                 </div>

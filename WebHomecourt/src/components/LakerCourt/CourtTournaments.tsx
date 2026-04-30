@@ -3,7 +3,7 @@ import { LuPlus, LuSearch } from "react-icons/lu";
 import { getCourts, type Court } from "../../services/apiMAP";
 import { getCourtTournaments, getCurrentUserJoinedEventIds, getSkillLevels, leaveTournament, signUpTournament, type CourtTournament, type SkillLevel, } from "../../services/apiEvents";
 import { useCourtTournamentFilters } from "../../hooks/useCourtTournamentFilters";
-import { useAuth } from "../../hooks/Perfil/useAuth";
+import { useAuth } from "../../context/AuthContext";
 import CrearEvento from "./CreateEvent";
 import ReportEventPopUp from "./ReportEvent";
 import StatusAlert from "../Messages/StatusAlert";

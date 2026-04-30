@@ -19,12 +19,20 @@ export default function AchievementCard({ achievement }: Props) {
         w-14 h-14 rounded-full flex items-center justify-center mb-2
         ${unlocked ? 'bg-[#542581]' : 'bg-[#DEDAE2]'}
       `}>
-        <span className={`
-          material-symbols-outlined text-2xl
-          ${unlocked ? 'text-[#FCB136]' : 'text-[#A09CA4]'}
-        `}>
-          {icon}
-        </span>
+        {icon === 'sports_score' ? (
+          <img
+            src="/Perfil/Medal.svg"
+            alt="medal"
+            className={`w-6 h-6 ${!unlocked ? 'opacity-50 grayscale' : ''}`}
+          />
+        ) : (
+          <span className={`
+            material-symbols-outlined text-2xl
+            ${unlocked ? 'text-[#FCB136]' : 'text-[#A09CA4]'}
+          `}>
+            {icon}
+          </span>
+        )}
       </div>
 
       <h3 className={`

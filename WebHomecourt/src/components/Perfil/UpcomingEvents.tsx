@@ -9,9 +9,10 @@ export type EventItem = {
 
 type Props = {
     events: EventItem[]
+    isOwnProfile?: boolean
 }
 
-function UpcomingEvents({ events }: Props) {
+function UpcomingEvents({ events, isOwnProfile = true }: Props) {
     const formatDateTime = (dateString: string) => {
         const date = new Date(dateString)
         const day = date.getDate()
@@ -23,17 +24,17 @@ function UpcomingEvents({ events }: Props) {
 
     return (
         <div className="bg-white rounded-[15px] overflow-hidden border border-black/8 shadow-[0_4px_4px_0_rgba(0,0,0,0.08)]">
-       
+
             <div className="h-[59px] bg-morado-oscuro flex items-center justify-between px-6">
                 <span className="text-[#F3F2F3] text-[18px]">
-                    Upcoming Events
+                    {isOwnProfile ? 'My Upcoming Events' : 'Recent Activity'}
                 </span>
             </div>
 
    
             {events.length === 0 ? (
                 <div className="p-6 text-center text-Gris-Oscuro">
-                    No upcoming events
+                    {isOwnProfile ? 'No upcoming events' : 'No recent activity'}
                 </div>
             ) : (
                 <div className="divide-y divide-[#E7E6E8]">
@@ -55,19 +56,14 @@ function UpcomingEvents({ events }: Props) {
                                     {event.name}
                                 </div>
                                 <div className="text-sm text-[#A09CA4]">
-                                    {event.courtName} • {formatDateTime(event.date)}
+                                    {isOwnProfile ? `${event.courtName} • ${formatDateTime(event.date)}` : event.courtName}
                                 </div>
                             </div>
 
-                    
+
                             <div className="bg-[#E7E6E8] text-sm text-[#6F6975] px-3 py-1 rounded-full flex-shrink-0">
                                 {event.joinedCount}/{event.maxPlayers}
                             </div>
-
-                      
-                            <button className="bg-morado-lakers text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-morado-oscuro transition-colors flex-shrink-0">
-                                JOIN
-                            </button>
                         </div>
                     ))}
                 </div>

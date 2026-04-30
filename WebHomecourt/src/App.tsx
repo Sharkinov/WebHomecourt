@@ -21,6 +21,16 @@ import Monitor from './pages/Monitor';
 import EditAvatar from './pages/EditAvatar';
 import MyFriends from './pages/MyFriends';
 
+import { useAuth } from './context/AuthContext'
+import { Navigate } from 'react-router-dom'
+
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { userType, loading } = useAuth()
+  if (loading) return <div>Loading...</div>
+  if (userType !== 1) return <Navigate to="/" replace />
+  return <>{children}</>
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -35,16 +45,15 @@ function App() {
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/perfil/:userId" element={<Perfil />} />
         <Route path="/my-friends" element={<MyFriends />} />
-        <Route path="/admin" element={<Admin/>} />
-        <Route path="/admin/report/:id" element={<ReportDetails />} />
-        <Route path="/admin/event/:id" element={<EventReportDetails />} />
+        <Route path="/admin" element={<AdminRoute><Admin/></AdminRoute>} />
+        <Route path="/admin/report" element={<AdminRoute><ReportDetails /></AdminRoute>} />
+        <Route path="/admin/event" element={<AdminRoute><EventReportDetails /></AdminRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/session" element={<UserSession />} /> 
         <Route path="/editar-perfil" element={<EditarPerfil />} />
         <Route path="/complete-register" element={<CompleteRegister />} />
-        <Route path="/admin/monitor/:id" element={<Monitor />} />
-
+        <Route path="/admin/monitor" element={<AdminRoute><Monitor /></AdminRoute>} />
         <Route path='/edit-avatar' element={<EditAvatar/>}></Route>
       </Routes>
     </BrowserRouter>
