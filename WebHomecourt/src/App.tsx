@@ -5,6 +5,7 @@ import Agenda from './pages/Agenda'
 import Brackets from './pages/Brackets'
 import Estadisticas from './pages/Estadisticas'
 import LakersCourt from './pages/LakersCourt'
+import HistorialLakers from './pages/HistorialLakers';
 import Juego from './pages/Juego'
 import Store from './pages/Store'
 import Perfil from './pages/Perfil'
@@ -59,6 +60,7 @@ function App() {
         <Route path="/complete-register" element={<CompleteRegister />} />
         <Route path="/admin/monitor" element={<AdminRoute><Monitor /></AdminRoute>} />
         <Route path='/edit-avatar' element={<EditAvatar/>}></Route>
+        <Route path='/historial-lakers' element={<HistorialLakers/>}></Route>
       </Routes>
     </BrowserRouter>
   )

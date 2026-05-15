@@ -4,7 +4,7 @@ import CourtTournaments from '../components/LakerCourt/CourtTournaments'
 import RatePlayersPanel from '../components/LakerCourt/RatePlayersPanel'
 import YourActivityCard from '../components/YourActivityCard'
 import ActiveModerationCard from '../components/LakerCourt/ActiveModerationCard'
-import HeroBanner from '../components/LakerCourt/BannerReput'
+import BannerReput from '../components/LakerCourt/BannerReput'
 import { useEffect, useState } from 'react'
 import {
   getPendingRatingPlayers,
@@ -152,7 +152,7 @@ function LakersCourt() {
         <Nav current="LakersCourt" />
       </div>
       <div className='px-14 py-5 bg-zinc-100 w-full '>
-        <HeroBanner
+        <BannerReput
           title="LAKERS COURT"
           subtitle="Find courts and basketball events near you"
           logoSrc="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1YSBBAgbPAWr0ku6NAqV0yojAo5q9RrpLww&s"
