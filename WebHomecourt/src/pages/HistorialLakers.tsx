@@ -1,88 +1,105 @@
+// HistorialLakers.tsx
 import Nav from '../components/Nav/Nav.tsx'
-import BannerReput from "../components/LakerCourt/BannerReput";
+import BannerReput from '../components/LakerCourt/BannerReput'
 import {
-    getCurrentUserReputation,
-    getCurrentUserMatchHistoryDashboard,
-    getCurrentUserWinStreak,
-    type UserMatchHistoryDashboard,
-    type UserWinStreakSummary,
-} from '../services/apiUser.ts';
-import { useEffect, useState } from 'react';
-import StatsContainer from '../components/HistorialLakers/StatsContainer.tsx';
-import PastGamesTable from '../components/HistorialLakers/PastGamesTable.tsx';
+  getCurrentUserReputation,
+  getCurrentUserMatchHistoryDashboard,
+  type UserMatchHistoryDashboard,
+} from '../services/apiUser.ts'
+import { useEffect, useState } from 'react'
+import StatsContainer from '../components/HistorialLakers/StatsContainer.tsx'
+import PastGamesTable from '../components/HistorialLakers/PastGamesTable.tsx'
+
+interface PageState {
+  reputation: number | null
+  matchHistory: UserMatchHistoryDashboard | null
+}
+
+const fetchPageData = async (): Promise<PageState> => {
+  const [reputation, matchHistory] = await Promise.all([
+    getCurrentUserReputation(),
+    getCurrentUserMatchHistoryDashboard(),
+  ])
+
+  return {
+    reputation,
+    matchHistory,
+  }
+}
+
 function HistorialLakers() {
-    const [userReputation, setUserReputation] = useState<number | null>(null)
-    const [loadingReputation, setLoadingReputation] = useState(true)
-    const [matchHistory, setMatchHistory] = useState<UserMatchHistoryDashboard | null>(null)
-    const [winStreak, setWinStreak] = useState<UserWinStreakSummary | null>(null)
-    const [loadingMatchData, setLoadingMatchData] = useState(true)
+  const [loading, setLoading] = useState(true)
+  const [pageState, setPageState] = useState<PageState>({
+    reputation: null,
+    matchHistory: null,
+  })
 
-    const loadUserReputation = async () => {
-        setLoadingReputation(true)
-        try {
-            const reputation = await getCurrentUserReputation()
-            setUserReputation(reputation)
-        } finally {
-            setLoadingReputation(false)
-        }
+  const refreshPageData = async () => {
+    const nextPageState = await fetchPageData()
+    setPageState(nextPageState)
+  }
+
+  useEffect(() => {
+    const loadPageData = async () => {
+      setLoading(true)
+      try {
+        const nextPageState = await fetchPageData()
+        setPageState(nextPageState)
+      } finally {
+        setLoading(false)
+      }
     }
 
-    useEffect(() => {
-        loadUserReputation()
-    }, [])
+    loadPageData()
+  }, [])
 
-    const loadMatchData = async () => {
-        setLoadingMatchData(true)
-        try {
-            const [history, streak] = await Promise.all([
-                getCurrentUserMatchHistoryDashboard(),
-                getCurrentUserWinStreak(),
-            ])
-            setMatchHistory(history)
-            setWinStreak(streak)
-        } finally {
-            setLoadingMatchData(false)
-        }
-    }
+  return (
+    <div>
+      <Nav current="Historial Lakers" />
 
-    useEffect(() => {
-        loadMatchData()
-    }, [])
+      <div className="w-full max-w-7xl mx-auto px-4 py-8">
+        <BannerReput
+          title="HISTORIAL DE PARTIDOS"
+          subtitle="Revisa tus partidos anteriores y tu desempeño"
+          logoSrc="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1YSBBAgbPAWr0ku6NAqV0yojAo5q9RrpLww&s"
+          logoAlt="Lakers logo"
+          reputationValue={pageState.reputation}
+          loadingReputation={loading}
+          icon={
+            <span
+              className="material-symbols-outlined leading-none text-amarillo-lakers"
+              style={{ fontSize: '100px' }}
+            >
+              star
+            </span>
+          }
+        />
+      </div>
 
-    return (
-        <div>
-            <Nav current="Historial Lakers" />
-            <div className="w-full max-w-7xl mx-auto px-4 py-8">
-                <BannerReput
-                    title="HISTORIAL DE PARTIDOS"
-                    subtitle="Revisa tus partidos anteriores y tu desempeño"
-                    logoSrc="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1YSBBAgbPAWr0ku6NAqV0yojAo5q9RrpLww&s"
-                    logoAlt="Lakers logo"
-                    reputationValue={userReputation}
-                    loadingReputation={loadingReputation}
-                    icon={
-                        <span
-                            className="material-symbols-outlined leading-none text-amarillo-lakers"
-                            style={{ fontSize: '100px' }}
-                        >
-                            star
-                        </span>
-                    }
-                />
+      <div className="w-full max-w-7xl mx-auto px-4 pb-10">
+        <StatsContainer
+          summary={pageState.matchHistory?.summary ?? null}
+          streak={pageState.matchHistory?.streak ?? null}
+        />
+
+        <div className="mt-8">
+          {loading ? (
+            <div className="flex items-center justify-center py-16 text-sm text-Gris-Oscuro">
+              Cargando estadísticas...
             </div>
-            <div className="w-full max-w-7xl mx-auto px-4 pb-10">
-                <StatsContainer summary={matchHistory?.summary ?? null} streak={winStreak} />
-                {!loadingMatchData ? (
-                    <div className="mt-8">
-                        <PastGamesTable rows={matchHistory?.rows ?? []} />
-                    </div>
-                ) : null}
-                {loadingMatchData ? (
-                    <p className="mt-4 text-sm text-Gris-Oscuro">Cargando estadisticas...</p>
-                ) : null}
-            </div>
+          ) : (
+            <PastGamesTable
+              rows={pageState.matchHistory?.rows ?? []}
+              summary={pageState.matchHistory?.summary ?? null}
+              onStatsAdded={() => {
+                void refreshPageData()
+              }}
+            />
+          )}
         </div>
-    )
+      </div>
+    </div>
+  )
 }
 
 export default HistorialLakers

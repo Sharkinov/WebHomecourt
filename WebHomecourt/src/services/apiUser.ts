@@ -20,9 +20,39 @@ export interface UserMatchHistoryRow {
   points: number | null
   rebounds: number | null
   assists: number | null
+  steals: number | null
+  blocks: number | null
+
+  field_goals: number | null
+  field_goals_attempts: number | null
+  tre_pointer: number | null
+  tre_pointer_atemp: number | null
+  // Calculados
   fg_pct: number | null
   three_pct: number | null
+  avg_rating_received: number | null
   rated_others: boolean | null
+}
+
+export interface SaveUserEventStatsPayload {
+  user_event_id: number
+  user_score: number
+  opponent_score: number
+  result: boolean
+  points: number
+  rebounds: number
+  assists: number
+
+  steals?: number | null
+  blocks?: number | null
+
+  // Shooting splits opcionales
+  field_goals?: number | null        // FG Made
+  field_goals_attempts?: number | null
+  tre_pointer?: number | null        // 3P Made
+  tre_pointer_atemp?: number | null
+
+
 }
 
 export interface UserMatchHistorySummary {
@@ -45,6 +75,38 @@ export interface UserWinStreakSummary {
 export interface UserMatchHistoryDashboard {
   rows: UserMatchHistoryRow[]
   summary: UserMatchHistorySummary
+  streak: UserWinStreakSummary
+}
+
+const buildWinStreakSummary = (rows: UserMatchHistoryRow[]): UserWinStreakSummary => {
+  const completedRows = rows.filter((row) => row.result !== null)
+
+  let currentStreak = 0
+  for (const row of completedRows) {
+    if (row.result === true) {
+      currentStreak += 1
+    } else {
+      break
+    }
+  }
+
+  let maxStreak = 0
+  let tempStreak = 0
+  for (const row of completedRows) {
+    if (row.result === true) {
+      tempStreak += 1
+      if (tempStreak > maxStreak) {
+        maxStreak = tempStreak
+      }
+    } else {
+      tempStreak = 0
+    }
+  }
+
+  return {
+    currentStreak,
+    maxStreak,
+  }
 }
 
 const averageNumbers = (values: Array<number | null | undefined>) => {
@@ -128,13 +190,9 @@ export async function getCurrentUserActivity(): Promise<UserActivityStats | null
 }
 
 export async function getCurrentUserMatchHistorySummary(): Promise<UserMatchHistorySummary | null> {
-  const rows = await getCurrentUserMatchHistoryRows()
+  const dashboard = await getCurrentUserMatchHistoryDashboard()
 
-  if (!rows) {
-    return null
-  }
-
-  return buildMatchHistorySummary(rows)
+  return dashboard?.summary ?? null
 }
 
 export async function getCurrentUserMatchHistoryRows(): Promise<UserMatchHistoryRow[] | null> {
@@ -167,37 +225,43 @@ export async function getCurrentUserMatchHistoryDashboard(): Promise<UserMatchHi
   return {
     rows,
     summary: buildMatchHistorySummary(rows),
+    streak: buildWinStreakSummary(rows),
   }
 }
 
 export async function getCurrentUserWinStreak(): Promise<UserWinStreakSummary | null> {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser()
+  const rows = await getCurrentUserMatchHistoryRows()
 
-  if (userError || !user?.id) {
+  if (!rows) {
     return null
   }
 
-  const { data, error } = await supabase
-    .rpc('get_user_win_streak', { p_user_id: user.id })
-    .single()
+  return buildWinStreakSummary(rows)
+}
 
-  if (error || !data) {
-    return null
-  }
+export async function saveUserEventStats(
+  payload: SaveUserEventStatsPayload,
+): Promise<{ success: boolean; error?: string }> {
+  const { error } = await supabase
+    .from('user_event')
+    .update({
+      user_score: payload.user_score,
+      opponent_score: payload.opponent_score,
+      result: payload.result,
+      points: payload.points,
+      rebounds: payload.rebounds,
+      assists: payload.assists,
+      steals: payload.steals ?? null,
+      blocks: payload.blocks ?? null,
 
-  const row = data as {
-    current_streak?: number | string | null
-    max_streak?: number | string | null
-  }
+      field_goals: payload.field_goals ?? null,
+      field_goals_attempts: payload.field_goals_attempts ?? null,
+      tre_pointer: payload.tre_pointer ?? null,
+      tre_pointer_atemp: payload.tre_pointer_atemp ?? null,
+      rated_others: true,
+    })
+    .eq('user_event_id', payload.user_event_id)
 
-  const parsedCurrentStreak = Number(row.current_streak ?? 0)
-  const parsedMaxStreak = Number(row.max_streak ?? 0)
-
-  return {
-    currentStreak: Number.isFinite(parsedCurrentStreak) ? parsedCurrentStreak : 0,
-    maxStreak: Number.isFinite(parsedMaxStreak) ? parsedMaxStreak : 0,
-  }
+  if (error) return { success: false, error: error.message }
+  return { success: true }
 }

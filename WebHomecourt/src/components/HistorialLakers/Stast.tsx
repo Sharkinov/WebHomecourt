@@ -76,9 +76,8 @@ function StatCard({
 
   return (
     <div
-      className={`flex w-full flex-col gap-1 rounded-[14px] border border-black/10 bg-white px-5.25 pb-5.25 pt-4.25 shadow-[0_4px_8px_rgba(0,0,0,0.06)] ${
-        className ?? ''
-      }`}
+      className={`flex w-full flex-col gap-1 rounded-[14px] border border-black/10 bg-white px-5.25 pb-5.25 pt-4.25 shadow-[0_4px_8px_rgba(0,0,0,0.06)] ${className ?? ''
+        }`}
     >
       <p className="text-[20px] font-bold leading-6.25 text-morado-lakers">{title}</p>
 
@@ -136,7 +135,7 @@ function StatCard({
           </PieChart>
 
           {/* El valor central va encima de la grafica para dar lectura inmediata al usuario. */}
-          <div className="absolute inset-0 flex items-center justify-center text-[30px] font-bold leading-7.5 tracking-[-0.5px] text-texto-oscuro">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[30px] font-bold leading-none tracking-[-0.5px] text-texto-oscuro whitespace-nowrap">
             {computedCenterLabel}
           </div>
         </div>
