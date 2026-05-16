@@ -1,10 +1,21 @@
 import Nav from '../components/Nav/Nav.tsx'
 import BannerReput from "../components/LakerCourt/BannerReput";
-import { getCurrentUserReputation } from '../services/apiUser.ts';
+import {
+    getCurrentUserReputation,
+    getCurrentUserMatchHistoryDashboard,
+    getCurrentUserWinStreak,
+    type UserMatchHistoryDashboard,
+    type UserWinStreakSummary,
+} from '../services/apiUser.ts';
 import { useEffect, useState } from 'react';
+import StatsContainer from '../components/HistorialLakers/StatsContainer.tsx';
+import PastGamesTable from '../components/HistorialLakers/PastGamesTable.tsx';
 function HistorialLakers() {
     const [userReputation, setUserReputation] = useState<number | null>(null)
     const [loadingReputation, setLoadingReputation] = useState(true)
+    const [matchHistory, setMatchHistory] = useState<UserMatchHistoryDashboard | null>(null)
+    const [winStreak, setWinStreak] = useState<UserWinStreakSummary | null>(null)
+    const [loadingMatchData, setLoadingMatchData] = useState(true)
 
     const loadUserReputation = async () => {
         setLoadingReputation(true)
@@ -18,6 +29,24 @@ function HistorialLakers() {
 
     useEffect(() => {
         loadUserReputation()
+    }, [])
+
+    const loadMatchData = async () => {
+        setLoadingMatchData(true)
+        try {
+            const [history, streak] = await Promise.all([
+                getCurrentUserMatchHistoryDashboard(),
+                getCurrentUserWinStreak(),
+            ])
+            setMatchHistory(history)
+            setWinStreak(streak)
+        } finally {
+            setLoadingMatchData(false)
+        }
+    }
+
+    useEffect(() => {
+        loadMatchData()
     }, [])
 
     return (
@@ -40,6 +69,17 @@ function HistorialLakers() {
                         </span>
                     }
                 />
+            </div>
+            <div className="w-full max-w-7xl mx-auto px-4 pb-10">
+                <StatsContainer summary={matchHistory?.summary ?? null} streak={winStreak} />
+                {!loadingMatchData ? (
+                    <div className="mt-8">
+                        <PastGamesTable rows={matchHistory?.rows ?? []} />
+                    </div>
+                ) : null}
+                {loadingMatchData ? (
+                    <p className="mt-4 text-sm text-Gris-Oscuro">Cargando estadisticas...</p>
+                ) : null}
             </div>
         </div>
     )

@@ -13,6 +13,7 @@ const pages = [
   { label: 'Agenda', path: '/agenda' },
   { label: 'Statistics', path: '/estadisticas' },
   { label: 'LakersCourt', path: '/lakerscourt' },
+  { label: 'Historial Lakers', path: '/historial-lakers' },
   { label: 'Dunk Royale', path: '/juego' },
   { label: 'Store', path: '/store' },
 ]
