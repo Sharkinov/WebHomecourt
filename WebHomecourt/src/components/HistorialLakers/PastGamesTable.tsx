@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import type { UserMatchHistoryRow, UserMatchHistorySummary } from '../../services/apiUser.ts'
 import AddStats from './AddStats.tsx'
 import { useState } from 'react'
@@ -7,7 +6,6 @@ interface PastGamesTableProps {
   rows: UserMatchHistoryRow[]
   summary: UserMatchHistorySummary | null
   onStatsAdded?: () => void
-  className?: string
 }
 
 const tableColumns = 'grid-cols-[186px_205px_129px_127px_123px_106px_106px_107px_107px]'
@@ -20,8 +18,7 @@ const formatDateLabel = (value: string | null) => {
 }
 
 
-function PastGamesTable({ rows, summary, onStatsAdded, className }: PastGamesTableProps) {
-
+function PastGamesTable({ rows, summary, onStatsAdded }: PastGamesTableProps) {
   const [popoRow, setPopoRow] = useState<UserMatchHistoryRow | null>(null)
 
   return (
@@ -36,9 +33,7 @@ function PastGamesTable({ rows, summary, onStatsAdded, className }: PastGamesTab
           }}
         />
       )}
-      <section
-        className={`w-full overflow-hidden rounded-[14px] border border-black/10 bg-white shadow-[0_4px_8px_rgba(0,0,0,0.06)] ${className ?? ''}`}
-      >
+      <section className="w-full overflow-hidden rounded-[14px] border border-black/10 bg-white">
         {/* Title */}
         <div className="px-6 pb-4 pt-5 bg-morado-oscuro">
           <h2 className="text-[30px] font-semibold leading-7.5 text-texto-claro">Past Games</h2>

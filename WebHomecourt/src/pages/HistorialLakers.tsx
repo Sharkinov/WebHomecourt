@@ -9,11 +9,15 @@ import {
 import { useEffect, useState } from 'react'
 import StatsContainer from '../components/HistorialLakers/StatsContainer.tsx'
 import PastGamesTable from '../components/HistorialLakers/PastGamesTable.tsx'
+import FilterBar from '../components/HistorialLakers/FilterBar.tsx'
+import { useFilterHistorialLakers } from '../hooks/useFilterHistorialLakers.ts'
 
 interface PageState {
   reputation: number | null
   matchHistory: UserMatchHistoryDashboard | null
 }
+
+type FilterStatus = 'all' | 'wins' | 'losses' | 'pending'
 
 const fetchPageData = async (): Promise<PageState> => {
   const [reputation, matchHistory] = await Promise.all([
@@ -33,11 +37,19 @@ function HistorialLakers() {
     reputation: null,
     matchHistory: null,
   })
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
+  const [searchText, setSearchText] = useState('')
 
   const refreshPageData = async () => {
     const nextPageState = await fetchPageData()
     setPageState(nextPageState)
   }
+
+  const { filteredRows, pendingCount } = useFilterHistorialLakers(
+    pageState.matchHistory?.rows ?? [],
+    filterStatus,
+    searchText,
+  )
 
   useEffect(() => {
     const loadPageData = async () => {
@@ -82,19 +94,28 @@ function HistorialLakers() {
           streak={pageState.matchHistory?.streak ?? null}
         />
 
-        <div className="mt-8">
+        <div className="mt-8 flex flex-col gap-6">
           {loading ? (
             <div className="flex items-center justify-center py-16 text-sm text-Gris-Oscuro">
               Cargando estadísticas...
             </div>
           ) : (
-            <PastGamesTable
-              rows={pageState.matchHistory?.rows ?? []}
-              summary={pageState.matchHistory?.summary ?? null}
-              onStatsAdded={() => {
-                void refreshPageData()
-              }}
-            />
+            <>
+              <FilterBar
+                filterStatus={filterStatus}
+                onFilterChange={setFilterStatus}
+                searchText={searchText}
+                onSearchChange={setSearchText}
+                pendingCount={pendingCount}
+              />
+              <PastGamesTable
+                rows={filteredRows}
+                summary={pageState.matchHistory?.summary ?? null}
+                onStatsAdded={() => {
+                  void refreshPageData()
+                }}
+              />
+            </>
           )}
         </div>
       </div>

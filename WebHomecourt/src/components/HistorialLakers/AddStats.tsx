@@ -170,7 +170,7 @@ function AddStats({ row, onClose, onSaved }: AddStatsProps) {
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
             onClick={(e) => e.target === e.currentTarget && onClose()}
         >
-            <div className="w-full max-w-[580px] overflow-hidden rounded-[20px] bg-white shadow-2xl">
+            <div className="w-full max-w-145 overflow-hidden rounded-[20px] bg-white shadow-2xl">
 
                 {/* Header morado */}
                 <div className="relative bg-morado-lakers px-6 py-5">
