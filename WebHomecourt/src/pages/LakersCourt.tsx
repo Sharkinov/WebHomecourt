@@ -6,16 +6,18 @@ import YourActivityCard from '../components/YourActivityCard'
 import ActiveModerationCard from '../components/LakerCourt/ActiveModerationCard'
 import BannerReput from '../components/LakerCourt/BannerReput'
 import { useEffect, useState } from 'react'
+import { useAuth } from '../context/AuthContext'
 import {
   getPendingRatingPlayers,
   markUserEventAsRated,
   saveUserEventRating,
   type RatePlayer,
 } from '../services/apiRate'
-import { getCurrentUserActivity, getCurrentUserReputation } from '../services/apiUser'
+import { getCurrentUserActivity, getUserReputation } from '../services/apiUser'
 import type { UserActivityStats } from '../services/apiUser'
 
 function LakersCourt() {
+  const { userId } = useAuth()
   const [players, setPlayers] = useState<RatePlayer[]>([])
   const [loadingPlayers, setLoadingPlayers] = useState(true)
   const [submittingRatings, setSubmittingRatings] = useState(false) // Para bloquear el boton mientras se envia
@@ -36,7 +38,7 @@ function LakersCourt() {
     setLoadingReputation(true)
 
     try {
-      const reputation = await getCurrentUserReputation()
+      const reputation = await getUserReputation(userId)
       setUserReputation(reputation)
     } finally {
       setLoadingReputation(false)
@@ -97,7 +99,12 @@ function LakersCourt() {
     setActivityError(null)
 
     try {
-      const activity = await getCurrentUserActivity()
+      if (!userId) {
+        setUserActivity(null)
+        return
+      }
+
+      const activity = await getCurrentUserActivity(userId)
       setUserActivity(activity)
     } catch (error) {
       setUserActivity(null)
@@ -144,7 +151,7 @@ function LakersCourt() {
     loadPendingRatings()
     loadUserReputation()
     loadUserActivity()
-  }, [])
+  }, [userId])
 
   return (
     <div>

@@ -65,8 +65,10 @@ function StatCard({
   const { outer, inner } = computeRingRadii(chartSize);
   const center = chartSize / 2;
 
-  const primaryFill = primaryColor ?? 'var(--color-amarillo-lakers)';
-  const secondaryFill = secondaryColor ?? 'var(--color-morado-lakers)';
+
+  //Tuve que poner los colores harcoded par apoder pasarlos a el reactcharts
+  const secondaryFill = primaryColor ?? 'var(--color-amarillo-lakers)';
+  const primaryFill = secondaryColor ?? 'var(--color-morado-lakers)';
   const trackFill = '#E7E6E8';
 
   const legendPrimary = primaryLabel ?? (hasSecondary ? 'Win' : 'Value');
@@ -134,9 +136,11 @@ function StatCard({
             </Pie>
           </PieChart>
 
-          {/* El valor central va encima de la grafica para dar lectura inmediata al usuario. */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[30px] font-bold leading-none tracking-[-0.5px] text-texto-oscuro whitespace-nowrap">
-            {computedCenterLabel}
+          {/* El valor central ocupa todo el chart para asegurar un centrado exacto, tambien en valores con decimales. */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span className="whitespace-nowrap text-center text-[30px] font-bold leading-none tracking-[-0.5px] tabular-nums text-texto-oscuro">
+              {computedCenterLabel}
+            </span>
           </div>
         </div>
       </div>

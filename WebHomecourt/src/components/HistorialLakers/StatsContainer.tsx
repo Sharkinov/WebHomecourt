@@ -27,6 +27,7 @@ function StatsContainer({ summary, streak, className }: StatsContainerProps) {
       subtitle: 'Points per game',
       primaryValue: ppg,
       centerLabel: ppg.toFixed(1),
+      secondaryColor: 'var(--color-amarillo-lakers)',
     },
     {
       title: 'RPG',
@@ -39,6 +40,7 @@ function StatsContainer({ summary, streak, className }: StatsContainerProps) {
       subtitle: 'Assists per game',
       primaryValue: apg,
       centerLabel: apg.toFixed(1),
+      secondaryColor: 'var(--color-amarillo-lakers)',
     },
     {
       title: 'Record',
@@ -61,6 +63,7 @@ function StatsContainer({ summary, streak, className }: StatsContainerProps) {
       primaryValue: threePct,
       total: 100,
       centerLabel: `${threePct.toFixed(1)}%`,
+      secondaryColor: 'var(--color-amarillo-lakers)',
     },
     {
       title: 'Streak Win',

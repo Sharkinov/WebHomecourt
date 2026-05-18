@@ -134,20 +134,16 @@ const buildMatchHistorySummary = (rows: UserMatchHistoryRow[]): UserMatchHistory
   }
 }
 
-export async function getCurrentUserReputation(): Promise<number | null> {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser()
+export async function getUserReputation(userId: string | null): Promise<number | null> {
 
-  if (userError || !user?.id) {
+  if (!userId) {
     return null
   }
 
   const { data, error } = await supabase
     .from('user_laker')
     .select('reputation')
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
     .maybeSingle()
 
   if (error) {
@@ -157,18 +153,14 @@ export async function getCurrentUserReputation(): Promise<number | null> {
   return data?.reputation ?? null
 }
 
-export async function getCurrentUserActivity(): Promise<UserActivityStats | null> {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser()
+export async function getCurrentUserActivity(userId: string): Promise<UserActivityStats | null> {
 
-  if (userError || !user?.id) {
+  if (!userId) {
     return null
   }
 
   const { data, error } = await supabase
-    .rpc('get_user_stats', { p_user_id: user.id })
+    .rpc('get_user_stats', { p_user_id: userId })
     .single()
 
   if (error || !data) {
@@ -189,39 +181,23 @@ export async function getCurrentUserActivity(): Promise<UserActivityStats | null
   }
 }
 
-export async function getCurrentUserMatchHistorySummary(): Promise<UserMatchHistorySummary | null> {
-  const dashboard = await getCurrentUserMatchHistoryDashboard()
-
+export async function getCurrentUserMatchHistorySummary(userId: string | null): Promise<UserMatchHistorySummary | null> {
+  const dashboard = await getCurrentUserMatchHistoryDashboard(userId)
   return dashboard?.summary ?? null
 }
 
-export async function getCurrentUserMatchHistoryRows(): Promise<UserMatchHistoryRow[] | null> {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser()
-
-  if (userError || !user?.id) {
-    return null
-  }
+export async function getCurrentUserMatchHistoryRows(userId: string | null): Promise<UserMatchHistoryRow[] | null> {
+  if (!userId) return null
 
   const { data, error } = await supabase
-    .rpc('get_user_match_history', { p_user_id: user.id })
-
-  if (error || !data) {
-    return null
-  }
-
+    .rpc('get_user_match_history', { p_user_id: userId })
+  if (error || !data) return null
   return data as UserMatchHistoryRow[]
 }
 
-export async function getCurrentUserMatchHistoryDashboard(): Promise<UserMatchHistoryDashboard | null> {
-  const rows = await getCurrentUserMatchHistoryRows()
-
-  if (!rows) {
-    return null
-  }
-
+export async function getCurrentUserMatchHistoryDashboard(userId: string | null): Promise<UserMatchHistoryDashboard | null> {
+  const rows = await getCurrentUserMatchHistoryRows(userId)
+  if (!rows) return null
   return {
     rows,
     summary: buildMatchHistorySummary(rows),
@@ -229,13 +205,9 @@ export async function getCurrentUserMatchHistoryDashboard(): Promise<UserMatchHi
   }
 }
 
-export async function getCurrentUserWinStreak(): Promise<UserWinStreakSummary | null> {
-  const rows = await getCurrentUserMatchHistoryRows()
-
-  if (!rows) {
-    return null
-  }
-
+export async function getCurrentUserWinStreak(userId: string | null): Promise<UserWinStreakSummary | null> {
+  const rows = await getCurrentUserMatchHistoryRows(userId)
+  if (!rows) return null
   return buildWinStreakSummary(rows)
 }
 

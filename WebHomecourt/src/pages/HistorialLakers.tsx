@@ -2,7 +2,7 @@
 import Nav from '../components/Nav/Nav.tsx'
 import BannerReput from '../components/LakerCourt/BannerReput'
 import {
-  getCurrentUserReputation,
+  getUserReputation,
   getCurrentUserMatchHistoryDashboard,
   type UserMatchHistoryDashboard,
 } from '../services/apiUser.ts'
@@ -11,6 +11,7 @@ import StatsContainer from '../components/HistorialLakers/StatsContainer.tsx'
 import PastGamesTable from '../components/HistorialLakers/PastGamesTable.tsx'
 import FilterBar from '../components/HistorialLakers/FilterBar.tsx'
 import { useFilterHistorialLakers } from '../hooks/useFilterHistorialLakers.ts'
+import { useAuth } from '../context/AuthContext'
 
 interface PageState {
   reputation: number | null
@@ -19,19 +20,16 @@ interface PageState {
 
 type FilterStatus = 'all' | 'wins' | 'losses' | 'pending'
 
-const fetchPageData = async (): Promise<PageState> => {
+const fetchPageData = async (userId: string | null): Promise<PageState> => {
   const [reputation, matchHistory] = await Promise.all([
-    getCurrentUserReputation(),
-    getCurrentUserMatchHistoryDashboard(),
+    getUserReputation(userId),
+    getCurrentUserMatchHistoryDashboard(userId),
   ])
-
-  return {
-    reputation,
-    matchHistory,
-  }
+  return { reputation, matchHistory }
 }
 
 function HistorialLakers() {
+  const { userId } = useAuth()
   const [loading, setLoading] = useState(true)
   const [pageState, setPageState] = useState<PageState>({
     reputation: null,
@@ -41,7 +39,7 @@ function HistorialLakers() {
   const [searchText, setSearchText] = useState('')
 
   const refreshPageData = async () => {
-    const nextPageState = await fetchPageData()
+    const nextPageState = await fetchPageData(userId)
     setPageState(nextPageState)
   }
 
@@ -55,7 +53,7 @@ function HistorialLakers() {
     const loadPageData = async () => {
       setLoading(true)
       try {
-        const nextPageState = await fetchPageData()
+        const nextPageState = await fetchPageData(userId)
         setPageState(nextPageState)
       } finally {
         setLoading(false)
