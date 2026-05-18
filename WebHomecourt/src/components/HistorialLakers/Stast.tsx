@@ -63,7 +63,7 @@ function StatCard({
   // Esto mantiene el tamano del chart proporcional al componente sin depender de valores fijos para cada pantalla.
   const chartSize = size ?? 130;
   const { outer, inner } = computeRingRadii(chartSize);
-  const center = chartSize / 2;
+ 
 
 
   //Tuve que poner los colores harcoded par apoder pasarlos a el reactcharts
@@ -105,8 +105,8 @@ function StatCard({
             {hasSecondary ? (
               <Pie
                 data={secondaryData}
-                cx={center}
-                cy={center}
+                cx="50%"
+                cy="50%"
                 innerRadius={inner.inner}
                 outerRadius={inner.outer}
                 startAngle={90}
@@ -122,8 +122,8 @@ function StatCard({
             {/* Anillo exterior: representa el valor principal (por ejemplo, Win). */}
             <Pie
               data={primaryData}
-              cx={center}
-              cy={center}
+              cx="50%"
+              cy="50%"
               innerRadius={outer.inner}
               outerRadius={outer.outer}
               startAngle={90}
@@ -138,7 +138,7 @@ function StatCard({
 
           {/* El valor central ocupa todo el chart para asegurar un centrado exacto, tambien en valores con decimales. */}
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <span className="whitespace-nowrap text-center text-[30px] font-bold leading-none tracking-[-0.5px] tabular-nums text-texto-oscuro">
+            <span className=" whitespace-nowrap text-center text-[30px] font-bold leading-none tabular-nums text-texto-oscuro">
               {computedCenterLabel}
             </span>
           </div>

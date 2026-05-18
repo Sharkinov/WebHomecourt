@@ -50,6 +50,10 @@ function HistorialLakers() {
   )
 
   useEffect(() => {
+    if (!userId) {
+      return
+    }
+
     const loadPageData = async () => {
       setLoading(true)
       try {
@@ -60,8 +64,8 @@ function HistorialLakers() {
       }
     }
 
-    loadPageData()
-  }, [])
+    void loadPageData()
+  }, [userId])
 
   return (
     <div>
