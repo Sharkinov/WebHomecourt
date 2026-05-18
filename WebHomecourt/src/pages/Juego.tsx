@@ -76,15 +76,21 @@ function Juego() {
             <h1 className="justify-start text-white text-4xl font-black font">{crowns}</h1>
           </div>
         </div>
-
-        <div className="w-[90vw] max-w-[1600px] aspect-video">
-          <Unity
-            unityProvider={unityProvider}
-            style={{
-              width: "100%",
-              height: "90%",
-            }}
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+          <div className="flex justify-center">
+            <div className="w-full max-w-[420px] aspect-[9/16]">
+              <Unity
+                unityProvider={unityProvider}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
+            </div>
+          </div>
+          <div className=" flex flex-col gap-6">
+            <h1>Probando 1, 2, 3</h1>
+          </div>
         </div>
       </section>
     </div>
