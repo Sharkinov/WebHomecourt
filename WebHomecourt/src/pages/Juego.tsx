@@ -19,15 +19,32 @@ async function getUserCrowns(session: Session | null): Promise<number> {
   return data.crowns
 }
 
+
 function Juego() {
   const { session } = useAuth();
   const [crowns, setCrowns] = useState(0);
+  const [instructions, setInstructions] = useState<{id: number, title: string, description: string, image: string}[]>([])
+  const [tips, setTips] = useState<{id: number, description: string, image: string}[]>([])
+
   const { unityProvider } = useUnityContext({
     loaderUrl: "/Build/RETO.loader.js",
     dataUrl: "/Build/RETO.data",
     frameworkUrl: "/Build/RETO.framework.js",
     codeUrl: "/Build/RETO.wasm",
   });
+
+  useEffect(() => {
+    const fetchHowToPlay = async () => {
+      const [{ data: instructionsData }, { data: tipsData }] = await Promise.all([
+        supabase.from('instructions').select('*').order('id'),
+        supabase.from('tips').select('*').order('id')
+      ])
+      if (instructionsData) setInstructions(instructionsData)
+      if (tipsData) setTips(tipsData)
+    }
+
+    void fetchHowToPlay()
+  }, []) // nunca cambia
 
   const refreshCrowns = async () => {
     try {
@@ -76,6 +93,47 @@ function Juego() {
             <h1 className="justify-start text-white text-4xl font-black font">{crowns}</h1>
           </div>
         </div>
+
+        <div className="w-full bg-white rounded-2xl p-7 shadow-sm ring-1 ring-gray-200">
+        <div className="flex items-center gap-2 mb-6">
+          <div className="bg-morado-oscuro rounded-full w-10 h-10 flex items-center justify-center">
+            <span className="material-symbols-outlined text-amarillo-lakers text-[20px]">
+              auto_stories
+            </span>
+          </div>
+          <h2 className="text-morado-oscuro font-semibold!">How To Play</h2>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-4">
+          {instructions?.map(section => (
+            <div key={section.id} className="flex-1 border-b md:border-b-0 md:border-r border-gray-200 last:border-none pb-4 md:pb-0 pr-0 md:pr-4 flex flex-col">
+              <h4 className="text-morado-oscuro mb-1">{section.id}. {section.title}</h4>
+              <div className="flex items-center gap-2">
+                <p className="text-gray-700 mx-2">{section.description}</p>
+                {section.image && (
+                  <img src={section.image} className="h-32 w-32 object-contain shrink-0" />
+                )}
+              </div>
+            </div>
+          ))}
+          <div className="flex-1 pl-0 md:pl-4">
+            <h4 className="text-morado-oscuro mb-1">4. Tips</h4>
+            <div className="flex items-center">
+              <div className="flex flex-col gap-3 mt-2">
+                {tips?.map((tip, i) => (
+                  <div key={tip.id} className="flex items-center gap-2">
+                    <span className="bg-morado-oscuro text-white text-xs rounded-full w-6 h-6 flex items-center justify-center shrink-0">{i + 1}</span>
+                    <p className="text-gray-700 mx-1">{tip.description}</p>
+                  </div>
+                ))}
+              </div>
+              {tips?.find(t => t.image)?.image && (
+                <img src={tips.find(t => t.image)!.image} className="h-32 w-32 object-contain shrink-0" />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
 
         <div className="w-[90vw] max-w-[1600px] aspect-video">
           <Unity

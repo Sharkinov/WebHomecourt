@@ -94,6 +94,7 @@ a {
   --color-morado-hover:     #7E57D7; /* lo uso en MyFriends.tsx */
   --color-rojo-error:       #BC3737; /* lo uso en MyFriends.tsx */
   --color-rojo-error-hover: #a02d2d; /* lo uso en MyFriends.tsx */
+  --color-amarillo-warn:    #FFD796;
   /* Additional card colors */ 
   --color-royal-blue: #261D82; 
   --color-light-blue: #46AEE6;
