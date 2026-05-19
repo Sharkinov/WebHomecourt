@@ -53,6 +53,14 @@ function Deck(){
         setSelectedWishCard(card);
         setIsChoosing(true);
     }
+    function handleSelectWishCard(card: Card){
+        if (selectedWishCard?.user_card_id === card.user_card_id){
+            setSelectedWishCard(null);
+            setIsChoosing(false);
+            return;
+        }
+        setSelectedWishCard(card);
+    }
     async function handleReplace(deckCard: Card){
         if(!selectedWishCard) return;
         try {
@@ -72,7 +80,7 @@ function Deck(){
             <div className="flex items-center justify-between">
                 <h2 className="text-morado-oscuro">My Deck</h2>
                 {isChoosing && (
-                    <span className="text-sm text-morado-lakers font-semibold">Choose a card to replace</span>
+                    <h5 className="text-gray-500">Choose a card to replace</h5>
                 )}
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center">
@@ -93,16 +101,7 @@ function Deck(){
             </div>
             <div className="flex items-center justify-between">
                 <h2 className="text-morado-oscuro">My Wishlist</h2>
-                {isChoosing && (
-                    <button onClick={() => {
-                                setIsChoosing(false);
-                                setSelectedWishCard(null);
-                            }}
-                            className=" text-sm text-red-500 hover:underline">
-                            Cancel
-                        </button>
-                    // <span className="text-sm text-morado-lakers font-semibold">Choose a card to replace</span>
-                )}
+                
             </div>
             <div className="grid grid-cols-3 gap-3 justify-items-center">
                 {wishlist.length === 0 ? (
@@ -110,7 +109,7 @@ function Deck(){
                 ) : (
                     wishlist.map((card) => (
                         <div key={card.user_card_id} className="flex flex-col items-center gap-2">
-                            <div onClick={() => setSelectedWishCard(card)} className={`relative w-full max-w-[110px] aspect-[3/4] rounded-xl overflow-hidden bg-zinc-100 shadow-sm transition duration-200 cursor-pointer
+                            <div onClick={() => handleSelectWishCard(card)} className={`relative w-full max-w-[110px] aspect-[3/4] rounded-xl overflow-hidden bg-zinc-100 shadow-sm transition duration-200 cursor-pointer
                                 ${selectedWishCard?.user_card_id == card.user_card_id ? "ring-4 ring-morado-lakers scale-[1.03]" : "hover:scale-[1.03]"}`}>
                                 <div className="absolute top-1 right-1 z-10 w-7 h-7 rounded-full bg-morado-oscuro ring-2 ring-white border-[3px] border-morado-oscuro flex items-center justify-center shadow-lg">
                                     <span className="text-white font-black text-sm leading-none">{card.gatorade_cost}</span>
@@ -118,14 +117,27 @@ function Deck(){
                                 <img src={card.web_url} alt="card" className="w-full h-full object-cover" />
                             </div>
                             {selectedWishCard?.user_card_id === card.user_card_id && (
+                                isChoosing ? (
+                                <button onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsChoosing(false);
+                                        setSelectedWishCard(null);
+                                    }}
+                                    className=" w-full py-2 rounded-xl bg-gray-700 text-white hover:scale-105 transition">
+                                    Cancel
+                                </button>
+                                ) : (
                                     <button onClick={
                                         (e) => {
                                             e.stopPropagation();
                                             handleUse(card);
                                         }} 
-                                        className="px-4 py-1 rounded-full bg-morado-lakers text-white font-bold text-sm hover:scale-105 transition">Use</button>
+                                        className="w-full py-2 rounded-xl bg-morado-oscuro text-white font-bold text-sm hover:scale-105 transition">
+                                            <h5>Use</h5>
+                                        </button>
                                 )
-                            }
+                            )
+                        }
                         </div>
                     ))
                 )}
