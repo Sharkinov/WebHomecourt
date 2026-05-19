@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabase";
 import type { Session } from "@supabase/supabase-js";
 import { useAuth } from "../context/AuthContext"
 import { useEffect, useState } from 'react';
-
+import Deck from '../components/Juego/Deck';
 async function getUserCrowns(session: Session | null): Promise<number> {
   if (!session?.user?.id) {
     return 0
@@ -86,11 +86,13 @@ return (
   <div>
     <Nav current="Juego" />
     <section className="px-4 md:px-14 py-5 bg-zinc-100 w-full flex flex-col gap-6">
-      <div className="w-full px-3 py-4 md:px-5 md:py-7 bg-morado-oscuro rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-black/25 flex md:justify-between items-center overflow-hidden">
-        <h1 className="justify-start text-white title1">Dunk Royale</h1>
-        <div className="p-4 bg-morado-lakers rounded-2xl flex justify-start items-center gap-2.5 overflow-hidden">
-          <span className="!text-5xl text-amber-400 material-symbols-outlined">crown</span>
-          <h1 className="justify-start text-white text-4xl font-black font">{crowns}</h1>
+      <div className="w-full px-3 py-4 md:px-5 md:py-7 bg-morado-oscuro rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-black/25 flex flex-col gap-4 md:flex-row md:justify-between md:items-center overflow-hidden">
+        <h1 className="justify-start text-white title1 text-center md:text-left text-3xl sm:text-4xl lg:text-5xl leading-tight">
+          Dunk Royale
+        </h1>
+        <div className="w-full md:w-auto p-3 sm:p-4 bg-morado-lakers rounded-2xl flex justify-center md:justify-start items-center gap-2.5 overflow-hidden self-stretch md:self-auto">
+          <span className="material-symbols-outlined text-amber-400 text-4xl sm:!text-5xl">crown</span>
+          <h1 className="justify-start text-white text-3xl sm:text-4xl font-black font">{crowns}</h1>
         </div>
       </div>
 
@@ -134,7 +136,7 @@ return (
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <div className="flex justify-center">
           <div className="w-full max-w-[420px] aspect-[9/16]">
             <Unity
@@ -143,8 +145,8 @@ return (
             />
           </div>
         </div>
-        <div className="flex flex-col gap-6">
-          <h1>Probando 1, 2, 3</h1>
+        <div className="flex flex-col gap-6 max-h-[750px]">
+          <Deck />
         </div>
       </div>
 
