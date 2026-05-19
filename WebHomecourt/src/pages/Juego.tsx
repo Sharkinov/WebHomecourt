@@ -82,19 +82,19 @@ function Juego() {
     };
   }, [session]);
 
-  return (
-    <div>
-      <Nav current="Juego" />
-      <section className="px-4 md:px-14 py-5 bg-zinc-100 w-full flex flex-col gap-6">
-        <div className="w-full px-3 py-4 md:px-5 md:py-7 bg-morado-oscuro rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-black/25 flex md:justify-between items-center overflow-hidden">
-          <h1 className="justify-start text-white title1">Dunk Royale</h1>
-          <div className="p-4 bg-morado-lakers rounded-2xl flex justify-start items-center gap-2.5 overflow-hidden">
-            <span className="!text-5xl text-amber-400 material-symbols-outlined">crown</span>
-            <h1 className="justify-start text-white text-4xl font-black font">{crowns}</h1>
-          </div>
+return (
+  <div>
+    <Nav current="Juego" />
+    <section className="px-4 md:px-14 py-5 bg-zinc-100 w-full flex flex-col gap-6">
+      <div className="w-full px-3 py-4 md:px-5 md:py-7 bg-morado-oscuro rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-black/25 flex md:justify-between items-center overflow-hidden">
+        <h1 className="justify-start text-white title1">Dunk Royale</h1>
+        <div className="p-4 bg-morado-lakers rounded-2xl flex justify-start items-center gap-2.5 overflow-hidden">
+          <span className="!text-5xl text-amber-400 material-symbols-outlined">crown</span>
+          <h1 className="justify-start text-white text-4xl font-black font">{crowns}</h1>
         </div>
+      </div>
 
-        <div className="w-full bg-white rounded-2xl p-7 shadow-sm ring-1 ring-gray-200">
+      <div className="w-full bg-white rounded-2xl p-7 shadow-sm ring-1 ring-gray-200 mb-8">
         <div className="flex items-center gap-2 mb-6">
           <div className="bg-morado-oscuro rounded-full w-10 h-10 flex items-center justify-center">
             <span className="material-symbols-outlined text-amarillo-lakers text-[20px]">
@@ -103,7 +103,6 @@ function Juego() {
           </div>
           <h2 className="text-morado-oscuro font-semibold!">How To Play</h2>
         </div>
-
         <div className="flex flex-col md:flex-row gap-4">
           {instructions?.map(section => (
             <div key={section.id} className="flex-1 border-b md:border-b-0 md:border-r border-gray-200 last:border-none pb-4 md:pb-0 pr-0 md:pr-4 flex flex-col">
@@ -135,18 +134,23 @@ function Juego() {
         </div>
       </div>
 
-        <div className="w-[90vw] max-w-[1600px] aspect-video">
-          <Unity
-            unityProvider={unityProvider}
-            style={{
-              width: "100%",
-              height: "90%",
-            }}
-          />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <div className="flex justify-center">
+          <div className="w-full max-w-[420px] aspect-[9/16]">
+            <Unity
+              unityProvider={unityProvider}
+              style={{ width: "100%", height: "100%" }}
+            />
+          </div>
         </div>
-      </section>
-    </div>
-  );
+        <div className="flex flex-col gap-6">
+          <h1>Probando 1, 2, 3</h1>
+        </div>
+      </div>
+
+    </section>
+  </div>
+);
 }
 
 export default Juego;
