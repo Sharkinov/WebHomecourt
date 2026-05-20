@@ -6,6 +6,8 @@ interface YourActivityCardProps {
   reputation: number | null
   loadingReputation: boolean
   error: string | null
+  onViewHistory?: () => void
+  viewHistoryLabel?: string
 }
 
 function ActivityValue({ value }: { value: string }) {
@@ -18,6 +20,8 @@ export default function YourActivityCard({
   reputation,
   loadingReputation,
   error,
+  onViewHistory,
+  viewHistoryLabel = 'View match history',
 }: YourActivityCardProps) {
   const eventsCreated = loading ? '...' : stats ? String(stats.eventsCreated) : '--'
   const eventsAttended = loading ? '...' : stats ? String(stats.eventsAttended) : '--'
@@ -25,7 +29,7 @@ export default function YourActivityCard({
     loadingReputation ? '...' : reputation !== null ? reputation.toFixed(1) : '--'
 
   return (
-    <section className="w-full h-48 rounded-[15px] border-[0.8px] border-black/8 bg-white px-[24.8px] pt-[24.8px] pb-4 shadow-[0_4px_4px_rgba(0,0,0,0.08)]">
+    <section className="w-full min-h-48 rounded-[15px] border-[0.8px] border-black/8 bg-white px-[24.8px] pt-[24.8px] pb-4 shadow-[0_4px_4px_rgba(0,0,0,0.08)]">
       <h3 className="text-[14px] leading-5.25 tracking-[0.35px] text-[#11061A]">YOUR ACTIVITY</h3>
 
       <div className="mt-4 flex flex-col gap-3">
@@ -49,6 +53,17 @@ export default function YourActivityCard({
       </div>
 
       {error ? <p className="mt-3 text-[12px] text-red-600">{error}</p> : null}
+
+      {onViewHistory ? (
+        <button
+          type="button"
+          onClick={onViewHistory}
+          className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-medium text-morado-lakers transition-opacity hover:opacity-70"
+        >
+          <span>{viewHistoryLabel}</span>
+          <span className="material-symbols-outlined text-[18px] leading-none">arrow_forward</span>
+        </button>
+      ) : null}
     </section>
   )
 }

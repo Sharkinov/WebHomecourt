@@ -23,14 +23,14 @@
     "react-dom": "^19.2.0",
     "react-horizontal-scrolling-menu": "^8.2.0",
     "react-icons": "^5.6.0",
+    "react-is": "^19.2.6",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.13.1",
     "react-unity-webgl": "^10.1.6",
     "recharts": "^3.8.1",
     "tailwindcss": "^4.2.1",
     "tweetnacl": "^1.0.3",
-    "tweetnacl-util": "^0.15.1",
-    "vercel": "^52.0.0"
+    "tweetnacl-util": "^0.15.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -47,6 +47,7 @@
     "supabase": "^2.78.1",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0",
+    "vercel": "^50.41.0",
     "vite": "^7.3.1"
   }
 }

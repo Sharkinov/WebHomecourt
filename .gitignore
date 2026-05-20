@@ -2,3 +2,4 @@
 supabase/
 schema.sql
 seed.sql
+.vscode
