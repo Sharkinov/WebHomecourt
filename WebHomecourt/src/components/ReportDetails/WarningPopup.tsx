@@ -19,7 +19,7 @@ const WarningPopup = ({ user, target, onConfirm, onCancel, scope = 'user' }: War
       const { data, error } = await supabase
         .from('warn_type')
         .select('warn_type_id, warn_type')
-        .eq('scope', scope)
+        .eq('scope_id', scope === 'user' ? 1 : 2)
 
       if (!error && data) {
         setWarnTypes(data)
@@ -44,8 +44,8 @@ const WarningPopup = ({ user, target, onConfirm, onCancel, scope = 'user' }: War
         {/* Header */}
         <div className="bg-violet-950 px-5 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="rounded-full p-1 flex items-center justify-center" style={{ backgroundColor: '#FFD796' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#794E07' }}>exclamation</span>
+            <div className="rounded-full p-1 flex items-center justify-center bg-amarillo-warn">
+              <span className="material-symbols-outlined text-amarillo-oscuro" style={{ fontSize: '20px'}}>exclamation</span>
             </div>
             <p className="text-white font-semibold">Warn {target}</p>
           </div>
@@ -56,7 +56,7 @@ const WarningPopup = ({ user, target, onConfirm, onCancel, scope = 'user' }: War
 
         {/* Body */}
         <div className="flex flex-col gap-4 px-7 py-7">
-          <h2 className="text-center pt-1" style={{ fontSize: '24px' }}>Send a warning to this user?</h2>
+          <h2 className="text-center pt-1">Send a warning to this user?</h2>
 
           {user && (
             <div className="flex flex-col items-center gap-2 my-3">
@@ -68,9 +68,9 @@ const WarningPopup = ({ user, target, onConfirm, onCancel, scope = 'user' }: War
           )}
 
           {/* Info box */}
-          <div className="rounded-lg px-4 py-3 flex gap-2 items-start border mb-5" style={{ backgroundColor: '#FFD79640', borderColor: '#FFD796' }}>
-            <span className="material-symbols-outlined mt-0.5" style={{ fontSize: '16px', color: '#FCB136' }}>info</span>
-            <small style={{ fontSize: '15px', color: '#6F6975' }}>This will notify the user about inappropriate behavior and remind them to follow community guidelines.</small>
+          <div className="rounded-lg px-4 py-3 flex gap-2 items-start border mb-5 bg-amarillo-warn/25 border-amarillo-warn">
+            <span className="material-symbols-outlined mt-0.5 text-amarillo-lakers" style={{ fontSize: '16px'}}>info</span>
+            <small className="!text-sm text-Gris-Oscuro">This will notify the user about inappropriate behavior and remind them to follow community guidelines.</small>
           </div>
 
           {/* Warnings */}
@@ -91,7 +91,6 @@ const WarningPopup = ({ user, target, onConfirm, onCancel, scope = 'user' }: War
             ))}
           </div>
 
-          {/* Other description */}
           {isOtherSelected && (
             <textarea
               placeholder="Describe the issue..."
@@ -102,7 +101,7 @@ const WarningPopup = ({ user, target, onConfirm, onCancel, scope = 'user' }: War
             />
           )}
 
-          {/* Buttons */}
+          {/* Action Buttons */}
           <div className="flex gap-3 mt-2">
             <button onClick={onCancel} className="flex-1 py-2 rounded-lg bg-gray-100 text-black font-medium hover:brightness-90">
               Cancel
@@ -110,8 +109,7 @@ const WarningPopup = ({ user, target, onConfirm, onCancel, scope = 'user' }: War
             <button
               onClick={handleConfirm}
               disabled={!selected || (isOtherSelected && !customMessage)}
-              className="flex-1 py-2 rounded-lg text-black font-semibold hover:brightness-90 disabled:opacity-50"
-              style={{ backgroundColor: '#FFD796' }}
+              className="flex-1 py-2 rounded-lg text-black font-semibold hover:brightness-90 disabled:opacity-50 bg-amarillo-warn"
             >
               Warn {target}
             </button>

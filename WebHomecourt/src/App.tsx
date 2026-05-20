@@ -21,6 +21,7 @@ import CompleteRegister from './pages/CompleteRegister';
 import Monitor from './pages/Monitor';
 import EditAvatar from './pages/EditAvatar';
 import MyFriends from './pages/MyFriends';
+import Collection from './pages/Collection';
 
 import { useAuth } from './context/AuthContext'
 import { Navigate } from 'react-router-dom'
@@ -61,6 +62,7 @@ function App() {
         <Route path="/admin/monitor" element={<AdminRoute><Monitor /></AdminRoute>} />
         <Route path='/edit-avatar' element={<EditAvatar/>}></Route>
         <Route path='/historial-lakers' element={<HistorialLakers/>}></Route>
+        <Route path='/collection' element={<Collection/>}></Route>
       </Routes>
     </BrowserRouter>
   )
