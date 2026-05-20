@@ -158,7 +158,7 @@ function LakersCourt() {
       <div >
         <Nav current="LakersCourt" />
       </div>
-      <div className='px-14 py-5 bg-zinc-100 w-full '>
+      <div className='px-4 py-5 bg-zinc-100 w-full sm:px-6 lg:px-14'>
         <BannerReput
           title="LAKERS COURT"
           subtitle="Find courts and basketball events near you"
@@ -177,7 +177,7 @@ function LakersCourt() {
         />
         {loadingPlayers && <div className="p-5"><p>Loading players...</p></div>}
         {!loadingPlayers && playersError && <div className="p-5"><p>{playersError}</p></div>}
-        {!loadingPlayers && players.length > 0 && <div className="p-5">
+        {!loadingPlayers && players.length > 0 && <div className="px-0 py-5 sm:p-5">
           <RatePlayersPanel
             players={players}
             subtitle={pendingCourtSubtitle}
