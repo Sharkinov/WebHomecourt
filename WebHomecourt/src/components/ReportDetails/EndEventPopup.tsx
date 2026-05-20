@@ -12,8 +12,8 @@ const EndEventPopup = ({ event, onConfirm, onCancel }: EndEventPopupProps) => {
         {/* Header */}
         <div className="bg-violet-950 px-5 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="rounded-full p-1 flex items-center justify-center" style={{ backgroundColor: '#BC3737' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '20px', color: 'white' }}>exclamation</span>
+            <div className="rounded-full p-1 flex items-center justify-center bg-rojo-oscuro">
+              <span className="material-symbols-outlined text-white" style={{ fontSize: '20px'}}>exclamation</span>
             </div>
             <p className="text-white font-semibold">End Event</p>
           </div>
@@ -24,7 +24,7 @@ const EndEventPopup = ({ event, onConfirm, onCancel }: EndEventPopupProps) => {
 
         {/* Body */}
         <div className="flex flex-col items-center gap-4 px-7 py-7">
-          <h2 className="font-medium text-center mx-2" style={{ fontSize: '24px' }}>Are you sure you want to end this event?</h2>
+          <h2 className="font-medium text-center mx-3">Are you sure you want to end this event?</h2>
 
           <div className="flex flex-col items-center gap-1 my-3 text-center">
             <h5 className="font-bold text-lg mb-2">{event.name}</h5>
@@ -34,8 +34,8 @@ const EndEventPopup = ({ event, onConfirm, onCancel }: EndEventPopupProps) => {
           </div>
 
           <div className="rounded-lg px-4 py-3 flex gap-2 items-start border" style={{ backgroundColor: '#BC373722', borderColor: '#BC373780' }}>
-            <span className="material-symbols-outlined mt-0.5" style={{ fontSize: '16px', color: '#BC3737' }}>info</span>
-            <small style={{ fontSize: '15px', color: '#6F6975' }}>This action will cancel the event and prevent participants from continuing or joining.</small>
+            <span className="material-symbols-outlined mt-0.5 text-rojo-oscuro" style={{ fontSize: '16px'}}>info</span>
+            <small className="text-Gris-Oscuro"style={{ fontSize: '15px'}}>This action will cancel the event and prevent participants from continuing or joining.</small>
           </div>
 
           <div className="flex gap-3 w-full mt-6">

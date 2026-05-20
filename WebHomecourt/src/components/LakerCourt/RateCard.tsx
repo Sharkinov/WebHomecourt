@@ -28,8 +28,8 @@ export default function RateCard({
   };
 
   return (
-    <div className="w-88 h-48 p-2.5 flex flex-col items-start gap-5 bg-[#E7E6E8] border border-black/24 rounded-[15px]">
-      <div className="flex items-center gap-5">
+    <div className="w-full max-w-88 min-w-0 min-h-48 p-2.5 flex flex-col items-start gap-5 bg-[#E7E6E8] border border-black/24 rounded-[15px]">
+      <div className="flex w-full items-center gap-3 sm:gap-5 min-w-0">
         <div className="w-16 h-16 border-2 border-[#E7E6E8] rounded-full p-0.5 box-border">
           <img
             src={avatarUrl}
@@ -37,13 +37,13 @@ export default function RateCard({
             className="w-full h-full rounded-full object-cover"
           />
         </div>
-        <div className="flex flex-col gap-2.5">
-          <h3 className="text-[24px] leading-6.5 font-normal text-[#000000] m-0">{playerName}</h3>
-          <p className="text-[18px] leading-5 font-normal text-[#000000] m-0">{playerTag}</p>
+        <div className="flex min-w-0 flex-1 flex-col gap-2.5">
+          <h3 className="m-0 truncate text-[20px] leading-6 font-normal text-[#000000] sm:text-[24px] sm:leading-6.5">{playerName}</h3>
+          <p className="m-0 truncate text-[16px] leading-5 font-normal text-[#000000] sm:text-[18px]">{playerTag}</p>
         </div>
       </div>
 
-      <div className="flex gap-3.75 justify-center items-center w-full">
+      <div className="flex w-full flex-wrap justify-center gap-2 sm:gap-3.75 items-center">
         {stars.map((starValue) => (
           <button
             key={starValue}
@@ -59,7 +59,7 @@ export default function RateCard({
       </div>
 
       <button
-        className="w-83 h-11 flex justify-center items-center py-3 px-5 gap-2.5 bg-transparent border-[3px] border-morado-lakers opacity-50 rounded-[15px] transition-all hover:bg-morado-lakers/10 hover:opacity-100"
+        className="w-full min-h-11 flex justify-center items-center py-3 px-4 sm:px-5 gap-2.5 bg-transparent border-[3px] border-morado-lakers opacity-50 rounded-[15px] transition-all hover:bg-morado-lakers/10 hover:opacity-100"
         onClick={() => onReport(id, playerName)}
         aria-label={`Reportar a ${playerName}`}
       >

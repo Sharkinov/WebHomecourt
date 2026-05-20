@@ -6,16 +6,20 @@ import YourActivityCard from '../components/YourActivityCard'
 import ActiveModerationCard from '../components/LakerCourt/ActiveModerationCard'
 import BannerReput from '../components/LakerCourt/BannerReput'
 import { useEffect, useState } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import {
   getPendingRatingPlayers,
   markUserEventAsRated,
   saveUserEventRating,
   type RatePlayer,
 } from '../services/apiRate'
-import { getCurrentUserActivity, getCurrentUserReputation } from '../services/apiUser'
+import { getCurrentUserActivity, getUserReputation } from '../services/apiUser'
 import type { UserActivityStats } from '../services/apiUser'
 
 function LakersCourt() {
+  const { userId } = useAuth()
+  const navigate = useNavigate()
   const [players, setPlayers] = useState<RatePlayer[]>([])
   const [loadingPlayers, setLoadingPlayers] = useState(true)
   const [submittingRatings, setSubmittingRatings] = useState(false) // Para bloquear el boton mientras se envia
@@ -36,7 +40,7 @@ function LakersCourt() {
     setLoadingReputation(true)
 
     try {
-      const reputation = await getCurrentUserReputation()
+      const reputation = await getUserReputation(userId)
       setUserReputation(reputation)
     } finally {
       setLoadingReputation(false)
@@ -97,7 +101,12 @@ function LakersCourt() {
     setActivityError(null)
 
     try {
-      const activity = await getCurrentUserActivity()
+      if (!userId) {
+        setUserActivity(null)
+        return
+      }
+
+      const activity = await getCurrentUserActivity(userId)
       setUserActivity(activity)
     } catch (error) {
       setUserActivity(null)
@@ -144,14 +153,18 @@ function LakersCourt() {
     loadPendingRatings()
     loadUserReputation()
     loadUserActivity()
-  }, [])
+  }, [userId])
+
+  const handleViewHistory = () => {
+    navigate('/historial-lakers')
+  }
 
   return (
     <div>
       <div >
         <Nav current="LakersCourt" />
       </div>
-      <div className='px-14 py-5 bg-zinc-100 w-full '>
+      <div className='px-4 py-5 bg-zinc-100 w-full sm:px-6 lg:px-14'>
         <BannerReput
           title="LAKERS COURT"
           subtitle="Find courts and basketball events near you"
@@ -170,7 +183,7 @@ function LakersCourt() {
         />
         {loadingPlayers && <div className="p-5"><p>Loading players...</p></div>}
         {!loadingPlayers && playersError && <div className="p-5"><p>{playersError}</p></div>}
-        {!loadingPlayers && players.length > 0 && <div className="p-5">
+        {!loadingPlayers && players.length > 0 && <div className="px-0 py-5 sm:p-5">
           <RatePlayersPanel
             players={players}
             subtitle={pendingCourtSubtitle}
@@ -198,6 +211,7 @@ function LakersCourt() {
             reputation={userReputation}
             loadingReputation={loadingReputation}
             error={activityError}
+            onViewHistory={handleViewHistory}
           />
         </div>
       </div>

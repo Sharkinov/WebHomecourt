@@ -140,7 +140,7 @@ const Monitor = () => {
         {/* Event Details */}
         <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
           <div className="bg-violet-950 px-5 py-4 flex justify-between items-center">
-            <p className="text-white font-bold" style={{ fontSize: '26px' }}>Event Details</p>
+            <h2 className="text-white font-bold">Event Details</h2>
             <button onClick={() => navigate('/admin')} className="text-white hover:text-gray-300 transition-colors">
               <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>close</span>
             </button>
@@ -185,7 +185,7 @@ const Monitor = () => {
                 
                 <div className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-morado-lakers" style={{ fontSize: '30px' }}>crown</span>
-                    <h4 style={{fontWeight: '600'}}>Host</h4>
+                    <h4 className="!font-bold">Host</h4>
                   </div>
                   <div className="flex flex-row items-start gap-2">
                   <div className="w-18 h-18 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 -mt-1">
@@ -193,7 +193,7 @@ const Monitor = () => {
                     </div>
                   
                   <div className="flex-1 flex flex-col gap-1">
-                    <p className="font-medium" style={{fontWeight: '500'}}>{event?.created_user?.nickname}</p>
+                    <p className="!font-medium">{event?.created_user?.nickname}</p>
                     <p className="font-medium text-gray-600 mb-3">@{event?.created_user?.username}</p>
                     <div className="flex gap-3 text-sm text-gray-600">
                       <p className="text-morado-lakers">Age: <span className="text-black">{calculateAge(event?.created_user?.birthdate)}</span></p>
@@ -207,12 +207,12 @@ const Monitor = () => {
                   </div>
                   
                 </div>
-                <button onClick={() => navigate(`/perfil/${event?.created_user?.user_id}`)} className="mt-3 w-full bg-morado-lakers text-white py-1.5 rounded-lg font-medium hover:bg-morado-oscuro transition-colors" style={{ fontSize: '14px' }}>
-                  View Profile
+                <button onClick={() => navigate(`/perfil/${event?.created_user?.user_id}`)} className="mt-3 w-full bg-morado-lakers text-white py-3 rounded-lg font-medium hover:bg-morado-oscuro transition-colors">
+                  <p>View Profile</p>
                 </button>
                 </div>
 
-            {/* Registered Players */}
+            {/* Participants */}
             <div className="flex flex-col gap-3 flex-1 max-h-110 overflow-y-auto pr-1">
               <h5 className="font-medium">Registered Players</h5>
               {event?.participants?.map((p: any) => {
@@ -225,16 +225,12 @@ const Monitor = () => {
 
               return (
                 <div key={p.user.user_id} className="flex flex-row items-center gap-3 bg-gray-100 rounded-xl px-5 py-4 w-full justify-between">
-
-                  {/* Avatar */}
                   <div className="w-14 h-14 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
                     {p.user.photo_url && <img src={p.user.photo_url} className="w-full h-full object-cover" />}
                   </div>
-
-                  {/* Info */}
                   <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 flex-1 min-w-0">
                     <div className="flex flex-col gap-0.5 min-w-0 sm:min-w-[150px]">
-                      <p className="font-medium truncate" style={{fontWeight: '500'}}>{p.user.nickname}</p>
+                      <p className="!font-medium truncate">{p.user.nickname}</p>
                       <small className="text-gray-500 truncate">@{p.user.username}</small>
                     </div>
 
@@ -250,7 +246,6 @@ const Monitor = () => {
                     </div>
                   </div>
 
-                  {/* Flag */}
                   <div className="flex items-center self-center flex-shrink-0">
                     {hasActiveReport && (
                       <div className="w-10 h-10 rounded-xl bg-gray-200 flex items-center justify-center">
@@ -274,7 +269,7 @@ const Monitor = () => {
             <button onClick={() => setShowWarning(true)} className="w-70 px-5 py-2 rounded-lg bg-[#FFD796] text-black font-medium hover:brightness-90 transition-colors">
               Warn Host
             </button>
-            <button onClick={() => setShowEndEvent(true)} className="w-70 px-5 py-2 rounded-lg bg-[#BC3737] text-white font-medium hover:brightness-90 transition-colors">
+            <button onClick={() => setShowEndEvent(true)} className="w-70 px-5 py-2 rounded-lg bg-rojo-oscuro text-white font-medium hover:brightness-90 transition-colors">
               End Event
             </button>
           </div>
