@@ -7,6 +7,7 @@ import ActiveModerationCard from '../components/LakerCourt/ActiveModerationCard'
 import BannerReput from '../components/LakerCourt/BannerReput'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import {
   getPendingRatingPlayers,
   markUserEventAsRated,
@@ -18,6 +19,7 @@ import type { UserActivityStats } from '../services/apiUser'
 
 function LakersCourt() {
   const { userId } = useAuth()
+  const navigate = useNavigate()
   const [players, setPlayers] = useState<RatePlayer[]>([])
   const [loadingPlayers, setLoadingPlayers] = useState(true)
   const [submittingRatings, setSubmittingRatings] = useState(false) // Para bloquear el boton mientras se envia
@@ -153,6 +155,10 @@ function LakersCourt() {
     loadUserActivity()
   }, [userId])
 
+  const handleViewHistory = () => {
+    navigate('/historial-lakers')
+  }
+
   return (
     <div>
       <div >
@@ -205,6 +211,7 @@ function LakersCourt() {
             reputation={userReputation}
             loadingReputation={loadingReputation}
             error={activityError}
+            onViewHistory={handleViewHistory}
           />
         </div>
       </div>
