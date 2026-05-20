@@ -105,7 +105,7 @@ function Store() {
 
           <Button
             text="COLLECTION"
-            type="primarydisable"
+            type="secondary"
             onClick={() => navigate('/collection')}
             className="text-2xl font-semibold px-10"
           />

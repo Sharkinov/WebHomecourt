@@ -4,6 +4,7 @@ import React from 'react';
 interface IconButtonProp {
     type?: 'primary' | 'secondary' | 'tertiary' | 'primarydisable' | 'yellow'; //| 'secondarydisable' | 'tertiarydisable'; // Add more if needed, will be string recieving type 
     leftIcon?: React.ReactNode; //Icon that is recieved
+    leftMaterial?: string; // For material icon compatibility
     text: string; // What is shown in frontend
     rightIcon?: React.ReactNode; //Icon that is recieved
     onClick: () => void; // Function default does nothing
@@ -22,6 +23,7 @@ const typeStyles: Record<string, string> = {
 function IconButton({
     type = 'primary',
     leftIcon,
+    leftMaterial,
     text,
     rightIcon,
     onClick = () => { }, // Backup default to do nothing
@@ -33,6 +35,7 @@ function IconButton({
             className={`px-3 py-5 text-center rounded-2xl ${typeStyles[type]} ${className}`}>
             {/* Will check first if there is left or right icon defined to show that img, and then the text itself if there is any and other icon if necessary*/}
             {leftIcon}
+            <span className="material-symbols-outlined text-[20px] leading-none">{leftMaterial}</span>
             <span>{text}</span>
             {rightIcon}
         </button>

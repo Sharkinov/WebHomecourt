@@ -20,7 +20,7 @@ function CategorySummary( props: SummaryProp) {
     } 
 
     return (
-        <div className={`w-72 px-3.5 py-4 bg-white rounded-2xl inline-flex flex-col justify-center items-start gap-4 ${injectVictoryOutline}`}>
+        <div className={`w-50 md:w-72 px-3.5 py-4 bg-white rounded-2xl inline-flex flex-col justify-center items-start gap-4 ${injectVictoryOutline}`}>
             <h3>{props.category}</h3>
             <div className="text-4xl font-semibold">{props.unlocked}/{props.total}</div>
             <div className="text-gris-disabled">{progress}% unlocked</div>

@@ -19,7 +19,7 @@ const WarningPopup = ({ user, target, onConfirm, onCancel, scope = 'user' }: War
       const { data, error } = await supabase
         .from('warn_type')
         .select('warn_type_id, warn_type')
-        .eq('scope', scope)
+        .eq('scope_id', scope === 'user' ? 1 : 2)
 
       if (!error && data) {
         setWarnTypes(data)
