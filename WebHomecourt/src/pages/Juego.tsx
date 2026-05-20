@@ -26,11 +26,11 @@ function Juego() {
   const [instructions, setInstructions] = useState<{id: number, title: string, description: string, image: string}[]>([])
   const [tips, setTips] = useState<{id: number, description: string, image: string}[]>([])
 
-  const { unityProvider } = useUnityContext({
-    loaderUrl: "/Build/RETO.loader.js",
-    dataUrl: "/Build/RETO.data",
-    frameworkUrl: "/Build/RETO.framework.js",
-    codeUrl: "/Build/RETO.wasm",
+  const { unityProvider, sendMessage, isLoaded } = useUnityContext({
+    loaderUrl: "/Build/DunkDeploy.loader.js",
+    dataUrl: "/Build/DunkDeploy.data.br",
+    frameworkUrl: "/Build/DunkDeploy.framework.js.br",
+    codeUrl: "/Build/DunkDeploy.wasm.br",
   });
 
   useEffect(() => {
@@ -81,6 +81,19 @@ function Juego() {
       void supabase.removeChannel(channel);
     };
   }, [session]);
+
+  useEffect(() => {
+    if (isLoaded && session?.access_token && session?.user?.id) {
+      sendMessage(
+        "SupabaseConfig",
+        "ReceiveSessionFromReact",
+        JSON.stringify({
+          jwt: session.access_token,
+          userId: session.user.id
+        })
+      );
+    }
+  }, [isLoaded, session]);
 
 return (
   <div>
