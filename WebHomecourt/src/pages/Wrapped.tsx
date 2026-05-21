@@ -26,7 +26,6 @@ export function WrappedPage() {
   const [fontStyle, setFontStyle] = useState('bold');
   const [backgroundPattern, setBackgroundPattern] = useState('solid');
   const [textShadow, setTextShadow] = useState(false);
-  const [frameStyle, setFrameStyle] = useState('none');
   const [selectedStickers, setSelectedStickers] = useState<string[]>([]);
   const [droppedStickers, setDroppedStickers] = useState<Array<{id: string, src: string, x: number, y: number}>>([]);
   const [customCaption, setCustomCaption] = useState('');
@@ -74,14 +73,7 @@ export function WrappedPage() {
   const fonts = [
     { id: 'bold', label: 'Bold', style: { fontWeight: 'bold', fontFamily: 'Graphik, sans-serif' } },
     { id: 'script', label: 'Script', style: { fontFamily: 'cursive', fontStyle: 'italic' } },
-    { id: 'retro', label: 'Retro', style: { fontFamily: 'monospace', letterSpacing: '0.1em' } },
-  ];
-
-  const frames = [
-    { id: 'none', label: 'None' },
-    { id: 'classic', label: 'Classic' },
-    { id: 'modern', label: 'Modern' },
-    { id: 'neon', label: 'Neon' },
+    { id: 'retro', label: 'Retro', style: { fontFamily: 'monospace', letterSpacing: '0.02em' } },
   ];
 
   const currentScheme = colorSchemes.find(s => s.id === colorScheme) || colorSchemes[0];
@@ -104,22 +96,14 @@ export function WrappedPage() {
   };
 
   const randomizeStyles = () => {
-    // randomize color scheme
     const randomScheme = colorSchemes[Math.floor(Math.random() * colorSchemes.length)];
     setColorScheme(randomScheme.id);
 
-    // randomize font
     const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
     setFontStyle(randomFont.id);
 
-    // randomize frame
-    const randomFrame = frames[Math.floor(Math.random() * frames.length)];
-    setFrameStyle(randomFrame.id);
-
-    // randomize text shadow
     setTextShadow(Math.random() > 0.5);
 
-    // randomize background solo si hay disponibles
     if (backgrounds.length > 0) {
       const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
       setSelectedBackground(randomBg.wrap_backgrounds_id);
@@ -132,47 +116,52 @@ export function WrappedPage() {
     setFontStyle('bold');
     setBackgroundPattern('solid');
     setTextShadow(false);
-    setFrameStyle('none');
     setSelectedStickers([]);
     setDroppedStickers([]);
     setCustomCaption('');
   };
 
   const downloadWrap = async () => {
-    if (!wrapRef.current) return;
-
-    setIsDownloading(true);
-    document.body.style.cursor = 'wait';
+    if (!wrapRef.current) return
+    setIsDownloading(true)
+    document.body.style.cursor = 'wait'
 
     try {
-      // wrap con dimensiones exactas de una instagram story
-      const canvas = await html2canvas(wrapRef.current, {
-        width: 1080,
-        height: 1920,
-        scale: 2,
+      const element = wrapRef.current
+      const rect = element.getBoundingClientRect()
+      const scaleToUse = 1080 / rect.width
+
+      const canvas = await html2canvas(element, {
+        scale: scaleToUse,
         useCORS: true,
         allowTaint: true,
         backgroundColor: null,
-      });
+        logging: false,
+        width: rect.width,
+        height: rect.height,
+      })
 
-      // download directo
-      const dataUrl = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `lakers-wrap-${selectedWrap}-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = `lakers-wrap-${selectedWrap}-${Date.now()}.png`
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        }
+        setIsDownloading(false)
+        document.body.style.cursor = 'default'
+      }, 'image/png')
 
-      setIsDownloading(false);
-      document.body.style.cursor = 'default';
     } catch (error) {
-      console.error('Error downloading wrap:', error);
-      alert('Error downloading wrap. Please try again.');
-      setIsDownloading(false);
-      document.body.style.cursor = 'default';
+      console.error('Error downloading wrap:', error)
+      setIsDownloading(false)
+      document.body.style.cursor = 'default'
     }
-  };
+  }
 
   const getBackgroundStyle = () => {
     const selected = backgrounds.find(b => b.wrap_backgrounds_id === selectedBackground)
@@ -206,8 +195,6 @@ export function WrappedPage() {
     <div className="min-h-screen bg-Background">
       <Nav current="Wrapped" />
       <div className="px-4 md:px-6 xl:px-14 py-5 bg-Background w-full">
-
-        {/* HEADER */}
         <div className="mb-8">
           <BannerGeneral
             title="Wrapped"
@@ -234,18 +221,14 @@ export function WrappedPage() {
           </div>
         ) : (
           <>
-
-        {/* ONBOARDING */}
         <OnboardingSteps />
 
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
-          {/* PREVIEW */}
-          <div className="w-full lg:flex-1 min-w-0">
+        <div className="flex flex-col xl:flex-row gap-6 items-start">
+          <div className="w-full xl:w-[788px] flex-shrink-0">
            <PreviewContainer
             selectedWrap={selectedWrap}
             selectedStickers={selectedStickers}
             customCaption={customCaption}
-            frameStyle={frameStyle}
             currentFont={currentFont}
             currentScheme={currentScheme}
             wrapData={wrapData}
@@ -262,8 +245,7 @@ export function WrappedPage() {
           />
           </div>
 
-          {/* SIDEBAR DE LOS CONTROLES */}
-          <div className="w-full lg:w-[clamp(340px,28vw,500px)] flex-shrink-0 flex flex-col gap-6 lg:gap-8">
+          <div className="w-full xl:flex-1 xl:min-w-0 flex flex-col gap-6">
             <PickWrapContainer
               selectedWrap={selectedWrap}
               setSelectedWrap={setSelectedWrap}
@@ -285,9 +267,6 @@ export function WrappedPage() {
               colorSchemes={colorSchemes}
               colorScheme={colorScheme}
               setColorScheme={setColorScheme}
-              frames={frames}
-              frameStyle={frameStyle}
-              setFrameStyle={setFrameStyle}
               elements={elements}
               toggleElement={toggleElement}
               selectedWrap={selectedWrap}

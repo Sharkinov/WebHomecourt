@@ -1,13 +1,10 @@
 import watermarkImg from '../../assets/Wrapped/wrapped-watermark.png'
-import Lottie from 'lottie-react'
 
 interface TopStatsWrapProps {
   wrapData: any;
   currentFont: { id: string; label: string; style: React.CSSProperties };
   textStyle: React.CSSProperties;
   elements: Record<string, boolean>;
-  selectedStickers: string[];
-  stickerAnimations: Record<string, any>;
   customCaption: string;
 }
 
@@ -16,8 +13,6 @@ export function TopStatsWrap({
   currentFont,
   textStyle,
   elements,
-  selectedStickers,
-  stickerAnimations,
   customCaption,
 }: TopStatsWrapProps) {
   return (
@@ -276,56 +271,10 @@ export function TopStatsWrap({
 
                 </div>
 
-                {/* SHINE EFFECT TEAM SCORE */}
-                {isTeamScore && (
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background: `
-                        linear-gradient(
-                          120deg,
-                          transparent 20%,
-                          rgba(255,255,255,0.10) 45%,
-                          rgba(255,255,255,0.22) 50%,
-                          rgba(255,255,255,0.10) 55%,
-                          transparent 80%
-                        )
-                      `,
-                      transform: 'translateX(-120%) skewX(-18deg)',
-                      animation: 'shineMove 4.5s ease-in-out infinite',
-                      mixBlendMode: 'screen',
-                    }}
-                  />
-                )}
-
               </div>
             )
           })}
         </div>
-
-        {/* STICKERS */}
-        {selectedStickers.length > 0 && (
-          <div className="flex gap-3 justify-center mb-4 mt-6">
-            {selectedStickers.map((id) => (
-              <div
-                key={id}
-                style={{
-                  width: 70,
-                  height: 70,
-                  filter: 'drop-shadow(1px 1px 3px rgba(0,0,0,0.5))',
-                }}
-              >
-                {stickerAnimations[id] && (
-                  <Lottie
-                    animationData={stickerAnimations[id]}
-                    loop={true}
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* CAPTION */}
         {customCaption && (
@@ -339,7 +288,7 @@ export function TopStatsWrap({
               textAlign: 'center',
               maxWidth: '75%',
               marginBottom: '18px',
-              marginTop: selectedStickers.length > 0 ? '0' : '24px',
+              marginTop: '24px',
             }}
           >
             {customCaption}
@@ -355,36 +304,12 @@ export function TopStatsWrap({
               height: '70px',
               objectFit: 'contain',
               opacity: 0.5,
-              marginTop: customCaption || selectedStickers.length > 0 ? '0' : '24px',
+              marginTop: customCaption ? '0' : '24px',
             }}
           />
         )}
 
       </div>
-
-      {/* ANIMATION */}
-      <style>{`
-        @keyframes shineMove {
-          0% {
-            transform: translateX(-140%) skewX(-18deg);
-            opacity: 0;
-          }
-
-          15% {
-            opacity: 1;
-          }
-
-          50% {
-            transform: translateX(140%) skewX(-18deg);
-            opacity: 1;
-          }
-
-          100% {
-            transform: translateX(140%) skewX(-18deg);
-            opacity: 0;
-          }
-        }
-      `}</style>
 
     </div>
   )

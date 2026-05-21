@@ -1,12 +1,9 @@
-import Lottie from 'lottie-react'
 import watermarkImg from '../../assets/Wrapped/wrapped-watermark.png'
 
 interface LastGameWrapProps {
   wrapData: any;
   currentFont: { id: string; label: string; style: React.CSSProperties };
   textStyle: React.CSSProperties;
-  selectedStickers: string[];
-  stickerAnimations: Record<string, any>;
   customCaption: string;
   elements: Record<string, boolean>;
 }
@@ -15,8 +12,6 @@ export function LastGameWrap({
   wrapData,
   currentFont,
   textStyle,
-  selectedStickers,
-  stickerAnimations,
   customCaption,
   elements,
 }: LastGameWrapProps) {
@@ -121,25 +116,6 @@ export function LastGameWrap({
               }}
             >
 
-              {/* SHINEE EFECTO */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background: `
-                    linear-gradient(
-                      120deg,
-                      transparent 20%,
-                      rgba(255,255,255,0.08) 45%,
-                      rgba(255,255,255,0.16) 50%,
-                      rgba(255,255,255,0.08) 55%,
-                      transparent 80%
-                    )
-                  `,
-                  transform: 'translateX(-120%) skewX(-18deg)',
-                  animation: 'shineMove 4.5s ease-in-out infinite',
-                  mixBlendMode: 'screen',
-                }}
-              />
 
               {/* LOGO */}
               <div
@@ -199,26 +175,6 @@ export function LastGameWrap({
 
             {/* SCORE */}
             <div className="relative mt-2 md:mt-2.5 lg:mt-3 flex items-center justify-center">
-
-              {/* SPARKLEE EFFECT */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background: `
-                    linear-gradient(
-                      120deg,
-                      transparent 20%,
-                      rgba(255,255,255,0.20) 45%,
-                      rgba(255,255,255,0.45) 50%,
-                      rgba(255,255,255,0.20) 55%,
-                      transparent 80%
-                    )
-                  `,
-                  transform: 'translateX(-150%) skewX(-18deg)',
-                  animation: 'scoreSparkle 3.8s ease-in-out infinite',
-                  mixBlendMode: 'screen',
-                }}
-              />
 
               <span
                 className="text-[60px] md:text-[80px] lg:text-[100px]"
@@ -443,29 +399,6 @@ export function LastGameWrap({
         </div>
         )}
 
-        {/* STICKERS */}
-        {selectedStickers.length > 0 && (
-          <div className="flex gap-2 md:gap-2.5 lg:gap-3 justify-center mb-3 md:mb-3.5 lg:mb-4">
-            {selectedStickers.map((id) => (
-              <div
-                key={id}
-                className="w-[50px] h-[50px] md:w-[60px] md:h-[60px] lg:w-[70px] lg:h-[70px]"
-                style={{
-                  filter: 'drop-shadow(1px 1px 3px rgba(0,0,0,0.5))',
-                }}
-              >
-                {stickerAnimations[id] && (
-                  <Lottie
-                    animationData={stickerAnimations[id]}
-                    loop={true}
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* CAPTION */}
         {customCaption && (
           <p
@@ -497,32 +430,6 @@ export function LastGameWrap({
         )}
 
       </div>
-
-      {/* ANIMATIONS */}
-      <style>{`
-        @keyframes shineMove {
-          0% {
-            transform: translateX(-140%) skewX(-18deg);
-            opacity: 0;
-          }
-
-          15% {
-            opacity: 1;
-          }
-
-          50% {
-            transform: translateX(140%) skewX(-18deg);
-            opacity: 1;
-          }
-
-          100% {
-            transform: translateX(140%) skewX(-18deg);
-            opacity: 0;
-          }
-        }
-
-        
-      `}</style>
 
     </div>
   )

@@ -1,4 +1,3 @@
-import Lottie from 'lottie-react'
 import wrappedMvpBg from '../../assets/Wrapped/wrapped-mvp-bg.png'
 import watermarkImg from '../../assets/Wrapped/wrapped-watermark.png'
 
@@ -7,8 +6,6 @@ interface MvpMomentWrapProps {
   currentFont: { id: string; label: string; style: React.CSSProperties };
   currentScheme: { bg: string; accent: string; secondary: string };
   textStyle: React.CSSProperties;
-  selectedStickers: string[];
-  stickerAnimations: Record<string, any>;
   customCaption: string;
   elements: Record<string, boolean>;
 }
@@ -18,8 +15,6 @@ export function MvpMomentWrap({
   currentFont,
   currentScheme,
   textStyle,
-  selectedStickers,
-  stickerAnimations,
   customCaption,
   elements,
 }: MvpMomentWrapProps) {
@@ -88,38 +83,6 @@ export function MvpMomentWrap({
         {/* PLAYER CARD */}
         {elements.player !== false && (
         <div className="relative flex items-center justify-center mb-8">
-
-          {/* OUTER GLOW */}
-          <div
-            className="absolute inset-0 rounded-[30px]"
-            style={{
-              border: '1px solid rgba(253,185,39,0.16)',
-              boxShadow: '0 0 32px rgba(253,185,39,0.18)',
-              animation: 'pulseGlow 4s ease-in-out infinite',
-            }}
-          />
-
-          {/* SHINEE EFFECT */}
-          <div
-            className="absolute inset-0 overflow-hidden rounded-[30px] pointer-events-none"
-          >
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: `
-                  linear-gradient(
-                    120deg,
-                    transparent 20%,
-                    rgba(255,255,255,0.10) 45%,
-                    transparent 70%
-                  )
-                `,
-                transform: 'translateX(-120%)',
-                animation: 'shine 5s infinite',
-              }}
-            />
-          </div>
 
           {/* CARD */}
           <div
@@ -191,23 +154,6 @@ export function MvpMomentWrap({
               boxShadow: '0 0 18px rgba(253,185,39,0.35)',
             }}
           >
-
-            {/* BADGE SHINE EFFECT */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `
-                  linear-gradient(
-                    120deg,
-                    transparent 20%,
-                    rgba(255,255,255,0.22) 45%,
-                    transparent 70%
-                  )
-                `,
-                transform: 'translateX(-120%)',
-                animation: 'shine 4s infinite',
-              }}
-            />
 
             <div className="flex items-center gap-1 relative">
               <span
@@ -323,30 +269,6 @@ export function MvpMomentWrap({
 
         </div>
 
-        {/* STICKERS */}
-        {selectedStickers.length > 0 && (
-          <div className="flex gap-3 justify-center mb-5">
-            {selectedStickers.map((id) => (
-              <div
-                key={id}
-                style={{
-                  width: 64,
-                  height: 64,
-                  filter: 'drop-shadow(1px 1px 3px rgba(0,0,0,0.5))',
-                }}
-              >
-                {stickerAnimations[id] && (
-                  <Lottie
-                    animationData={stickerAnimations[id]}
-                    loop={true}
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* CAPTION */}
         {customCaption && (
           <p
@@ -380,35 +302,6 @@ export function MvpMomentWrap({
 
       </div>
 
-      {/* ANIMACIONES */}
-      <style>{`
-        @keyframes shine {
-          0% {
-            transform: translateX(-120%);
-          }
-
-          100% {
-            transform: translateX(120%);
-          }
-        }
-
-        @keyframes pulseGlow {
-          0% {
-            opacity: 0.5;
-            transform: scale(1);
-          }
-
-          50% {
-            opacity: 1;
-            transform: scale(1.02);
-          }
-
-          100% {
-            opacity: 0.5;
-            transform: scale(1);
-          }
-        }
-      `}</style>
     </>
   )
 }

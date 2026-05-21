@@ -70,7 +70,7 @@ export function OnboardingSteps() {
             Make It Yours
           </h3>
           <p style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-Gris-Oscuro)', fontSize: '14px', lineHeight: '21px' }}>
-            Choose your theme, colors and style to match your Lakers pride
+            Pick your wrap type, theme and style to make it uniquely yours
           </p>
         </div>
 
@@ -90,7 +90,7 @@ export function OnboardingSteps() {
             Download & Save
           </h3>
           <p style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-Gris-Oscuro)', fontSize: '14px', lineHeight: '21px' }}>
-            Save your wrap and share it with your friends
+            Download your wrap as a 9:16 image, perfectly sized for Instagram Stories
           </p>
         </div>
 
@@ -107,20 +107,20 @@ export function OnboardingSteps() {
             </div>
           </div>
           <h3 style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-morado-oscuro)', fontSize: '20px', fontWeight: 500 }} className="mb-2">
-            Share Everywhere
+            Share on Instagram
           </h3>
           <p style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-Gris-Oscuro)', fontSize: '14px', lineHeight: '21px' }}>
-            Show off your Lakers moments across your socials
+            Post it to your Instagram Story and show the world you're a Lakers fan
           </p>
         </div>
       </div>
 
       {/* EL PRO TIP */}
-      <div className="mt-4 md:mt-5 lg:mt-6 bg-gradient-to-r from-[#FDB927]/10 via-[#FDB927]/20 to-[#FDB927]/10 border-l-4 border-[#FDB927] p-3 md:p-3.5 lg:p-4 rounded-lg flex items-start md:items-center gap-2.5 md:gap-3">
-        <span className="material-symbols-outlined text-[#FDB927] shrink-0 text-[24px] md:text-[28px] lg:text-[32px]">
+      <div className="mt-6 bg-[#FDB927]/10 border-l-4 border-[#FDB927] p-3 rounded-lg flex items-start gap-3">
+        <span className="material-symbols-outlined text-[#FDB927] shrink-0" style={{ fontSize: '18px' }}>
           star
         </span>
-        <p className="text-[12px] md:text-[13px] lg:text-sm" style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-morado-oscuro)', lineHeight: '18px' }}>
+        <p style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-morado-oscuro)', fontSize: '13px', lineHeight: '1.5' }}>
           <strong>Pro Tip:</strong> The more you personalize, the more legendary your wrap becomes
         </p>
       </div>

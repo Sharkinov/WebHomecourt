@@ -1,7 +1,3 @@
-import confettiAnim from '../../assets/Wrapped/Lottie-Animations/Confetti.json'
-import crownAnim from '../../assets/Wrapped/Lottie-Animations/Crown.json'
-import fireAnim from '../../assets/Wrapped/Lottie-Animations/Fire.json'
-import trophyAnim from '../../assets/Wrapped/Lottie-Animations/Trophy.json'
 import { LastGameWrap } from './LastGameWrap'
 import { MvpMomentWrap } from './MvpMomentWrap'
 import { TopStatsWrap } from './TopStatsWrap'
@@ -10,7 +6,6 @@ interface PreviewContainerProps {
   selectedWrap: string;
   selectedStickers: string[];
   customCaption: string;
-  frameStyle: string;
   currentFont: { id: string; label: string; style: React.CSSProperties };
   currentScheme: { bg: string; accent: string; secondary: string };
   wrapData: any;
@@ -28,7 +23,7 @@ interface PreviewContainerProps {
 
 export function PreviewContainer({
   selectedWrap, selectedStickers,
-  customCaption, frameStyle,
+  customCaption,
   currentFont, currentScheme, wrapData,
   getBackgroundStyle,
   textStyle,
@@ -37,48 +32,18 @@ export function PreviewContainer({
   elements,
   droppedStickers, setDroppedStickers,
 }: PreviewContainerProps) {
-  const stickerAnimations: Record<string, any> = {
-    trophy: trophyAnim,
-    fire: fireAnim,
-    crown: crownAnim,
-    confetti: confettiAnim,
-  }
 
   return (
     <div className="w-full flex flex-col min-w-0">
       <div className="bg-white rounded-[15px] p-4 md:p-6 shadow-[0_2px_12px_rgba(59,25,92,0.08)] flex flex-col">
-        <style>{`
-          @keyframes fadeInScale {
-            0% { opacity: 0; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1); }
-          }
-        `}</style>
-
         {/* HEADER */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-morado-oscuro/10 mb-6">
-          <div>
-            <h2 style={{ fontFamily: 'Graphik, sans-serif', fontSize: '18px', fontWeight: 600, color: 'var(--color-texto-oscuro)', margin: 0 }}>
-              Preview
-            </h2>
-            <p style={{ fontFamily: 'Graphik, sans-serif', fontSize: '12px', color: 'var(--color-morado-bajo)', margin: 0 }}>
-              Customize and generate your wrap
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full border"
-              style={{ fontFamily: 'Graphik, sans-serif', background: 'rgba(253,185,39,0.12)',
-                borderColor: 'rgba(253,185,39,0.35)', color: '#8a6200', letterSpacing: '0.03em' }}
-            >
-              9:16 · Story
-            </span>
-            <span
-              className="text-[12px] font-medium px-2.5 py-0.5 rounded-full bg-Background"
-              style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-morado-bajo)' }}
-            >
-              1080 × 1920
-            </span>
-          </div>
+        <div className="pb-3.5 border-b border-morado-oscuro/10 mb-6">
+          <h2 style={{ fontFamily: 'Graphik, sans-serif', fontSize: '18px', fontWeight: 600, color: 'var(--color-texto-oscuro)', margin: 0 }}>
+            Preview
+          </h2>
+          <p style={{ fontFamily: 'Graphik, sans-serif', fontSize: '12px', color: 'var(--color-morado-bajo)', margin: 0 }}>
+            Customize and download your wrap
+          </p>
         </div>
 
         {/* STORY CARD */}
@@ -87,23 +52,10 @@ export function PreviewContainer({
             ref={wrapRef}
             className="relative overflow-hidden flex flex-col rounded-[20px] transition-all duration-300 mx-auto"
             style={{
-              width: 'clamp(280px, 55vw, 590px)',
+              width: 'clamp(280px, 55vw, 450px)',
               aspectRatio: '9/16',
               ...getBackgroundStyle(),
               boxShadow: '0 25px 70px rgba(59,25,92,0.4), 0 8px 20px rgba(0,0,0,0.25)',
-              ...(frameStyle === 'classic' && {
-                border: '6px solid white',
-                boxShadow: `0 0 0 12px ${currentScheme.accent}, 0 20px 60px rgba(59,25,92,0.35)`,
-              }),
-              ...(frameStyle === 'modern' && {
-                border: `3px solid ${currentScheme.accent}`,
-                outline: '2px solid white',
-                outlineOffset: '-7px',
-              }),
-              ...(frameStyle === 'neon' && {
-                border: `3px solid ${currentScheme.accent}`,
-                boxShadow: `0 0 20px ${currentScheme.accent}, inset 0 0 20px ${currentScheme.accent}40`,
-              }),
             }}
             onDragOver={(e) => {
               e.preventDefault()
@@ -129,8 +81,6 @@ export function PreviewContainer({
                   wrapData={wrapData}
                   currentFont={currentFont}
                   textStyle={textStyle}
-                  selectedStickers={selectedStickers}
-                  stickerAnimations={stickerAnimations}
                   customCaption={customCaption}
                   elements={elements}
                 />
@@ -143,8 +93,6 @@ export function PreviewContainer({
                   currentFont={currentFont}
                   currentScheme={currentScheme}
                   textStyle={textStyle}
-                  selectedStickers={selectedStickers}
-                  stickerAnimations={stickerAnimations}
                   customCaption={customCaption}
                   elements={elements}
                 />
@@ -157,8 +105,6 @@ export function PreviewContainer({
                   currentFont={currentFont}
                   textStyle={textStyle}
                   elements={elements}
-                  selectedStickers={selectedStickers}
-                  stickerAnimations={stickerAnimations}
                   customCaption={customCaption}
                 />
               )}

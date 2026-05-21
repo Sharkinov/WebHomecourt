@@ -1,9 +1,4 @@
 import type { WrapBackground } from '../../hooks/Wrapped/useWrapBackgrounds.ts'
-import Lottie from 'lottie-react'
-import confettiAnim from '../../assets/Wrapped/Lottie-Animations/Confetti.json'
-import crownAnim from '../../assets/Wrapped/Lottie-Animations/Crown.json'
-import fireAnim from '../../assets/Wrapped/Lottie-Animations/Fire.json'
-import trophyAnim from '../../assets/Wrapped/Lottie-Animations/Trophy.json'
 import happysticker1 from '../../assets/Wrapped/Stickers/happysticker1-wrapped.png'
 import happysticker2 from '../../assets/Wrapped/Stickers/happysticker2-wrapped.png'
 import happysticker3 from '../../assets/Wrapped/Stickers/happysticker3-wrapped.png'
@@ -41,12 +36,6 @@ interface WrapElement {
   icon: React.ReactNode
 }
 
-interface LottieSticker {
-  id: string
-  label: string
-  anim: object
-}
-
 interface CustomizeStyleContainerProps {
   backgrounds: WrapBackground[]
   backgroundsLoading: boolean
@@ -64,20 +53,10 @@ interface CustomizeStyleContainerProps {
   colorSchemes: ColorScheme[]
   colorScheme: string
   setColorScheme: (value: string) => void
-  frames: Frame[]
-  frameStyle: string
-  setFrameStyle: (value: string) => void
   elements: Record<string, boolean>
   toggleElement: (id: string) => void
   selectedWrap: string
 }
-
-const stickers: LottieSticker[] = [
-  { id: 'trophy', label: 'Trophy', anim: trophyAnim },
-  { id: 'fire', label: 'On Fire', anim: fireAnim },
-  { id: 'crown', label: 'Crown', anim: crownAnim },
-  { id: 'confetti', label: 'Confetti', anim: confettiAnim },
-]
 
 const dragDropStickers = [
   { id: 'happy1', src: happysticker1, label: 'Happy 1' },
@@ -160,7 +139,6 @@ export function CustomizeStyleContainer({
   fonts, fontStyle, setFontStyle,
   customCaption, setCustomCaption,
   colorSchemes, colorScheme, setColorScheme,
-  frames, frameStyle, setFrameStyle,
   elements, toggleElement,
   selectedWrap,
 }: CustomizeStyleContainerProps) {
@@ -168,19 +146,16 @@ export function CustomizeStyleContainer({
   const wrapElements = ALL_WRAP_ELEMENTS.filter(el => availableElementIds.includes(el.id))
 
   return (
-    <div className="bg-white rounded-[15px] p-4 md:p-5 overflow-y-auto shadow-[0_2px_12px_rgba(59,25,92,0.08)] w-full lg:flex-1 lg:max-w-[800px]">
+    <div className="bg-white rounded-[15px] p-4 md:p-5 overflow-y-auto shadow-[0_2px_12px_rgba(59,25,92,0.08)] w-full">
 
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-4 pb-3 border-b border-morado-oscuro/10">
-        <h3 style={{ fontFamily: 'Graphik, sans-serif', fontSize: '18px', fontWeight: 600, color: 'var(--color-texto-oscuro)' }}>
+      <div className="mb-4 pb-3 border-b border-morado-oscuro/10">
+        <h3 style={{ fontFamily: 'Graphik, sans-serif', fontSize: '18px', fontWeight: 600, color: 'var(--color-texto-oscuro)', margin: 0 }}>
           Customize Style
         </h3>
-        <span
-          className="bg-Background px-2.5 py-0.5 rounded-full font-medium"
-          style={{ fontFamily: 'Graphik, sans-serif', fontSize: '11px', color: 'var(--color-morado-bajo)' }}
-        >
-          Live preview
-        </span>
+        <p style={{ fontFamily: 'Graphik, sans-serif', fontSize: '12px', color: 'var(--color-morado-bajo)', margin: 0 }}>
+          See your changes live as you customize
+        </p>
       </div>
 
       {/* BACKGROUND */}
@@ -194,32 +169,6 @@ export function CustomizeStyleContainer({
           </div>
         ) : (
           <div className="flex gap-2 overflow-x-auto py-2 -mx-1 px-1" style={{ scrollbarWidth: 'thin' }}>
-            {/* color schemes como backgrounds */}
-            {colorSchemes.map((scheme) => (
-              <button
-                key={scheme.id}
-                onClick={() => {
-                  setColorScheme(scheme.id)
-                  setSelectedBackground(null)
-                  setBackgroundPattern('solid')
-                }}
-                className={`relative h-[72px] w-[72px] flex-shrink-0 rounded-[12px] transition-all ${
-                  colorScheme === scheme.id && !selectedBackground
-                    ? 'ring-2 ring-[#FDB927] shadow-[0_0_0_4px_rgba(253,185,39,0.2)]'
-                    : 'hover:ring-2 hover:ring-morado-fosfo/40'
-                }`}
-                style={{ background: scheme.accent }}
-              >
-                {colorScheme === scheme.id && !selectedBackground && (
-                  <div className="absolute top-1.5 right-1.5 w-[18px] h-[18px] bg-[#FDB927] rounded-full flex items-center justify-center z-10">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--color-morado-oscuro)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                  </div>
-                )}
-              </button>
-            ))}
-
             {/* IMAGE BACKGROUNDS */}
             {backgrounds.map((bg) => (
               <button
@@ -323,53 +272,6 @@ export function CustomizeStyleContainer({
         </div>
       </div>
 
-      {/* ANIMACIONES */}
-      <div className="mb-5">
-        <SectionLabel>Animations</SectionLabel>
-        <div
-          className="flex gap-2 overflow-x-auto -mx-1 px-1"
-          style={{ scrollbarWidth: 'thin', paddingTop: '4px', paddingBottom: '8px' }}
-        >
-          {stickers.map((sticker) => {
-            const active = selectedStickers.includes(sticker.id)
-            return (
-              <button
-                key={sticker.id}
-                onClick={() => toggleSticker(sticker.id)}
-                className={`h-[88px] w-[80px] flex-shrink-0 rounded-[12px] flex flex-col items-center justify-center gap-1 transition-all ${
-                  active
-                    ? 'bg-morado-oscuro/10 ring-2 ring-[#FDB927] shadow-[0_0_0_3px_rgba(253,185,39,0.15)]'
-                    : 'bg-[#F7F5FA] hover:bg-[#EDE8F7]'
-                }`}
-              >
-                <Lottie
-                  animationData={sticker.anim}
-                  loop={true}
-                  style={{ width: 50, height: 50 }}
-                />
-                <span style={{
-                  fontFamily: 'Graphik, sans-serif',
-                  fontSize: '10px',
-                  fontWeight: 500,
-                  color: active ? 'var(--color-morado-oscuro)' : 'var(--color-Gris-Oscuro)',
-                }}>
-                  {sticker.label}
-                </span>
-              </button>
-            )
-          })}
-        </div>
-        <p style={{
-          fontFamily: 'Graphik, sans-serif',
-          fontSize: '11px',
-          color: 'var(--color-morado-bajo)',
-          marginTop: '8px',
-          fontStyle: 'italic'
-        }}>
-          The animation will not move when you download your wrap
-        </p>
-      </div>
-
       {/* CAPTION */}
       <div className="mb-5">
         <SectionLabel>Your Caption</SectionLabel>
@@ -418,22 +320,6 @@ export function CustomizeStyleContainer({
               onClick={() => setFontStyle(font.id)}
             >
               {font.label}
-            </PillButton>
-          ))}
-        </div>
-      </div>
-
-      {/* FRAME STYLE */}
-      <div className="mb-5">
-        <SectionLabel>Frame Style</SectionLabel>
-        <div className="flex gap-2">
-          {frames.map((frame) => (
-            <PillButton
-              key={frame.id}
-              active={frameStyle === frame.id}
-              onClick={() => setFrameStyle(frame.id)}
-            >
-              {frame.label}
             </PillButton>
           ))}
         </div>

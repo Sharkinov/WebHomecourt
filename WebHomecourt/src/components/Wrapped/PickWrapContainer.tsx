@@ -49,14 +49,10 @@ export function PickWrapContainer({ selectedWrap, setSelectedWrap }: PickWrapCon
   return (
     <div className="bg-white rounded-[15px] p-4 md:p-5 lg:p-6 shadow-[0_2px_12px_rgba(59,25,92,0.08)]">
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-4 pb-3 border-b border-morado-oscuro/10">
+      <div className="mb-4 pb-3 border-b border-morado-oscuro/10">
         <h3 style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-texto-oscuro)', fontSize: '18px', fontWeight: 600, margin: 0 }}>
           Pick a Wrap
         </h3>
-        <span style={{ fontFamily: 'Graphik, sans-serif', fontSize: '12px', color: 'var(--color-Gris-Oscuro)' }}
-          className="bg-Background px-2.5 py-0.5 rounded-full">
-          3 types
-        </span>
       </div>
 
       {/* OPCIONES */}
