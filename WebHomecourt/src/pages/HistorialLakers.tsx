@@ -69,12 +69,12 @@ function HistorialLakers() {
 
   return (
     <div>
-      <Nav current="Historial Lakers" />
+      <Nav current="Match History" />
 
       <div className="w-full max-w-7xl mx-auto px-4 py-8">
         <BannerReput
-          title="HISTORIAL DE PARTIDOS"
-          subtitle="Revisa tus partidos anteriores y tu desempeño"
+          title="MATCH HISTORY"
+          subtitle="Review your previous games and performance"
           logoSrc="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1YSBBAgbPAWr0ku6NAqV0yojAo5q9RrpLww&s"
           logoAlt="Lakers logo"
           reputationValue={pageState.reputation}
@@ -99,7 +99,7 @@ function HistorialLakers() {
         <div className="mt-8 flex flex-col gap-6">
           {loading ? (
             <div className="flex items-center justify-center py-16 text-sm text-Gris-Oscuro">
-              Cargando estadísticas...
+              Loading statistics...
             </div>
           ) : (
             <>

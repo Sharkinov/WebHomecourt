@@ -162,7 +162,7 @@ function LakersCourt() {
   return (
     <div>
       <div >
-        <Nav current="LakersCourt" />
+        <Nav current="Lakers Court" />
       </div>
       <div className='px-4 py-5 bg-zinc-100 w-full sm:px-6 lg:px-14'>
         <BannerReput
