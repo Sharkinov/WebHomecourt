@@ -45,8 +45,8 @@ export function PreviewContainer({
   }
 
   return (
-    <div className="flex-1 max-w-[900px] flex-shrink-0 flex flex-col">
-      <div className="bg-white rounded-[15px] p-6 shadow-[0_2px_12px_rgba(59,25,92,0.08)] flex flex-col">
+    <div className="w-full flex flex-col min-w-0">
+      <div className="bg-white rounded-[15px] p-4 md:p-6 shadow-[0_2px_12px_rgba(59,25,92,0.08)] flex flex-col">
         <style>{`
           @keyframes fadeInScale {
             0% { opacity: 0; transform: scale(0.95); }
@@ -85,8 +85,9 @@ export function PreviewContainer({
         <div className="pt-4 pb-4 flex items-center justify-center">
           <div
             ref={wrapRef}
-            className="relative overflow-hidden flex flex-col rounded-[20px] transition-all duration-300 w-[590px] mx-auto"
+            className="relative overflow-hidden flex flex-col rounded-[20px] transition-all duration-300 mx-auto"
             style={{
+              width: 'clamp(280px, 55vw, 590px)',
               aspectRatio: '9/16',
               ...getBackgroundStyle(),
               boxShadow: '0 25px 70px rgba(59,25,92,0.4), 0 8px 20px rgba(0,0,0,0.25)',

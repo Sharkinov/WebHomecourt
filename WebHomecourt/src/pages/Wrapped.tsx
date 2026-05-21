@@ -205,7 +205,7 @@ export function WrappedPage() {
   return (
     <div className="min-h-screen bg-Background">
       <Nav current="Wrapped" />
-      <div className="px-4 md:px-14 py-5 bg-Background w-full">
+      <div className="px-4 md:px-6 xl:px-14 py-5 bg-Background w-full">
 
         {/* HEADER */}
         <div className="mb-8">
@@ -238,9 +238,10 @@ export function WrappedPage() {
         {/* ONBOARDING */}
         <OnboardingSteps />
 
-        <div className="flex gap-8 items-start">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
           {/* PREVIEW */}
-          <PreviewContainer
+          <div className="w-full lg:flex-1 min-w-0">
+           <PreviewContainer
             selectedWrap={selectedWrap}
             selectedStickers={selectedStickers}
             customCaption={customCaption}
@@ -259,9 +260,10 @@ export function WrappedPage() {
             droppedStickers={droppedStickers}
             setDroppedStickers={setDroppedStickers}
           />
+          </div>
 
           {/* SIDEBAR DE LOS CONTROLES */}
-          <div className="w-[500px] flex-shrink-0 flex flex-col gap-8">
+          <div className="w-full lg:w-[clamp(340px,28vw,500px)] flex-shrink-0 flex flex-col gap-6 lg:gap-8">
             <PickWrapContainer
               selectedWrap={selectedWrap}
               setSelectedWrap={setSelectedWrap}

@@ -25,7 +25,7 @@ export function OnboardingSteps() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-white to-Background rounded-[15px] p-8 mb-8 border border-morado-oscuro/10 shadow-sm relative">
+    <div className="bg-gradient-to-br from-white to-Background rounded-[15px] p-4 md:p-6 lg:p-8 mb-6 lg:mb-8 border border-morado-oscuro/10 shadow-sm relative">
       <button
         onClick={() => setIsCollapsed(true)}
         className="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-morado-oscuro/10 flex items-center justify-center transition-colors"
@@ -36,21 +36,21 @@ export function OnboardingSteps() {
         </svg>
       </button>
       <h2
-        className="text-center mb-6"
-        style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-texto-oscuro)', fontSize: '24px', fontWeight: 400 }}
+        className="text-center mb-4 md:mb-6"
+        style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-texto-oscuro)', fontSize: '20px', fontWeight: 400 }}
       >
         Create Your Lakers Wrapped
         <br />
-        <span style={{ fontSize: '18px', color: 'var(--color-Gris-Oscuro)' }}>in 3 simple steps</span>
+        <span style={{ fontSize: '16px', color: 'var(--color-Gris-Oscuro)' }}>in 3 simple steps</span>
       </h2>
 
-      <div className="grid grid-cols-3 gap-8 relative">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 relative">
         {/* FLECHA 1 */}
-        <svg className="absolute text-morado-oscuro/30" style={{ top: '28px', left: 'calc(33% - 36px)', width: '72px', height: '40px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="hidden lg:block absolute text-morado-oscuro/30" style={{ top: '28px', left: 'calc(33% - 36px)', width: '72px', height: '40px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
         </svg>
         {/* FLECHA 2 */}
-        <svg className="absolute text-morado-oscuro/30" style={{ top: '28px', right: 'calc(33% - 36px)', width: '72px', height: '40px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="hidden lg:block absolute text-morado-oscuro/30" style={{ top: '28px', right: 'calc(33% - 36px)', width: '72px', height: '40px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
         </svg>
 
@@ -116,11 +116,11 @@ export function OnboardingSteps() {
       </div>
 
       {/* EL PRO TIP */}
-      <div className="mt-6 bg-gradient-to-r from-[#FDB927]/10 via-[#FDB927]/20 to-[#FDB927]/10 border-l-4 border-[#FDB927] p-4 rounded-lg flex items-center gap-3">
-        <span className="material-symbols-outlined text-[#FDB927] shrink-0" style={{ fontSize: '32px' }}>
+      <div className="mt-4 md:mt-5 lg:mt-6 bg-gradient-to-r from-[#FDB927]/10 via-[#FDB927]/20 to-[#FDB927]/10 border-l-4 border-[#FDB927] p-3 md:p-3.5 lg:p-4 rounded-lg flex items-start md:items-center gap-2.5 md:gap-3">
+        <span className="material-symbols-outlined text-[#FDB927] shrink-0 text-[24px] md:text-[28px] lg:text-[32px]">
           star
         </span>
-        <p style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-morado-oscuro)', fontSize: '14px', lineHeight: '21px' }}>
+        <p className="text-[12px] md:text-[13px] lg:text-sm" style={{ fontFamily: 'Graphik, sans-serif', color: 'var(--color-morado-oscuro)', lineHeight: '18px' }}>
           <strong>Pro Tip:</strong> The more you personalize, the more legendary your wrap becomes
         </p>
       </div>

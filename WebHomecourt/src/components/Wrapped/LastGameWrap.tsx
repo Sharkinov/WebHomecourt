@@ -39,21 +39,21 @@ export function LastGameWrap({
     >
 
       {/* CONTENT */}
-      <div className="relative z-10 w-full h-full px-5 flex flex-col items-center justify-center">
+      <div className="relative z-10 w-full h-full px-3 md:px-4 lg:px-5 flex flex-col items-center justify-center">
 
         {/* HEADER */}
-        <div className="flex flex-col items-center mb-10">
+        <div className="flex flex-col items-center mb-6 md:mb-8 lg:mb-10">
 
           <span
+            className="text-[10px] md:text-xs lg:text-sm"
             style={{
               fontFamily: 'Graphik, sans-serif',
-              fontSize: '14px',
               fontWeight: 700,
               color: won
                 ? 'rgba(253,185,39,0.88)'
                 : 'rgba(255,120,120,0.88)',
               letterSpacing: '0.22em',
-              marginBottom: '12px',
+              marginBottom: '8px',
             }}
           >
             LAST GAME
@@ -63,10 +63,10 @@ export function LastGameWrap({
 
             {/* TITULO */}
             <span
+              className="text-[42px] md:text-[56px] lg:text-[72px]"
               style={{
                 position: 'relative',
                 fontFamily: 'Graphik, sans-serif',
-                fontSize: '72px',
                 fontWeight: 900,
                 fontStyle: 'italic',
                 lineHeight: 1,
@@ -92,17 +92,15 @@ export function LastGameWrap({
         </div>
 
         {/* MATCHUP */}
-        <div className="w-full flex items-start justify-center gap-4 mb-8">
+        <div className="w-full flex items-start justify-center gap-2 md:gap-3 lg:gap-4 mb-5 md:mb-6 lg:mb-8">
 
           {/* TEAM 1 */}
           <div className="flex-1 flex flex-col items-center">
 
             {/* TEAM CARD */}
             <div
-              className="relative overflow-hidden rounded-[28px] flex flex-col items-center justify-center"
+              className="relative overflow-hidden rounded-[18px] md:rounded-[22px] lg:rounded-[28px] flex flex-col items-center justify-center w-[100px] h-[120px] md:w-[120px] md:h-[145px] lg:w-[148px] lg:h-[176px]"
               style={{
-                width: '148px',
-                height: '176px',
 
                 background: `
                   linear-gradient(
@@ -145,10 +143,8 @@ export function LastGameWrap({
 
               {/* LOGO */}
               <div
-                className="flex items-center justify-center rounded-full mb-3"
+                className="flex items-center justify-center rounded-full mb-2 md:mb-2.5 lg:mb-3 w-[55px] h-[55px] md:w-[68px] md:h-[68px] lg:w-[82px] lg:h-[82px]"
                 style={{
-                  width: '82px',
-                  height: '82px',
                   background: 'rgba(255,255,255,0.04)',
                   border: '1px solid rgba(255,255,255,0.08)',
                 }}
@@ -157,13 +153,13 @@ export function LastGameWrap({
                   <img
                     src={wrapData.lastGame.lakersLogoUrl}
                     alt="LAL"
-                    className="w-[72px] h-[72px] object-contain"
+                    className="w-[48px] h-[48px] md:w-[60px] md:h-[60px] lg:w-[72px] lg:h-[72px] object-contain"
                   />
                 ) : (
                   <span
+                    className="text-base md:text-lg lg:text-[22px]"
                     style={{
                       color: '#FDB927',
-                      fontSize: '22px',
                       fontWeight: 800,
                     }}
                   >
@@ -174,13 +170,13 @@ export function LastGameWrap({
 
               {/* ABBR */}
               <span
+                className="text-sm md:text-base lg:text-lg"
                 style={{
                   fontFamily: 'Graphik, sans-serif',
-                  fontSize: '18px',
                   fontWeight: 800,
                   color: '#FDB927',
                   letterSpacing: '0.08em',
-                  marginBottom: '3px',
+                  marginBottom: '2px',
                 }}
               >
                 {wrapData.lastGame.team1}
@@ -188,12 +184,12 @@ export function LastGameWrap({
 
               {/* NAME */}
               <span
+                className="text-[9px] md:text-[10px] lg:text-xs"
                 style={{
                   fontFamily: 'Graphik, sans-serif',
-                  fontSize: '12px',
                   color: 'rgba(255,255,255,0.48)',
                   textAlign: 'center',
-                  padding: '0 10px',
+                  padding: '0 6px',
                 }}
               >
                 {wrapData.lastGame.lakersName}
@@ -202,7 +198,7 @@ export function LastGameWrap({
             </div>
 
             {/* SCORE */}
-            <div className="relative mt-3 flex items-center justify-center">
+            <div className="relative mt-2 md:mt-2.5 lg:mt-3 flex items-center justify-center">
 
               {/* SPARKLEE EFFECT */}
               <div
@@ -225,10 +221,10 @@ export function LastGameWrap({
               />
 
               <span
+                className="text-[60px] md:text-[80px] lg:text-[100px]"
                 style={{
                   position: 'relative',
                   fontFamily: 'Graphik, sans-serif',
-                  fontSize: '100px',
                   fontWeight: 900,
                   lineHeight: 1,
                   color: 'white',
@@ -255,22 +251,20 @@ export function LastGameWrap({
           </div>
 
           {/* VS */}
-          <div className="flex flex-col items-center justify-center pt-[82px]">
+          <div className="flex flex-col items-center justify-center pt-[56px] md:pt-[68px] lg:pt-[82px]">
 
             <div
-              className="flex items-center justify-center rounded-full"
+              className="flex items-center justify-center rounded-full w-[32px] h-[32px] md:w-[38px] md:h-[38px] lg:w-[44px] lg:h-[44px]"
               style={{
-                width: '44px',
-                height: '44px',
                 background: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 backdropFilter: 'blur(8px)',
               }}
             >
               <span
+                className="text-[10px] md:text-xs lg:text-[13px]"
                 style={{
                   fontFamily: 'Graphik, sans-serif',
-                  fontSize: '13px',
                   fontWeight: 700,
                   color: 'rgba(255,255,255,0.38)',
                   letterSpacing: '0.08em',
@@ -287,10 +281,8 @@ export function LastGameWrap({
 
             {/* TEAM CARD */}
             <div
-              className="relative overflow-hidden rounded-[28px] flex flex-col items-center justify-center"
+              className="relative overflow-hidden rounded-[18px] md:rounded-[22px] lg:rounded-[28px] flex flex-col items-center justify-center w-[100px] h-[120px] md:w-[120px] md:h-[145px] lg:w-[148px] lg:h-[176px]"
               style={{
-                width: '148px',
-                height: '176px',
 
                 background: `
                   linear-gradient(
@@ -313,10 +305,8 @@ export function LastGameWrap({
 
               {/* LOGO */}
               <div
-                className="flex items-center justify-center rounded-full mb-3"
+                className="flex items-center justify-center rounded-full mb-2 md:mb-2.5 lg:mb-3 w-[55px] h-[55px] md:w-[68px] md:h-[68px] lg:w-[82px] lg:h-[82px]"
                 style={{
-                  width: '82px',
-                  height: '82px',
                   background: 'rgba(255,255,255,0.04)',
                   border: '1px solid rgba(255,255,255,0.06)',
                 }}
@@ -325,13 +315,13 @@ export function LastGameWrap({
                   <img
                     src={wrapData.lastGame.opponentLogoUrl}
                     alt={wrapData.lastGame.team2}
-                    className="w-[72px] h-[72px] object-contain"
+                    className="w-[48px] h-[48px] md:w-[60px] md:h-[60px] lg:w-[72px] lg:h-[72px] object-contain"
                   />
                 ) : (
                   <span
+                    className="text-base md:text-lg lg:text-[22px]"
                     style={{
                       color: 'rgba(255,255,255,0.75)',
-                      fontSize: '22px',
                       fontWeight: 800,
                     }}
                   >
@@ -342,13 +332,13 @@ export function LastGameWrap({
 
               {/* ABBR */}
               <span
+                className="text-sm md:text-base lg:text-lg"
                 style={{
                   fontFamily: 'Graphik, sans-serif',
-                  fontSize: '18px',
                   fontWeight: 800,
                   color: 'rgba(255,255,255,0.82)',
                   letterSpacing: '0.08em',
-                  marginBottom: '3px',
+                  marginBottom: '2px',
                 }}
               >
                 {wrapData.lastGame.team2}
@@ -356,12 +346,12 @@ export function LastGameWrap({
 
               {/* NAME */}
               <span
+                className="text-[9px] md:text-[10px] lg:text-xs"
                 style={{
                   fontFamily: 'Graphik, sans-serif',
-                  fontSize: '12px',
                   color: 'rgba(255,255,255,0.48)',
                   textAlign: 'center',
-                  padding: '0 10px',
+                  padding: '0 6px',
                 }}
               >
                 {wrapData.lastGame.opponentName || wrapData.lastGame.team2}
@@ -370,12 +360,12 @@ export function LastGameWrap({
             </div>
 
             {/* SCORE */}
-            <div className="relative mt-3 flex items-center justify-center">
+            <div className="relative mt-2 md:mt-2.5 lg:mt-3 flex items-center justify-center">
 
               <span
+                className="text-[60px] md:text-[80px] lg:text-[100px]"
                 style={{
                   fontFamily: 'Graphik, sans-serif',
-                  fontSize: '100px',
                   fontWeight: 900,
                   lineHeight: 1,
                   color: 'rgba(255,255,255,0.45)',
@@ -401,9 +391,8 @@ export function LastGameWrap({
         {/* DATE + STADIUM */}
         {elements.stadium !== false && (
         <div
-          className="flex items-center justify-center gap-3 mb-5 rounded-[24px]"
+          className="flex items-center justify-center gap-2 md:gap-2.5 lg:gap-3 mb-3 md:mb-4 lg:mb-5 rounded-[16px] md:rounded-[20px] lg:rounded-[24px] px-3 py-2.5 md:px-4 md:py-3 lg:px-[22px] lg:py-[18px]"
           style={{
-            padding: '18px 22px',
             background: `
               linear-gradient(
                 135deg,
@@ -421,9 +410,9 @@ export function LastGameWrap({
         >
 
           <span
+            className="text-[10px] md:text-xs lg:text-[13px]"
             style={{
               fontFamily: 'Graphik, sans-serif',
-              fontSize: '13px',
               color: 'rgba(255,255,255,0.52)',
             }}
           >
@@ -431,9 +420,8 @@ export function LastGameWrap({
           </span>
 
           <div
+            className="w-1 h-1"
             style={{
-              width: '4px',
-              height: '4px',
               borderRadius: '999px',
               background: won
                 ? 'rgba(253,185,39,0.55)'
@@ -442,9 +430,9 @@ export function LastGameWrap({
           />
 
           <span
+            className="text-[10px] md:text-xs lg:text-[13px]"
             style={{
               fontFamily: 'Graphik, sans-serif',
-              fontSize: '13px',
               fontWeight: 700,
               color: 'rgba(255,255,255,0.75)',
             }}
@@ -457,13 +445,12 @@ export function LastGameWrap({
 
         {/* STICKERS */}
         {selectedStickers.length > 0 && (
-          <div className="flex gap-3 justify-center mb-4">
+          <div className="flex gap-2 md:gap-2.5 lg:gap-3 justify-center mb-3 md:mb-3.5 lg:mb-4">
             {selectedStickers.map((id) => (
               <div
                 key={id}
+                className="w-[50px] h-[50px] md:w-[60px] md:h-[60px] lg:w-[70px] lg:h-[70px]"
                 style={{
-                  width: 70,
-                  height: 70,
                   filter: 'drop-shadow(1px 1px 3px rgba(0,0,0,0.5))',
                 }}
               >
@@ -482,15 +469,14 @@ export function LastGameWrap({
         {/* CAPTION */}
         {customCaption && (
           <p
+            className="text-[10px] md:text-[11px] lg:text-xs mb-3 md:mb-4 lg:mb-[18px]"
             style={{
               color: 'rgba(255,255,255,0.68)',
-              fontSize: '12px',
               fontStyle: 'italic',
               fontFamily: 'Graphik, sans-serif',
-              lineHeight: '18px',
+              lineHeight: '16px',
               textAlign: 'center',
               maxWidth: '75%',
-              marginBottom: '18px',
             }}
           >
             {customCaption}
@@ -502,8 +488,8 @@ export function LastGameWrap({
           <img
             src={watermarkImg}
             alt="Lakers Homecourt"
+            className="h-[50px] md:h-[60px] lg:h-[70px]"
             style={{
-              height: '70px',
               objectFit: 'contain',
               opacity: 0.5,
             }}

@@ -168,7 +168,7 @@ export function CustomizeStyleContainer({
   const wrapElements = ALL_WRAP_ELEMENTS.filter(el => availableElementIds.includes(el.id))
 
   return (
-    <div className="bg-white rounded-[15px] p-5 overflow-y-auto shadow-[0_2px_12px_rgba(59,25,92,0.08)] flex-1 max-w-[800px]">
+    <div className="bg-white rounded-[15px] p-4 md:p-5 overflow-y-auto shadow-[0_2px_12px_rgba(59,25,92,0.08)] w-full lg:flex-1 lg:max-w-[800px]">
 
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-morado-oscuro/10">
