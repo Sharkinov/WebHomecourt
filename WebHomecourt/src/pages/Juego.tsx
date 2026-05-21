@@ -85,7 +85,7 @@ function Juego() {
   useEffect(() => {
     if (isLoaded && session?.access_token && session?.user?.id) {
       sendMessage(
-        "SupabaseConfig",
+        "AppManager",
         "ReceiveSessionFromReact",
         JSON.stringify({
           jwt: session.access_token,
