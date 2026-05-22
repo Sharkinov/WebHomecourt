@@ -173,7 +173,7 @@ function Collection() {
             <div className="px-4 py-5 md:px-14 md:py-5 bg-Background w-full">
                 {/* Title comp */}
                 <BannerGeneral
-                    title="Laker Card Collection"
+                    title="Lakers Cards Collection"
                     subtitle="Collect virtual cards to show off your favorite team and power up your Dunk Royale gameplay"
                 />
 

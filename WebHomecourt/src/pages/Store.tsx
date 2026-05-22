@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Nav from '../components/Nav/Nav.tsx'
 import StoreRow from '../components/LakerStore/StoreRow.tsx'
 import Button from '../components/button.tsx';
+import BannerGeneral from '../components/BannerGeneral';
 import { useStoreUser } from '../hooks/useStoreUser.ts'; // Hook for store user
 import type { StorePacks } from "../hooks/storeTypes.ts"; // Types
 
@@ -89,17 +90,17 @@ function Store() {
       <Nav current="Lakers Cards" creditsOverride={storeUser?.credits} />
       <div className="px-4 py-5 md:px-14 md:py-5 bg-Background w-full">
         {/* Title comp */}
-        <div className="w-full px-3 py-4 md:px-5 md:py-7 bg-violet-950 rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-black/25 flex flex-col justify-left items-left overflow-hidden">
-          <h1 className="justify-start text-white title1">Laker Card Store</h1>
-          <p className="justify-start text-white mt-2 text-xl text-zinc-300">Unlock more cards featuring your favorite players and improve your Dunk Royale game deck</p>
-        </div>
-        
+        <BannerGeneral
+          title="Lakers Cards Store"
+          subtitle="Unlock more cards featuring your favorite players and improve your Dunk Royale game deck"
+        />
+
         {/* View store vs colection */}
         <div className="flex flex-col mx-2 gap-6 md:gap-0 md:mx-0 md:flex-row justify-left mt-10">
           <Button
             text="STORE"
             type="primary"
-            onClick={() => {} }
+            onClick={() => { }}
             className="text-2xl font-semibold px-10 md:mr-8"
           />
 
