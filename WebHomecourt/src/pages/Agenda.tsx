@@ -5,6 +5,7 @@ import Button from '../components/button.tsx';
 import GameListItem from '../components/Agenda/GameListItem.tsx';
 import GameUpcoming from '../components/Agenda/GameUpcomingItem.tsx';
 import Calendar from '../components/Agenda/Calendar.tsx';
+import BannerGeneral from '../components/BannerGeneral';
 
 // Actually used in query
 export type GameItem = {
@@ -108,16 +109,16 @@ function Agenda() {
   const upcomingGames = allGames.filter(
     (game) => new Date(game.start_date) >= currentDate || game.game_end_time === null
   );
-  
+
   return (
     <div>
       <Nav current="Agenda" />
       <div className="px-4 py-5 md:px-14 md:py-5 bg-zinc-100 w-full">
         {/* Title comp */}
-        <div className="w-full px-3 py-4 md:px-5 md:py-7 bg-violet-950 rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-black/25 flex md:justify-between items-center overflow-hidden">
-          <h1 className="justify-start text-white title1">Agenda</h1>
-          {/*<h3 className="justify-start text-white">2025 - 2026 Season</h3>*/}
-        </div>
+        <BannerGeneral
+          title="Agenda"
+          subtitle=""
+        />
 
         {/* Setup for agenda and matches list using grid */}
         <div className="flex flex-col md:grid md:grid-cols-6 gap-4 mt-4 ">
@@ -133,13 +134,13 @@ function Agenda() {
           {/* Side list view spanning 4 cols w buttons */}
           <div className="md:col-span-4 bg-transparent p-4">
             {/* Game type toggles*/}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2 md:mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2 md:mb-4">
               <div className="col-span-1 mb-2">
                 <Button
                   text="Upcoming Games"
                   type={showUpcoming ? 'primary' : 'secondary'}
                   onClick={() => setShowUpcoming(true)}
-                  className="w-full"
+                  className="w-full text-2xl"
                 />
               </div>
               <div className="col-span-1 mb-2">
@@ -147,7 +148,7 @@ function Agenda() {
                   text="Past Games"
                   type={!showUpcoming ? 'primary' : 'secondary'}
                   onClick={() => setShowUpcoming(false)}
-                  className="w-full"
+                  className="w-full text-2xl"
                 />
               </div>
             </div>

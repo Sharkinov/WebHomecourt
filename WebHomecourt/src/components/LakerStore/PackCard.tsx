@@ -15,15 +15,16 @@ function PackCard(prop: PackCardProp) {
         <div
             //itemID={prop.itemId} // hola
             key={prop.pack.pack_id}
-            className="w-[18rem] md:w-[25rem] md:h-[15rem] p-4 mb-4 mr-5 bg-white rounded-xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100"
+            className="w-100% md:w-[25rem] md:h-[16rem] p-4 mb-4 mr-5 bg-white rounded-xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100"
         >
             {/* Left side logo and team name, using h full to use full height of container and align button */}
-            <div className="flex flex-row items-stretch mt-2 mb-1">
+            <div className="flex flex-row items-stretch mt-2 mb-1 justify-between">
                 <img
                     src={prop.pack.closed_URL}
                     alt={prop.pack.name}
                     className="w-20 md:w-32 h-auto"
                 />
+
                 {/* Name of pack and cost */}
                 <div className="flex flex-col ml-3 mt-4 w-full">
                     {/* Pack details */}
@@ -47,7 +48,7 @@ function PackCard(prop: PackCardProp) {
                             />
                         ) : (
                             // Not enough credits
-                            < IconButton
+                            <IconButton
                                 type="primarydisable"
                                 leftIcon={
                                     <span className="material-symbols-outlined text-gray-100 text-2xl">payments</span>

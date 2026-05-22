@@ -8,6 +8,7 @@ import Button from '../components/button.tsx';
 import CategorySummary from '../components/Collection/CategorySummary.tsx';
 import CollectionCardRender from '../components/Collection/CollectionCardRender.tsx';
 import FilterBox from '../components/Collection/FilterBox.tsx';
+import BannerGeneral from '../components/BannerGeneral';
 import type { CardSummary, CollectionCard } from '../hooks/Collection/collectionTypes.tsx';
 
 // Handle API call
@@ -171,13 +172,13 @@ function Collection() {
             <Nav current="Lakers Cards" />
             <div className="px-4 py-5 md:px-14 md:py-5 bg-Background w-full">
                 {/* Title comp */}
-                <div className="w-full px-3 py-4 md:px-5 md:py-7 bg-violet-950 rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-black/25 flex flex-col justify-left items-left overflow-hidden">
-                    <h1 className="justify-start text-white title1">Laker Card Collection</h1>
-                    <p className="justify-start text-white mt-2 text-xl text-zinc-300">Collect virtual cards to show off your favorite team and power up your Dunk Royale gameplay!</p>
-                </div>
+                <BannerGeneral
+                    title="Lakers Cards Collection"
+                    subtitle="Collect virtual cards to show off your favorite team and power up your Dunk Royale gameplay"
+                />
 
                 {/* View store vs colection */}
-                <div className="flex flex-col mx-2 gap-6 md:gap-0 md:mx-0 md:flex-row justify-left mt-10 mb-6">
+                <div className="flex flex-col mx-2 gap-6 md:gap-0 md:mx-0 md:flex-row justify-left mt-6 mb-6">
                     <Button
                         text="STORE"
                         type="secondary"
@@ -223,7 +224,7 @@ function Collection() {
                 {/* Card filters */}
                 <div className="w-full px-5 py-2.5 mt-8 bg-white rounded-2xl">
                     <h4 className="mt-1 mb-3 ml-1">Filter Collection</h4>
-                    <div className="flex flex-col md:flex-row gap-4 md:gap-2">
+                    <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-2 mb-2">
                         {/* Custom filter box q toma el nombre del rectangle, las options, pasa currently selected one y cuando se pica otro, se cambia la option */}
                         <FilterBox
                             filterTitle='Card Rarity Category'
