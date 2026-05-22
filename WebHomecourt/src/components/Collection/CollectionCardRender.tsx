@@ -45,7 +45,7 @@ function CollectionCardRender({ card, userId }: CardProp) {
     const [cardFront, setCardFront] = useState(true);
     const [dunkRoyale, setDunkRoyale] = useState(card.added_deck); // Stores default if it's a part of dunk royale to update otherwise from here front end
     const [showMessage, setShowMessage] = useState(false); // To show success or error over card for two seconds
-    const [messageType, setMessageType] = useState<"success" | "error" | "info">("info"); // Default for info, can use other ones tho
+    const [messageType, setMessageType] = useState<"success" | "error" | "info">("info"); // Default for info, can use other ones tho so just as a fallback
     const [messageTitle, setMessageTitle] = useState("");
     const [message, setMessage] = useState("");
 
@@ -106,7 +106,7 @@ function CollectionCardRender({ card, userId }: CardProp) {
                 <IconButton
                     onClick={() => { handleClick() }}
                     leftMaterial={!dunkRoyale ? "add_circle" : "remove_circle"}
-                    text="Dunk Royale wishlist"
+                    text="Dunk Royale bench"
                     className="w-90% mt-4"
                 />
 

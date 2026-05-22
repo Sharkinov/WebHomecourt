@@ -155,7 +155,7 @@ function Collection() {
         displayCards = displayCards.filter((card) => card.user_owned);
     } else if (statusFilter === "Locked") {
         displayCards = displayCards.filter((card) => !card.user_owned);
-    } else if (statusFilter === "Wishlist") {
+    } else if (statusFilter === "Bench") {
         displayCards = displayCards.filter((card) => card.added_deck);
     } else if (statusFilter === "Deck") {
         displayCards = displayCards.filter((card) => card.in_deck);
@@ -234,7 +234,7 @@ function Collection() {
 
                         <FilterBox
                             filterTitle='Card Status'
-                            filterOptions={["All", "Unlocked", "Locked", "Wishlist", "Deck"]}
+                            filterOptions={["All", "Unlocked", "Locked", "Bench", "Deck"]}
                             selectedOption={statusFilter}
                             onSelect={setStatusFilter}
                         />
