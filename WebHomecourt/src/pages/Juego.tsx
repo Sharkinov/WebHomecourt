@@ -110,44 +110,57 @@ return (
       </div>
 
       <div className="w-full bg-white rounded-2xl p-7 shadow-sm ring-1 ring-gray-200 mb-8">
-        <div className="flex items-center gap-2 mb-6">
-          <div className="bg-morado-oscuro rounded-full w-10 h-10 flex items-center justify-center">
-            <span className="material-symbols-outlined text-amarillo-lakers text-[20px]">
-              auto_stories
-            </span>
+    <div className="flex items-center gap-2 mb-6">
+      <div className="bg-morado-oscuro rounded-full w-10 h-10 flex items-center justify-center">
+        <span className="material-symbols-outlined text-amarillo-lakers text-[20px]">
+          auto_stories
+        </span>
+      </div>
+      <h2 className="text-morado-oscuro font-semibold!">How To Play</h2>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {instructions?.map((section) => (
+        <div
+          key={section.id}
+          className="flex flex-col border-b md:border-b-0 md:border-r border-gray-200 last:border-none pb-4 md:pb-0 pr-0 md:pr-4"
+        >
+          <h4 className="text-morado-oscuro mb-2">{section.id}. {section.title}</h4>
+          <div className="flex flex-row items-center gap-2 flex-1">
+            <p className="text-gray-700 text-sm flex-1 leading-snug!">{section.description}</p>
+            {section.image && (
+              <img
+                src={section.image}
+                className="h-32 w-32 object-contain shrink-0"
+              />
+            )}
           </div>
-          <h2 className="text-morado-oscuro font-semibold!">How To Play</h2>
         </div>
-        <div className="flex flex-col md:flex-row gap-4">
-          {instructions?.map(section => (
-            <div key={section.id} className="flex-1 border-b md:border-b-0 md:border-r border-gray-200 last:border-none pb-4 md:pb-0 pr-0 md:pr-4 flex flex-col">
-              <h4 className="text-morado-oscuro mb-1">{section.id}. {section.title}</h4>
-              <div className="flex items-center gap-2">
-                <p className="text-gray-700 mx-2">{section.description}</p>
-                {section.image && (
-                  <img src={section.image} className="h-32 w-32 object-contain shrink-0" />
-                )}
+      ))}
+
+      <div className="flex flex-col pl-0 lg:pl-4 border-gray-200">
+        <h4 className="text-morado-oscuro mb-2">4. Tips</h4>
+        <div className="flex flex-row items-center gap-2 flex-1">
+          <div className="flex flex-col gap-3 flex-1">
+            {tips?.map((tip, i) => (
+              <div key={tip.id} className="flex items-start gap-2">
+                <span className="bg-morado-oscuro text-white text-xs rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5">
+                  {i + 1}
+                </span>
+                <p className="text-gray-700 ">{tip.description}</p>
               </div>
-            </div>
-          ))}
-          <div className="flex-1 pl-0 md:pl-4">
-            <h4 className="text-morado-oscuro mb-1">4. Tips</h4>
-            <div className="flex items-center">
-              <div className="flex flex-col gap-3 mt-2">
-                {tips?.map((tip, i) => (
-                  <div key={tip.id} className="flex items-center gap-2">
-                    <span className="bg-morado-oscuro text-white text-xs rounded-full w-6 h-6 flex items-center justify-center shrink-0">{i + 1}</span>
-                    <p className="text-gray-700 mx-1">{tip.description}</p>
-                  </div>
-                ))}
-              </div>
-              {tips?.find(t => t.image)?.image && (
-                <img src={tips.find(t => t.image)!.image} className="h-32 w-32 object-contain shrink-0" />
-              )}
-            </div>
+            ))}
           </div>
+          {tips?.find(t => t.image)?.image && (
+            <img
+              src={tips.find(t => t.image)!.image}
+              className="h-32 w-32 object-contain shrink-0"
+            />
+          )}
         </div>
       </div>
+    </div>
+  </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <div className="flex justify-center">

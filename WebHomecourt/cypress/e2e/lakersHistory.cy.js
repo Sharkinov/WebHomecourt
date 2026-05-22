@@ -6,8 +6,8 @@ describe('Lakers History', () => {
 
     // Checks that the page loads the visible in English 
     it('loads the lakers history page', () => {
-        cy.contains('MATCH HISTORY').should('be.visible') // Título
-        cy.contains("Review your previous games and performance").should('be.visible') // Sub-title elem
+        cy.contains('LAKERS COURT - HISTORY').should('be.visible') // Título
+        cy.contains("Check your progress and enjoy your games").should('be.visible') // Sub-title elem
         cy.contains('YOUR REPUTATION').should('be.visible') // Button 
         cy.contains('Past Games').should('be.visible')
     })
