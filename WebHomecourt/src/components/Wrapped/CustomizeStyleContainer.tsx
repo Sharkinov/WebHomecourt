@@ -24,10 +24,10 @@ interface ColorScheme {
   secondary: string;
 }
 
-interface Frame {
-  id: string;
-  label: string;
-}
+// interface Frame {
+//   id: string;
+//   label: string;
+// }
 
 interface WrapElement {
   id: string
@@ -134,11 +134,11 @@ const PillButton = ({ active, onClick, children }: { active: boolean; onClick: (
 
 export function CustomizeStyleContainer({
   backgrounds, backgroundsLoading, selectedBackground, applyBackground,
-  setSelectedBackground, setBackgroundPattern,
-  selectedStickers, toggleSticker,
+  // setSelectedBackground, setBackgroundPattern,
+  // selectedStickers, toggleSticker,
   fonts, fontStyle, setFontStyle,
   customCaption, setCustomCaption,
-  colorSchemes, colorScheme, setColorScheme,
+  // colorSchemes, colorScheme, setColorScheme,
   elements, toggleElement,
   selectedWrap,
 }: CustomizeStyleContainerProps) {

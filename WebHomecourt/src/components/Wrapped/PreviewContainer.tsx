@@ -22,7 +22,7 @@ interface PreviewContainerProps {
 }
 
 export function PreviewContainer({
-  selectedWrap, selectedStickers,
+  selectedWrap, // selectedStickers,
   customCaption,
   currentFont, currentScheme, wrapData,
   getBackgroundStyle,
