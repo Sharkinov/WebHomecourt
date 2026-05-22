@@ -1,37 +1,27 @@
-import { useState, useEffect } from 'react';
 import { useAuth } from "../context/AuthContext";
-import { supabase } from "../lib/supabase";
 import type { StoreUser } from "./storeTypes.ts";
 
-// Data that is needed to set which user it is and whether they are signed in, fetched from db
+// Store screens use the same credits source as the navbar to avoid duplicate fetches.
 export function useStoreUser() {
-  const { user } = useAuth();
-  const [storeUser, setStoreUser] = useState<StoreUser>({
-    user_id: null,
-    credits: 0,
-    signedIn: false
-  });
+  const { user, credits, setCredits } = useAuth();
 
-  useEffect(() => {
-    if (!user) {
-      setStoreUser({ user_id: null, credits: 0, signedIn: false });
-      return;
-    }
-    supabase
-      .from("user_laker")
-      .select("credits")
-      .eq("user_id", user.id)
-      .single()
-      .then(({ data, error }) => {
-        if (error || !data) {
-            // Didn't fidn a match, means not logged in
-          setStoreUser({ user_id: user.id, credits: 0, signedIn: true }); 
-        } else {
-            // Establishes the info from db
-          setStoreUser({ user_id: user.id, credits: data.credits, signedIn: true });
-        }
-      });
-  }, [user]);
+  const storeUser: StoreUser = {
+    user_id: user?.id ?? null,
+    credits,
+    signedIn: !!user,
+  };
+
+  const setStoreUser = (value: StoreUser | ((prev: StoreUser) => StoreUser)) => {
+    setCredits((prevCredits) => {
+      const previous: StoreUser = {
+        user_id: user?.id ?? null,
+        credits: prevCredits,
+        signedIn: !!user,
+      };
+      const next = typeof value === "function" ? value(previous) : value;
+      return next.credits;
+    });
+  };
 
   return { storeUser, setStoreUser };
 }

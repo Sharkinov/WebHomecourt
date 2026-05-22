@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Nav from '../components/Nav/Nav';
 import ProfileButton from '../components/Perfil/ProfileButton';
 import { useAuth } from '../context/AuthContext';
 import { getFriendsList, sendFriendRequest, getPendingRequests, acceptFriendRequest, denyFriendRequest, removeFriend, type Friend, type FriendRequest } from '../lib/Perfil/friends';
@@ -123,10 +122,6 @@ export default function MyFriends() {
 
   return (
     <div className="min-h-screen bg-Background">
-      <div>
-        <Nav current="Perfil" />
-      </div>
-
       <div className="px-4 sm:px-8 md:px-12 lg:px-[60px] py-4 sm:py-[20px]">
         <div className="bg-morado-oscuro w-full h-[138px] flex flex-col justify-center px-8 rounded-2xl mb-6">
           <h1 className="text-white text-[40px] font-black leading-normal mb-2" style={{ fontFamily: 'Graphik' }}>

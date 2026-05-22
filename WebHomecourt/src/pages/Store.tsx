@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from "../lib/supabase"
 import { useNavigate } from 'react-router-dom';
-import Nav from '../components/Nav/Nav.tsx'
 import StoreRow from '../components/LakerStore/StoreRow.tsx'
 import Button from '../components/button.tsx';
 import BannerGeneral from '../components/BannerGeneral';
@@ -87,7 +86,6 @@ function Store() {
 
   return (
     <div>
-      <Nav current="Lakers Cards" creditsOverride={storeUser?.credits} />
       <div className="px-4 py-5 md:px-14 md:py-5 bg-Background w-full">
         {/* Title comp */}
         <BannerGeneral

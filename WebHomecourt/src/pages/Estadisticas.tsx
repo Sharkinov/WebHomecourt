@@ -1,4 +1,3 @@
-import Nav from '../components/Nav/Nav'
 import { useLocation } from 'react-router-dom'
 import PointsByPlayerGraph from '../components/Stats/PointsByPlayerGraph';
 import FGAvsFGMGraph from '../components/Stats/FGAvsFGMGraph';
@@ -48,7 +47,6 @@ function Estadisticas() {
 
   return (
     <div >
-      <Nav current="Estadistica" />
       <div className='px-4 md:px-14 py-5 bg-zinc-100 w-full'>
         <div>
           {juego !== null && <MarcadorActivo juego={juego} />}

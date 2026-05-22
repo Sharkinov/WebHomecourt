@@ -1,4 +1,3 @@
-import Nav from '../components/Nav/Nav.tsx'
 import StatsCards from '../components/Admin/StatsCards'
 import UserReports from '../components/Admin/UserReports';
 import ActiveEvents from '../components/Admin/ActiveEvents.tsx'
@@ -132,7 +131,6 @@ export const getUserHistory = async (userId: string, currentReportId: string) =>
 function Admin() {
   return (
     <div >
-      <Nav current="Admin" />
       <div className="px-4 md:px-14 py-5 pb-10 bg-zinc-100 w-full">
 
         {/* Header */}

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { supabase } from "../lib/supabase";
-import Nav from '../components/Nav/Nav.tsx';
 import Button from '../components/button.tsx';
 import GameListItem from '../components/Agenda/GameListItem.tsx';
 import GameUpcoming from '../components/Agenda/GameUpcomingItem.tsx';
@@ -112,7 +111,6 @@ function Agenda() {
 
   return (
     <div>
-      <Nav current="Agenda" />
       <div className="px-4 py-5 md:px-14 md:py-5 bg-zinc-100 w-full">
         {/* Title comp */}
         <BannerGeneral

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import Nav from '../components/Nav/Nav'
 import ProfileHeader from "../components/Perfil/ProfileHeader"
 import FriendsList from "../components/Perfil/FriendsList"
 import VotingActivity from "../components/Perfil/VotingActivity"
@@ -76,10 +75,6 @@ function Perfil() {
 
     return (
         <div className="min-h-screen bg-[#F3F2F5]">
-            <div >
-                <Nav current="Perfil" />
-            </div>
-
             <div className="px-4 sm:px-8 md:px-12 lg:px-[60px] py-4 sm:py-[20px] flex flex-col gap-4 sm:gap-6 md:gap-[31px]">
                 <ProfileHeader userId={profileUserId!} isOwnProfile={isOwnProfile} />
 

@@ -24,6 +24,7 @@ import MyFriends from './pages/MyFriends';
 import { WrappedPage } from './pages/Wrapped';
 import Comparison from './pages/Comparison';
 import Collection from './pages/Collection';
+import AppLayout from './components/AppLayout';
 
 import { useAuth } from './context/AuthContext'
 import { Navigate } from 'react-router-dom'
@@ -43,30 +44,32 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/agenda" element={<Agenda />} />
-        <Route path="/brackets" element={<Brackets />} />
-        <Route path="/estadisticas" element={<Estadisticas />} />
-        <Route path="/lakerscourt" element={<LakersCourt />} />
-        <Route path="/juego" element={<Juego />} />
-        <Route path="/store" element={<Store />} />
-        <Route path="/perfil" element={<Perfil />} />
-        <Route path="/perfil/:userId" element={<Perfil />} />
-        <Route path="/my-friends" element={<MyFriends />} />
-        <Route path="/admin" element={<AdminRoute><Admin/></AdminRoute>} />
-        <Route path="/admin/report" element={<AdminRoute><ReportDetails /></AdminRoute>} />
-        <Route path="/admin/event" element={<AdminRoute><EventReportDetails /></AdminRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/session" element={<UserSession />} /> 
-        <Route path="/editar-perfil" element={<EditarPerfil />} />
         <Route path="/complete-register" element={<CompleteRegister />} />
-        <Route path="/admin/monitor" element={<AdminRoute><Monitor /></AdminRoute>} />
         <Route path='/edit-avatar' element={<EditAvatar/>}></Route>
-        <Route path='/wrapped' element={<WrappedPage />} />
-        <Route path='/comparison' element={<Comparison/>}></Route>
-        <Route path='/historial-lakers' element={<HistorialLakers/>}></Route>
-        <Route path='/collection' element={<Collection/>}></Route>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/agenda" element={<Agenda />} />
+          <Route path="/brackets" element={<Brackets />} />
+          <Route path="/estadisticas" element={<Estadisticas />} />
+          <Route path="/lakerscourt" element={<LakersCourt />} />
+          <Route path="/juego" element={<Juego />} />
+          <Route path="/store" element={<Store />} />
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/perfil/:userId" element={<Perfil />} />
+          <Route path="/my-friends" element={<MyFriends />} />
+          <Route path="/admin" element={<AdminRoute><Admin/></AdminRoute>} />
+          <Route path="/admin/report" element={<AdminRoute><ReportDetails /></AdminRoute>} />
+          <Route path="/admin/event" element={<AdminRoute><EventReportDetails /></AdminRoute>} />
+          <Route path="/editar-perfil" element={<EditarPerfil />} />
+          <Route path="/admin/monitor" element={<AdminRoute><Monitor /></AdminRoute>} />
+          <Route path='/wrapped' element={<WrappedPage />} />
+          <Route path='/comparison' element={<Comparison/>}></Route>
+          <Route path='/historial-lakers' element={<HistorialLakers/>}></Route>
+          <Route path='/collection' element={<Collection/>}></Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   )

@@ -1,4 +1,3 @@
-import Nav from '../components/Nav/Nav'
 import Map from "../components/LakerCourt/Map"
 import CourtTournaments from '../components/LakerCourt/CourtTournaments'
 import RatePlayersPanel from '../components/LakerCourt/RatePlayersPanel'
@@ -161,9 +160,6 @@ function LakersCourt() {
 
   return (
     <div>
-      <div >
-        <Nav current="Lakers Court" />
-      </div>
       <div className='px-4 py-5 bg-zinc-100 w-full sm:px-6 lg:px-14'>
         <BannerReput
           title="LAKERS COURT"

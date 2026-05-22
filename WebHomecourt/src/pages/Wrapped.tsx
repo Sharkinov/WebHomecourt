@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import html2canvas from 'html2canvas';
-import Nav from '../components/Nav/Nav.tsx';
 import BannerGeneral from '../components/BannerGeneral.tsx';
 import { OnboardingSteps } from '../components/Wrapped/OnboardingStepsContainer.tsx';
 import { PreviewContainer } from '../components/Wrapped/PreviewContainer.tsx';
@@ -193,7 +192,6 @@ export function WrappedPage() {
 
   return (
     <div className="min-h-screen bg-Background">
-      <Nav current="Wrapped" />
       <div className="px-4 md:px-6 xl:px-14 py-5 bg-Background w-full">
         <div className="mb-8">
           <BannerGeneral

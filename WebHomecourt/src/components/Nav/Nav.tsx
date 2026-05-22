@@ -1,6 +1,5 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { getUserById, type User } from '../User'
 import { useAuth } from '../../context/AuthContext'
 import Sidebar from './Sidebar.tsx'
 import { getPendingRequests, type FriendRequest } from '../../lib/Perfil/friends'
@@ -18,35 +17,20 @@ const pages = [
   { label: 'Wrapped', path: '/wrapped' }, 
 ]
 
-interface NavProps {
-  current: string
-  creditsOverride?: number
-}
-
-function Nav({ current, creditsOverride }: NavProps) {
+function Nav() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [navHeight, setNavHeight] = useState(72)
   const navRef = useRef<HTMLDivElement>(null)
 
   const navigate = useNavigate()
-  const { user: authUser, userType } = useAuth()
-
-  const [user, setUser] = useState<User | null>(null)
+  const { pathname } = useLocation()
+  const { user: authUser, userType, credits, photoUrl } = useAuth()
 
   // Notifications state
   const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([])
   const [showNotifications, setShowNotifications] = useState(false)
   const [lastSeenCount, setLastSeenCount] = useState(0)
   const notificationRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const loadUser = async () => {
-      if (!authUser?.id) return
-      const data = await getUserById(authUser.id)
-      setUser(data)
-    }
-    loadUser()
-  }, [authUser?.id])
 
   useEffect(() => {
     const loadNotifications = async () => {
@@ -94,9 +78,16 @@ function Nav({ current, creditsOverride }: NavProps) {
 
   const navPages = userType === 1 ? [...pages, { label: 'Admin', path: '/admin' }] : pages
 
-  const credits = typeof creditsOverride === 'number' ? creditsOverride : user?.credits ?? 0
-
   const hasNewNotifications = pendingRequests.length > lastSeenCount
+
+  const isActivePage = (path: string) => {
+    if (path === '/') return pathname === '/'
+    if (path === '/admin') return pathname.startsWith('/admin')
+    if (path === '/store') return pathname === '/store' || pathname === '/collection'
+    return pathname === path
+  }
+
+  const current = navPages.find((p) => isActivePage(p.path))?.label ?? ''
 
   return (
     <>
@@ -122,7 +113,7 @@ function Nav({ current, creditsOverride }: NavProps) {
 
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
             {navPages.map((p) => {
-              const isCurrent = p.label === current
+              const isCurrent = isActivePage(p.path)
               return (
                 <button
                   key={p.path}
@@ -247,7 +238,7 @@ function Nav({ current, creditsOverride }: NavProps) {
             >
               <img
                 className="w-full h-full object-cover"
-                src={user?.photo_url || DEFAULT_AVATAR}
+                src={photoUrl || DEFAULT_AVATAR}
                 alt="User avatar"
               />
             </button>

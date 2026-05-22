@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
-import Nav from '../components/Nav/Nav'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import StatusAlert from '../components/Messages/StatusAlert'
@@ -128,8 +127,6 @@ const Monitor = () => {
           onCancel={() => setShowEndEvent(false)}
         />
 )}
-      <Nav current="Admin" />
-
         {/* Header */}
       <div className="px-4 md:px-14 py-5 mb-10">
         <div className="w-full px-5 py-7 bg-violet-950 rounded-2xl flex items-center gap-3 mb-6">

@@ -1,4 +1,3 @@
-import Nav from '../components/Nav/Nav.tsx'
 import { useEffect, useState } from "react"
 import { supabase } from "../lib/supabase"
 import MarcadorActivo, {getMarcadorActivo, type MarcadorJuego} from '../components/Home/Marcador'
@@ -102,7 +101,6 @@ function Home() {
   console.log(`past game:${pastgame}`);
   return (
     <div>
-    <Nav current="Home" />
     <section className="px-4 md:px-14 py-5 bg-zinc-100 w-full flex flex-col gap-6">
       <div>
         {juego ? (<MarcadorActivo juego={juego} />
