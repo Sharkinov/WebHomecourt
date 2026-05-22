@@ -66,20 +66,31 @@ function Juego() {
     }
 
     const channel = supabase
-      .channel('coronas-juego')
+      .channel(`user_laker:${session.user.id}`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'minigame_match' },
-        () => {
-          void refreshCrowns();
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'user_laker',
+          filter: `user_id=eq.${session.user.id}`,
+        },
+        (payload) => {
+          console.log('Realtime user_laker fired:', payload);
+          const newCrowns = (payload.new as { crowns?: number })?.crowns;
+          if (typeof newCrowns === 'number') {
+            setCrowns(newCrowns);
+          }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Channel status:', status);
+      });
 
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [session]);
+  }, [session?.user?.id]);
 
   useEffect(() => {
     if (isLoaded && session?.access_token && session?.user?.id) {
