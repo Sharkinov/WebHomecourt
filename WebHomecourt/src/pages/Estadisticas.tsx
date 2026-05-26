@@ -11,8 +11,21 @@ import PlayerStatsTable from '../components/Stats/PlayerStatsTable';
 import {getMarcadorByGameId} from '../components/Stats/getMarcadorByGameId';
 import  type {MarcadorJuego} from '../components/Home/Marcador'
 import MarcadorActivo from '../components/Home/Marcador'
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
 
 function Estadisticas() {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const handlePrint = useReactToPrint({
+    contentRef,
+    documentTitle: 'lakers-summary',
+    pageStyle: `
+      @page { margin: 10mm; }
+      @media print {
+        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      }
+    `,
+  });
   const location = useLocation()
   const state = location.state as { game_id?: number } | null
   //Para evitar el broken access control
@@ -49,7 +62,7 @@ function Estadisticas() {
   return (
     <div className="flex flex-col items-center justify-center  ">
       <Nav current="Estadistica" />
-      <div className='px-4 md:px-14 py-5 bg-zinc-100 w-full'>
+      <div  ref={contentRef} id="main-content" className='px-4 md:px-14 py-5 bg-zinc-100 w-full'>
         <div>
           {juego !== null && <MarcadorActivo juego={juego} />}
          
@@ -73,6 +86,14 @@ function Estadisticas() {
         <div className='flex center gap-6 pt-6 '>
           <PlayerStatsTable stats={stats} />
         </div>
+      </div>
+      <div className='flex flex-col items-center justify-center px-4 md:px-14 py-5 bg-zinc-100 w-full'>
+        <button
+          onClick={() => handlePrint()}
+          className='button p-2 rounded-xl text-white bg-morado-lakers'
+        >
+            Descargar PDF
+        </button>
       </div>
     </div>
   )
