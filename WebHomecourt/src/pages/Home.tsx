@@ -8,6 +8,7 @@ import RealtimeChat from '../components/RealtimeChat'
 import PrivateChat from '../components/Home/PrivateChat'
 import ListChats from '../components/Home/ListChats.tsx'
 import type { FriendChat } from '../components/Home/ListChats.tsx'
+import News from '../components/News/new.tsx'
 
 type ChatView = "community" | "private-list" | "private-chat"
 //Obtener el id del ultimo partido
@@ -138,6 +139,7 @@ function Home() {
           )}
         </div>
       </div>
+      <News />
     </section>
     </div>
   )
