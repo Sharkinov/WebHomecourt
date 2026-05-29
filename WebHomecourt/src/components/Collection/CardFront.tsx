@@ -1,9 +1,9 @@
 import { format, parseISO } from 'date-fns'; // For date formattings 
-import type { CollectionCard } from '../../hooks/Collection/collectionTypes.tsx';
+import type { DisplayCard } from '../../hooks/Collection/collectionTypes.tsx';
 import RarityLabelCircle from './RarityLabelCircle.tsx';
 
 type CardProp = {
-    card: CollectionCard;
+    card: DisplayCard;
 }
 
 // Record sirve para poder alt el style and kinda "inject it" depending on the var recieved

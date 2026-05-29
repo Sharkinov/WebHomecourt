@@ -156,11 +156,8 @@ function Agenda() {
               {/* if showUpcoming == true, shows the UpcomingGameItem w upcomingGames list; else shows PastGameItem w pastGames list reversed to show from closer to curr date backwards*/}
               {showUpcoming ? <GameUpcoming games={upcomingGames} currentDate={currentDate} /> : <GameListItem games={pastGames.reverse()} />}
             </div>
-
           </div>
-
         </div>
-
       </div>
     </div>
   )
