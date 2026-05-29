@@ -1,9 +1,9 @@
-import type { CollectionCard } from '../../hooks/Collection/collectionTypes.tsx';
+import type { DisplayCard } from '../../hooks/Collection/collectionTypes.tsx';
 import RarityLabelCircle from './RarityLabelCircle.tsx';
 import CardGameStats from './CardGameStats.tsx';
 
 type CardProp = {
-    card: CollectionCard;
+    card: DisplayCard;
 }
 
 function CardBack({ card }: CardProp) {

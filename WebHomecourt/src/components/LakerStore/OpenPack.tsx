@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "../../lib/supabase"
 import Button from '../button.tsx';
+import type { DisplayWonCard } from '../../hooks/Collection/collectionTypes.tsx';
+import CardFront from '../Collection/CardFront.tsx';
 
 // Visual pack render
 type OpenPackProp = {
@@ -19,22 +21,10 @@ type OpenPackProp = {
     onCreditsUpdated: (newCredits: number) => void; // Todo pq react no puede auto refresh no manches
 }
 
-// Information about wins from the API
-type WonCards = {
-    card_slot: number,
-    luck: number,
-    luck_rarity_id: number,
-    won_card_id: string
-    player_name: string,
-    updated_credits: number, // Useful to check if user can try again or whether they are out
-    random_case: number, // Just for debugging
-    card_rarity_id: number
-}
-
 // Now the actual API logic based on pack they're buying and their id
 async function buyPack(pack_id: number, user_id: string) {
     // Call supabase funct
-    const { data, error } = await supabase.rpc("randomize_cards", {
+    const { data, error } = await supabase.rpc("randomize_display_cards", {
         p_pack: Number(pack_id),
         p_user_id: user_id, // Must add month cause they're 0 based in typescript
     });
@@ -54,17 +44,27 @@ async function buyPack(pack_id: number, user_id: string) {
     console.log("raw data:", JSON.stringify(data, null, 2)) // A ver como se ve lo q fue fetched
 
     // Takes results del data and turns into the CollectedCard obj
-    const cards: WonCards[] = data.map(row => {
+    const cards: DisplayWonCard[] = data.map(row => {
         // Creates the game items 
         return {
+            card_id: row.card_id,
+            player_name: row.player_name,
+            web_url: row.web_url,
+            attack: row.attack,
+            defense: row.defense,
+            velocity: row.velocity,
+            rarity_id: row.rarity_id,
+            rarity_label: row.rarity_label,
+            times_unlocked: row.times_unlocked,
+            first_unlock: row.first_unlock,
+            pack_name: row.pack_name,
+
+            // Extras for display type
             card_slot: row.card_slot, // Pack data empty if no cards are present for that category
             luck: row.luck,
             luck_rarity_id: row.luck_rarity_id,
-            won_card_id: row.won_card_id,
-            player_name: row.player_name,
             updated_credits: row.updated_credits,
             random_case: row.random_case,
-            card_rarity_id: row.card_rarity_id
         }
     });
 
@@ -81,9 +81,12 @@ function OpenPack(prop: OpenPackProp) {
     const [openTextButton, setOpenTextButton] = useState("OPEN"); // To let user complete multiple buys
     const [imageURL, setImageURL] = useState('');
     const [isOpening, setIsOpening] = useState(false);
+    const [viewPrice, setViewPrice] = useState(true); // To show and hide the pack cost once bought
 
     // Temporary variable to get the info from the table
-    //const [wonCards, setWonCards] = useState<WonCards[]>([]);
+    const [wonCards, setWonCards] = useState<DisplayWonCard[]>([]);
+    const [uniqueWonCards, setUniqueWonCards] = useState<DisplayWonCard[]>([]);
+    const [page, setPage] = useState(0);
 
     // Initial function to render the base components
     useEffect(() => {
@@ -92,6 +95,15 @@ function OpenPack(prop: OpenPackProp) {
         setOpenText('Press the pack or the open button to see what you get!');
         setOpenTextButton("OPEN");
     }, [prop.open, prop.packId]);
+
+    // Function to set unique cards once cards have been won
+    useEffect(() => {
+        const uniqueMap = new Map();
+        for (const item of wonCards) {
+            uniqueMap.set(item.card_id, item);
+        }
+        setUniqueWonCards(Array.from(uniqueMap.values()));
+    }, [wonCards]);
 
     // Function to handle inner clicking and switching images
     async function opening() {
@@ -112,30 +124,13 @@ function OpenPack(prop: OpenPackProp) {
             setOpenText("You can almost see the cards now...");
         }
         else if (newCount === 3) {
-            setOpenText("Congrats!");
+            setOpenText(""); // Just eliminates to then render the counter of cards
             setImageURL(""); // Hides image, here will later display the cards won as a sort of board
+            setViewPrice(false); // Hides price 
 
-            // Call api function and saves it
-            /*buyPack(prop.packId, prop.userId).then(cards => setWonCards(cards));
-
-            // The user did not have credits so return was empty... might also happen if connection is lost when opening the pack and supabase fails 
-            if (wonCards.length == 0) {
-                setOpenText("I'm sorry, you cannot afford this pack at the moment. Keep playing to win more credits!");
-                setOpenEnabled(false); // To block user from buying again
-                return;
-            }*/
-
-            // Esto si de chat no sabía como hacer la lectura con validación de length adentro del call
-            /*buyPack(prop.packId, prop.userId).then(cards => {
-                setWonCards(cards);
-                if (!cards || cards.length === 0) {
-                    setOpenText("I'm sorry, you cannot afford this pack at the moment. Keep playing to win more credits!");
-                    setOpenEnabled(false);
-                }
-            });*/
             try {
                 const cards = await buyPack(prop.packId, prop.userId);
-                //setWonCards(cards);
+                setWonCards(cards);
 
                 if (!cards || cards.length === 0) {
                     setOpenText("Sorry, you cannot afford this pack at the moment. Keep playing to win more credits!");
@@ -145,13 +140,21 @@ function OpenPack(prop: OpenPackProp) {
                     return;
                 }
 
+                // Logic to count new cards 
+                const uniqueMap = new Map();
+                for (const item of cards) {
+                    uniqueMap.set(item.card_id, item);
+                }
+                const uniqueCount = uniqueMap.size;
+
                 setImageURL("");
-                setOpenText("Congrats!");
+                setOpenText(`Congratulations, you won ${uniqueCount} new card${uniqueCount !== 1 ? 's' : ''}!`);
                 setOpenTextButton("OPEN AGAIN!");
 
                 const updatedCredits = cards[0]?.updated_credits ?? 0; // Checks first item if they have updated_credits field or otherwise set as 0
                 console.log(`New credits: ${updatedCredits}`);
                 prop.onCreditsUpdated(updatedCredits); // Pass to general store
+
 
                 if (updatedCredits < prop.packCost) {
                     setOpenTextButton(`Not enough credits, you have ${updatedCredits} remaining`);
@@ -166,7 +169,7 @@ function OpenPack(prop: OpenPackProp) {
                 setOpenEnabled(false);
             }
 
-            setIsOpening(false); 
+            setIsOpening(false);
         } else if (newCount > 3) {
             if (!openEnabled) return; // Must have permission to oepn again
 
@@ -176,6 +179,7 @@ function OpenPack(prop: OpenPackProp) {
             setOpenText('Press the pack or the open button to see what you get!');
             setOpenTextButton("OPEN");
             setImageURL(prop.packImg);
+            setViewPrice(true);
         }
         else {
             // Idk fallback smth is wrong
@@ -187,11 +191,15 @@ function OpenPack(prop: OpenPackProp) {
         setIsOpening(false); // Turns off opening state
     }
 
-    // Robando basic struct de pop-up de pantalla Adolfo
+    // Logic to paginate the cards won that were recieved itself
+    const PAGE_SIZE = 1; // Only one card at a time 
+    const totalPages = Math.ceil(uniqueWonCards.length / PAGE_SIZE); // How many pages will be needed rounded up 
+    const paginated = uniqueWonCards.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE); // Divide by pages
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40" />
-            <div className="relative z-10 w-150 rounded-lg bg-white shadow-lg overflow-hidden">
+            <div className="relative z-10 w-[40rem] h-[48rem] rounded-lg bg-white shadow-lg overflow-hidden">
                 {/* Header */}
                 <div className="border-b border-gray-200 px-6 py-6 bg-morado-lakers">
                     <div className="flex items-start justify-between">
@@ -200,7 +208,7 @@ function OpenPack(prop: OpenPackProp) {
                             <p className="justify-start text-white mt-2 text-xl text-zinc-300">{prop.packName}</p>
                         </div>
 
-                        {/* Robado de Adolfo */}
+                        {/* Close button */}
                         <button
                             type="button"
                             onClick={prop.onClose}
@@ -213,69 +221,89 @@ function OpenPack(prop: OpenPackProp) {
 
                     </div>
                 </div>
-                {/* Opening pack content, I need to make it so that after the function to open the pack is done executing, I then do a fetch to get the user credits again and check whether the button to open it should work or whether I should diable from front end*/}
+
+                {/* Opening pack content */}
                 <div className="flex flex-col text-center items-center mt-3">
                     <h5 className="mb-2">{openText}</h5>
 
-                    <div className="flex flex-row w-fit justify-center items-center p-2.5 gap-3.5 mb-3 rounded-2xl outline -outline-offset-1 outline-black/25">
-                        <span className="text-xl">Pack cost: </span>
-                        <span className="material-symbols-outlined text-amarillo-lakers text-2xl pl-3">payments</span>
-                        <span className="pl-3 text-xl">{prop.packCost}</span>
-                    </div>
-
-                    {/*<p>Temp show user {prop.userId} and pack {prop.packId}</p>*/}
+                    {/* Renters price only if hasn't bought a pack yet */}
+                    {viewPrice &&
+                        <div className="flex flex-row w-fit justify-center items-center p-2.5 gap-3.5 mb-3 rounded-2xl outline -outline-offset-1 outline-black/25">
+                            <span className="text-xl">Pack cost: </span>
+                            <span className="material-symbols-outlined text-amarillo-lakers text-2xl pl-3">payments</span>
+                            <span className="pl-3 text-xl">{prop.packCost}</span>
+                        </div>
+                    }
 
                     {/* Opening board space */}
                     <div className="w-150 h-auto px-6">
+                        {/* Actual view area, check if there's a way to expand the thing once opened */}
                         <div className="flex flex-col w-full rounded-lg bg-zinc-100 items-center justify-center mb-4">
                             {imageURL ? (
-                                <img src={imageURL} className="h-75 md:h-75 w-auto animate-[pulse_0.75s_ease-in-out_2]" onClick={openEnabled ? () => opening() : () => {}} />
+                                <img src={imageURL} className="h-96 w-auto animate-[pulse_0.75s_ease-in-out_2]" onClick={openEnabled ? () => opening() : () => { }} />
                             ) : (
-                                <div className="flex flex-col w-150 h-75 max-h-72 text-center items-center justify-start overflow-y-auto py-4 px-2 gap-y-4">
-                                    {/*{wonCards.length > 0 ? (
-                                    wonCards.map((card) => (
-                                        // Usando key composed de slot and then the actual id pq duplicate cards give error
-                                        
-                                        <div key={`${card.card_slot}_${card.won_card_id}`} className="rounded-lg bg-white px-3 py-4">
-                                            <p className="text-xs">{card.card_slot}. Card {card.won_card_id}</p>
-                                            <p>featuring {card.player_name} type {card.card_rarity_id}</p>
+                                // Shows the open cards and arrows to navigate along the cards 
+                                <div className="flex flex-row w-full text-center items-center justify-between py-4 px-2 gap-y-4">
+                                    {/* No left arrow for now so empty div */}
+                                    <div className="flex flex-row justify-right pl-8">
+                                        <div className="flex flex-col justify-center items-center">
+                                            <button
+                                                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                                                disabled={page === 0}
+                                                className="text-black disabled:opacity-30 hover:opacity-75 transition text-8xl px-4"
+                                            >
+                                                ‹
+                                            </button>
+                                            <h5 className="text-lg">Previuos</h5>
                                         </div>
-                                        )
-                                    )) 
-                                    :
-                                    <p></p>
-                                }*/}
+                                    </div>
+
+                                    {/* Shows the cards */}
+                                    {paginated.map((card) => (
+                                        <CardFront card={card} />
+                                    ))}
+
+                                    {/* Button to view next card */}
+                                    <div className="flex flex-row justify-right pr-8">
+                                        <div className="flex flex-col justify-center items-center">
+                                            <button
+                                                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                                                disabled={page >= totalPages - 1}
+                                                className="text-black disabled:opacity-30 hover:opacity-75 transition text-8xl px-4"
+                                            >
+                                                ›
+                                            </button>
+                                            <h5 className="text-lg">Next</h5>
+                                        </div>
+                                    </div>
+
                                 </div>
                             )
                             }
-                            {/* Open manually via button */}
-                            <div className="w-full px-4 md:px-4 pb-4">
+
+                            {/* Open pack manually via button */}
+                            <div className="w-full px-4 md:px-4 pb-4 z-10">
                                 <Button
                                     text={openTextButton}
                                     type={openEnabled ? 'primary' : 'primarydisable'}
                                     //onClick={() => opening()} // Logic to open package
-                                    onClick={openEnabled ? () => opening() : () => {}} // Only let open if they can actually afford to do so
+                                    onClick={openEnabled ? () => opening() : () => { }} // Only let open if they can actually afford to do so
                                     className="w-full"
                                 />
                             </div>
-
                         </div>
                     </div>
-
-                    {/* Cancel button */}
-                    <div className="w-full px-10 pb-4">
-                        <Button
-                            text="Close"
-                            type="secondary"
-                            onClick={prop.onClose}
-                            className="w-full"
-                        />
-                    </div>
-
                 </div>
 
-
-                {/* */}
+                {/* Cancel button */}
+                <div className="w-full px-10 pb-4">
+                    <Button
+                        text="Close"
+                        type="secondary"
+                        onClick={prop.onClose}
+                        className="w-full"
+                    />
+                </div>
             </div>
         </div>
     )
