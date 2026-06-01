@@ -222,7 +222,7 @@ function Collection() {
                 {/* Card filters */}
                 <div className="w-full px-5 py-2.5 mt-8 bg-white rounded-2xl">
                     <h4 className="mt-1 mb-3 ml-1">Filter Collection</h4>
-                    <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-2 mb-2">
+                    <div className="flex flex-col md:flex-row md:justify-left gap-4 mb-2">
                         {/* Custom filter box q toma el nombre del rectangle, las options, pasa currently selected one y cuando se pica otro, se cambia la option */}
                         <FilterBox
                             filterTitle='Card Rarity Category'
@@ -230,6 +230,8 @@ function Collection() {
                             selectedOption={rarityFilter}
                             onSelect={setRarityFilter}
                         />
+
+                        <div className="mr-4"></div>
 
                         <FilterBox
                             filterTitle='Card Status'
