@@ -199,7 +199,7 @@ function OpenPack(prop: OpenPackProp) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40" />
-            <div className="relative z-10 w-[40rem] h-[48rem] rounded-lg bg-white shadow-lg overflow-hidden">
+            <div className="relative z-10 w-[22rem] h-auto md:w-[40rem] md:h-[48rem] rounded-lg bg-white shadow-lg overflow-hidden">
                 {/* Header */}
                 <div className="border-b border-gray-200 px-6 py-6 bg-morado-lakers">
                     <div className="flex items-start justify-between">
@@ -236,7 +236,7 @@ function OpenPack(prop: OpenPackProp) {
                     }
 
                     {/* Opening board space */}
-                    <div className="w-150 h-auto px-6">
+                    <div className="w-95 md:w-150 h-auto px-6">
                         {/* Actual view area, check if there's a way to expand the thing once opened */}
                         <div className="flex flex-col w-full rounded-lg bg-zinc-100 items-center justify-center mb-4">
                             {imageURL ? (
@@ -245,7 +245,7 @@ function OpenPack(prop: OpenPackProp) {
                                 // Shows the open cards and arrows to navigate along the cards 
                                 <div className="flex flex-row w-full text-center items-center justify-between py-4 px-2 gap-y-4">
                                     {/* No left arrow for now so empty div */}
-                                    <div className="flex flex-row justify-right pl-8">
+                                    <div className="flex flex-row justify-right pl-1 pr-1 md:pl-8 md:pr-0">
                                         <div className="flex flex-col justify-center items-center">
                                             <button
                                                 onClick={() => setPage((p) => Math.max(0, p - 1))}
@@ -254,7 +254,7 @@ function OpenPack(prop: OpenPackProp) {
                                             >
                                                 ‹
                                             </button>
-                                            <h5 className="text-lg">Previuos</h5>
+                                            <div className="text-lg">Back</div>
                                         </div>
                                     </div>
 
@@ -264,7 +264,7 @@ function OpenPack(prop: OpenPackProp) {
                                     ))}
 
                                     {/* Button to view next card */}
-                                    <div className="flex flex-row justify-right pr-8">
+                                    <div className="flex flex-row justify-right pl-1 pr-1 md:pl-0 md:pr-8">
                                         <div className="flex flex-col justify-center items-center">
                                             <button
                                                 onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}

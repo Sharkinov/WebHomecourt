@@ -8,7 +8,7 @@ type CardProp = {
 
 function CardBack({ card }: CardProp) {
     return (
-        <div className="w-60 h-96 px-4 py-3 bg-white rounded-2xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100 inline-flex flex-col justify-start items-center px-8">
+        <div className="w-42 h-67.2 md:w-60 md:h-96 px-4 py-3 bg-white rounded-2xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100 inline-flex flex-col justify-start items-center px-8">
             {/* Name of card */}
             <div className="font-semibold text-xl text-center mt-5 mb-2">{card.player_name}</div>
             <RarityLabelCircle
