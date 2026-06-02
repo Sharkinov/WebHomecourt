@@ -15,7 +15,7 @@ function PackCard(prop: PackCardProp) {
         <div
             //itemID={prop.itemId} // hola
             key={prop.pack.pack_id}
-            className="w-100% md:w-[25rem] md:h-[16rem] p-4 mb-4 mr-5 bg-white rounded-xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100"
+            className="w-full md:max-w-[25rem] md:h-[16rem] p-4 mb-4 mr-5 bg-white rounded-xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100"
         >
             {/* Left side logo and team name, using h full to use full height of container and align button */}
             <div className="flex flex-row items-stretch mt-2 mb-1 justify-between">
@@ -26,16 +26,16 @@ function PackCard(prop: PackCardProp) {
                 />
 
                 {/* Name of pack and cost */}
-                <div className="flex flex-col ml-3 mt-4 w-full">
+                <div className="flex flex-col ml-3 mt-4 w-full justify-between">
                     {/* Pack details */}
-                    <div>
+                    <div className="flex flex-col justify-start">
                         <h4 className="font-bold">{prop.pack.pack_name}</h4>
                         <h5 className="font-semibold mb-2">{prop.rowTitle} #{prop.pack.pack_id}</h5>
                         <p className="text-Gris-Oscuro">Win up to {prop.pack.num_cards} cards{prop.cardDesc}</p>
                     </div>
 
                     {/* Align to bottom, decide button to use depending if user can afford it or not */}
-                    <div>
+                    <div className="mb-4">
                         {prop.storeUser.credits >= (prop.pack.cost ?? 0) ? (
                             <IconButton
                                 type="yellow"

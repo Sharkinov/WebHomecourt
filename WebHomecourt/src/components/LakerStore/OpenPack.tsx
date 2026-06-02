@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { supabase } from "../../lib/supabase"
+import { supabase } from "../../lib/supabase";
 import Button from '../button.tsx';
 import type { DisplayWonCard } from '../../hooks/Collection/collectionTypes.tsx';
 import CardFront from '../Collection/CardFront.tsx';
+import CardBack from '../Collection/CardBack.tsx';
 
 // Visual pack render
 type OpenPackProp = {
@@ -88,6 +89,9 @@ function OpenPack(prop: OpenPackProp) {
     const [uniqueWonCards, setUniqueWonCards] = useState<DisplayWonCard[]>([]);
     const [page, setPage] = useState(0);
 
+    // Show back or front 
+    const [cardFront, setCardFront] = useState(true);
+
     // Initial function to render the base components
     useEffect(() => {
         setOpenClickCount(0);
@@ -148,8 +152,10 @@ function OpenPack(prop: OpenPackProp) {
                 const uniqueCount = uniqueMap.size;
 
                 setImageURL("");
-                setOpenText(`Congratulations, you won ${uniqueCount} new card${uniqueCount !== 1 ? 's' : ''}!`);
+                setOpenText(`Congratulations, you won ${uniqueCount} unique card${uniqueCount !== 1 ? 's' : ''}!`);
                 setOpenTextButton("OPEN AGAIN!");
+                setPage(0); 
+                setCardFront(true);
 
                 const updatedCredits = cards[0]?.updated_credits ?? 0; // Checks first item if they have updated_credits field or otherwise set as 0
                 console.log(`New credits: ${updatedCredits}`);
@@ -180,6 +186,8 @@ function OpenPack(prop: OpenPackProp) {
             setOpenTextButton("OPEN");
             setImageURL(prop.packImg);
             setViewPrice(true);
+            setPage(0); 
+            setCardFront(true);
         }
         else {
             // Idk fallback smth is wrong
@@ -262,10 +270,12 @@ function OpenPack(prop: OpenPackProp) {
                                     {/* Shows the cards */}
                                     <div className="md:px-20">
                                         {paginated.map((card) => (
-                                            <CardFront card={card} />
+                                            <div onClick={() => setCardFront((prev) => !prev)} className="flex-1"> 
+                                                {cardFront ? (<CardFront card={card} />) : (<CardBack card={card} />)} 
+                                            </div>
                                         ))}
                                     </div>
-                                    
+
 
                                     {/* Button to view next card */}
                                     <div className="flex flex-row justify-right pl-1 pr-1 md:pl-0 md:pr-8">
