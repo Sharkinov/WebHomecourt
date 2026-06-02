@@ -20,7 +20,7 @@ function CardFront({ card }: CardProp) {
             {/* Image w player and counter */}
             <div className="w-full flex flex-col relative mt-1.5 justify-center items-center px-2">
                 {/* Circle with repeated ownership count */}
-                {card.times_unlocked > 1 && <div className="absolute top-0 right-0 z-10 translate-x-1/4 -translate-y-1/5 w-12 h-6 md:w-16 md:h-7 bg-morado-fosfo rounded-full text-lg md:text-xl text-center text-white">{card.times_unlocked}x</div>}
+                {card.times_unlocked > 1 && <div className="absolute top-0 right-0 z-10 translate-x-1/6 -translate-y-1/5 w-12 h-6 md:w-16 md:h-7 bg-morado-fosfo rounded-full text-lg md:text-xl text-center text-white">{card.times_unlocked}x</div>}
 
                 {/* Image and triangle framing it */}
                 <div className="w-full aspect-square flex flex-col justify-center items-center gap-2.5 overflow-hidden mt-1 text-white text-8xl font-bold relative">
