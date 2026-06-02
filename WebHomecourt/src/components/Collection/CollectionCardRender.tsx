@@ -92,9 +92,9 @@ function CollectionCardRender({ card, userId }: CardProp) {
 
     if (card.user_owned) {
         return (
-            <div className="flex flex-col mb-4 items-center justify-center relative">
+            <div className="flex flex-col mb-4 items-stretch justify-center relative">
                 {/* Card front and back switching  */}
-                <div onClick={() => setCardFront((prev) => !prev)}>
+                <div onClick={() => setCardFront((prev) => !prev)} className="flex-1">
                     {cardFront ? (
                         <CardFront card={card} />
                     ) : (
@@ -107,7 +107,7 @@ function CollectionCardRender({ card, userId }: CardProp) {
                     onClick={() => { handleClick() }}
                     leftMaterial={!dunkRoyale ? "add_circle" : "remove_circle"}
                     text="Dunk Royale bench"
-                    className="w-90% mt-4"
+                    className="w-full mt-4"
                 />
 
                 {/* Show message overlayed temporairly */}

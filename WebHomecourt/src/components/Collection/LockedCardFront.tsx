@@ -7,13 +7,13 @@ type CardProp = {
 
 function LockedCardFront({ card }: CardProp) {
     return (
-        <div className="w-42 h-67.2 md:w-60 md:h-96 px-4 py-3 bg-gris-disabled rounded-2xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100 inline-flex flex-col justify-between items-center">
+        <div className="w-full px-4 py-3 bg-gris-disabled rounded-2xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100 inline-flex flex-col justify-between items-center">
             {/* Question mark */}
-            <div className="w-34 h-39 md:w-44 md:h-52 pl-2.5 bg-Gris-Oscuro flex flex-col justify-center items-center gap-2.5 overflow-hidden mt-4 text-white text-2xl md:text-8xl font-bold">
+            <div className="w-full aspect-square pl-2.5 bg-Gris-Oscuro flex flex-col justify-center items-center gap-2.5 overflow-hidden mt-4 text-white text-2xl md:text-8xl font-bold">
                 ?
             </div>
             {/* Card info */}
-            <div className="font-semibold text-xl text-center mt-1.5 mb-1">{card.player_name}</div>
+            <div className="font-semibold text-base md:text-xl text-center mt-1.5 mb-1 min-h-[3rem] md:min-h-[3.5rem]">{card.player_name}</div>
 
             {/* See if I can align to bottom */}
             <div className="text-center">
