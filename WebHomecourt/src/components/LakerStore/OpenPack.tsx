@@ -270,7 +270,9 @@ function OpenPack(prop: OpenPackProp) {
                                     {/* Shows the cards */}
                                     <div className="md:px-20">
                                         {paginated.map((card) => (
-                                            <div onClick={() => setCardFront((prev) => !prev)} className="flex-1"> {cardFront ? (<CardFront card={card} />) : (<CardBack card={card} />)} </div>
+                                            <div onClick={() => setCardFront((prev) => !prev)} className="flex-1"> 
+                                                {cardFront ? (<CardFront card={card} />) : (<CardBack card={card} />)} 
+                                            </div>
                                         ))}
                                     </div>
 
