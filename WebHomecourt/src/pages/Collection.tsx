@@ -284,7 +284,7 @@ function Collection() {
                 ) : paginated.length === 0 ? (
                     <p className="text-center">No cards matching specified filters.</p>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-15">
                         {paginated.map((card) => (
                             <CollectionCardRender key={card.card_id} card={card} userId={storeUser.user_id} />
                         ))}

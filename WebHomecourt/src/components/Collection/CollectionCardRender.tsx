@@ -116,7 +116,6 @@ function CollectionCardRender({ card, userId }: CardProp) {
                         <StatusAlert tone={messageType} title={messageTitle} message={message} />
                     </div>
                 )}
-
             </div>
         )
     }

@@ -301,7 +301,7 @@ function OpenPack(prop: OpenPackProp) {
                         text="Close"
                         type="secondary"
                         onClick={prop.onClose}
-                        className="w-full"
+                        className="w-95 md:w-150"
                     />
                 </div>
             </div>
