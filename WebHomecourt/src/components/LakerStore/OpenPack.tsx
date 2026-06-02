@@ -199,7 +199,8 @@ function OpenPack(prop: OpenPackProp) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40" />
-            <div className="relative z-10 w-[22rem] h-auto md:w-[40rem] md:h-[48rem] rounded-lg bg-white shadow-lg overflow-hidden">
+            {/* Using vh that sets to 95% of screen height */}
+            <div className="relative z-10 w-[22rem] md:w-[40rem] max-h-[90vh] md:max-h-[95vh] rounded-lg bg-white shadow-lg overflow-y-auto md:overflow-y-hidden">
                 {/* Header */}
                 <div className="border-b border-gray-200 px-6 py-6 bg-morado-lakers">
                     <div className="flex items-start justify-between">
@@ -236,11 +237,11 @@ function OpenPack(prop: OpenPackProp) {
                     }
 
                     {/* Opening board space */}
-                    <div className="w-95 md:w-150 h-auto px-6">
+                    <div className="w-full px-3 md:px-6">
                         {/* Actual view area, check if there's a way to expand the thing once opened */}
                         <div className="flex flex-col w-full rounded-lg bg-zinc-100 items-center justify-center mb-4">
                             {imageURL ? (
-                                <img src={imageURL} className="h-96 w-auto animate-[pulse_0.75s_ease-in-out_2]" onClick={openEnabled ? () => opening() : () => { }} />
+                                <img src={imageURL} className="h-[40vh] md:h-90 w-auto animate-[pulse_0.75s_ease-in-out_2]" onClick={openEnabled ? () => opening() : () => { }} />
                             ) : (
                                 // Shows the open cards and arrows to navigate along the cards 
                                 <div className="flex flex-row w-full text-center items-center justify-between py-4 px-2 gap-y-4">
@@ -259,9 +260,12 @@ function OpenPack(prop: OpenPackProp) {
                                     </div>
 
                                     {/* Shows the cards */}
-                                    {paginated.map((card) => (
-                                        <CardFront card={card} />
-                                    ))}
+                                    <div className="md:px-20">
+                                        {paginated.map((card) => (
+                                            <CardFront card={card} />
+                                        ))}
+                                    </div>
+                                    
 
                                     {/* Button to view next card */}
                                     <div className="flex flex-row justify-right pl-1 pr-1 md:pl-0 md:pr-8">
@@ -296,12 +300,12 @@ function OpenPack(prop: OpenPackProp) {
                 </div>
 
                 {/* Cancel button */}
-                <div className="w-full px-10 pb-4">
+                <div className="w-full px-4 md:px-10 pb-4">
                     <Button
                         text="Close"
                         type="secondary"
                         onClick={prop.onClose}
-                        className="w-95 md:w-150"
+                        className="w-full"
                     />
                 </div>
             </div>
