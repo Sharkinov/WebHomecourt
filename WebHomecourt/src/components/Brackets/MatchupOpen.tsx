@@ -1,7 +1,7 @@
 // components/MatchupOpen.tsx
 import { useState } from "react"
 import type { Matchup } from "./Brackets"
-import { submitVote } from "./insertVote"
+import { submitVote } from "./submitVote"
 
 type Props = {
   match: Matchup
