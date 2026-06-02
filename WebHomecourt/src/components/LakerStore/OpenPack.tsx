@@ -154,7 +154,7 @@ function OpenPack(prop: OpenPackProp) {
                 setImageURL("");
                 setOpenText(`Congratulations, you won ${uniqueCount} unique card${uniqueCount !== 1 ? 's' : ''}!`);
                 setOpenTextButton("OPEN AGAIN!");
-                setPage(0); 
+                setPage(0);
                 setCardFront(true);
 
                 const updatedCredits = cards[0]?.updated_credits ?? 0; // Checks first item if they have updated_credits field or otherwise set as 0
@@ -186,7 +186,7 @@ function OpenPack(prop: OpenPackProp) {
             setOpenTextButton("OPEN");
             setImageURL(prop.packImg);
             setViewPrice(true);
-            setPage(0); 
+            setPage(0);
             setCardFront(true);
         }
         else {
@@ -270,7 +270,9 @@ function OpenPack(prop: OpenPackProp) {
                                     {/* Shows the cards */}
                                     <div className="md:px-20">
                                         {paginated.map((card) => (
-                                            <div onClick={() => setCardFront((prev) => !prev)} className="flex-1"> {cardFront ? (<CardFront card={card} />) : (<CardBack card={card} />)} </div>
+                                            <div onClick={() => setCardFront((prev) => !prev)} className="flex-1"> 
+                                                {cardFront ? (<CardFront card={card} />) : (<CardBack card={card} />)}
+                                            </div>
                                         ))}
                                     </div>
 
