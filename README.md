@@ -156,6 +156,62 @@ La aplicacion usa Supabase desde `src/lib/supabase.ts`. Para que funcione correc
 
 El repositorio tambien incluye `schema.sql`, que puede servir como referencia del esquema de base de datos del proyecto.
 
+### Replicar el esquema de base de datos
+
+Antes de aplicar el esquema en otra instancia de Supabase, revisa `schema.sql` y verifica que quieres ejecutar todo su contenido en la base de datos destino. El archivo incluye instrucciones DDL para recrear objetos de la base de datos, por lo que conviene usar una instancia nueva o una base donde no haya datos que puedas perder.
+
+#### Desde la CLI de Supabase
+
+1. Instala o ejecuta la CLI de Supabase:
+
+```bash
+npm install supabase --save-dev
+```
+
+2. Inicia sesion y vincula el repositorio con tu proyecto de Supabase:
+
+```bash
+npx supabase login
+npx supabase link
+```
+Y selecciona el projecto, o puedes usar
+ ```bash
+npx supabase login
+npx supabase link --project-ref TU_PROJECT_REF
+```
+
+El `project-ref` aparece en la URL del dashboard de Supabase:
+
+```text
+https://supabase.com/dashboard/project/TU_PROJECT_REF
+```
+
+3. Crea una migracion con el contenido de `schema.sql`:
+
+```bash
+npx supabase migration new initial_schema
+```
+
+Esto genera un archivo dentro de `supabase/migrations/`. Copia el contenido de `schema.sql` dentro de esa migracion.
+
+4. Revisa que la migracion se pueda aplicar y luego subela a la instancia remota:
+
+```bash
+npx supabase db push --dry-run
+npx supabase db push
+```
+
+#### Desde la interfaz de Supabase
+
+1. Entra al dashboard de tu proyecto en Supabase.
+2. Abre la seccion `SQL Editor`.
+3. Crea una consulta nueva.
+4. Copia y pega el contenido de `schema.sql`.
+5. Ejecuta la consulta.
+6. Revisa en `Table Editor` que las tablas, relaciones, funciones, triggers y politicas esperadas se hayan creado correctamente.
+
+Si el esquema se aplica sobre una base que ya tiene tablas, extensiones o politicas con los mismos nombres, Supabase/Postgres puede marcar errores por objetos duplicados. En ese caso, usa una instancia limpia o adapta el SQL antes de ejecutarlo.
+
 ## Estructura del repositorio
 
 ```text
