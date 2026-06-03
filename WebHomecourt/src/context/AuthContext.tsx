@@ -49,7 +49,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUserData = async (userId: string) => {
     // actualizar last_seen 
-    void updateLastSeen(userId); 
+    void updateLastSeen(userId);
 
     const { data } = await supabase
       .from('user_laker')
@@ -74,14 +74,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
-      setLoading(false); 
+      setLoading(false);
 
       if (data.session?.user) {
         fetchUserData(data.session.user.id);
       }
     });
 
-  const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
 
@@ -112,6 +112,41 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     await supabase.auth.signOut();
   };
+
+  // Agregando realtime para credits 
+  useEffect(() => {
+    const userId = session?.user?.id; 
+
+    // No user session, sets as no money
+    if (!userId) {
+      setCredits(0);
+      return; 
+    }; 
+
+    // Does have session, checks realtime credits
+    const channel = supabase 
+      .channel(`user_laker:${session.user.id}:credits`).on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public', 
+          table: 'user_laker', 
+          filter: `user_id=eq.${session.user.id}`,
+        }, (payload) => {
+          // Checks payload and casts credits as number 
+          const newCredits = (payload.new as { credits?: number })?.credits; 
+          // Ensure it is actually a number
+          if (typeof newCredits === 'number') {
+            setCredits(newCredits);
+          }
+        }
+      )
+      .subscribe(); // Listening to that channel
+
+      return () => {
+        void supabase.removeChannel(channel); 
+      }; 
+  }, [session?.user?.id]);
 
   return (
     <AuthContext.Provider value={{ session, user, userId: user?.id ?? null, userType, nickname, photoUrl, credits, setCredits, gender, loading, refreshUserProfile, signIn, signOut }}>
