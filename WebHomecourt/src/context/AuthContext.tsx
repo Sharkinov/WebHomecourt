@@ -39,6 +39,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [credits, setCredits] = useState(0);
   const [loading, setLoading] = useState(true); // Empieza en true hasta que supabase confirme si hay sesión activa o no
   const [gender, setGender] = useState<number | null>(null);
+  const DEFAULT_AVATAR = 'https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/object/public/user_images/profile_picture_default.png'; // Default image if none is set 
 
   const updateLastSeen = async (userId: string) => {
     await supabase
@@ -115,37 +116,44 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   // Agregando realtime para credits 
   useEffect(() => {
-    const userId = session?.user?.id; 
+    const userId = session?.user?.id;
 
     // No user session, sets as no money
     if (!userId) {
       setCredits(0);
-      return; 
-    }; 
+      setPhotoUrl(DEFAULT_AVATAR);
+      return;
+    };
 
     // Does have session, checks realtime credits
-    const channel = supabase 
-      .channel(`user_laker:${session.user.id}:credits`).on(
+    const channel = supabase
+      .channel(`user_laker:${userId}:profile`).on(
         'postgres_changes',
         {
           event: 'UPDATE',
-          schema: 'public', 
-          table: 'user_laker', 
-          filter: `user_id=eq.${session.user.id}`,
+          schema: 'public',
+          table: 'user_laker',
+          filter: `user_id=eq.${userId}`,
         }, (payload) => {
-          // Checks payload and casts credits as number 
-          const newCredits = (payload.new as { credits?: number })?.credits; 
-          // Ensure it is actually a number
+          // Credits 
+          const newCredits = (payload.new as { credits?: number })?.credits;
           if (typeof newCredits === 'number') {
             setCredits(newCredits);
+          }
+
+          // Picture changed
+          const newPhotoUrl = (payload.new as { photo_url?: string })?.photo_url;
+          if (typeof newPhotoUrl === 'string') {
+            setPhotoUrl(newPhotoUrl);
           }
         }
       )
       .subscribe(); // Listening to that channel
 
-      return () => {
-        void supabase.removeChannel(channel); 
-      }; 
+    // Removes channel once done 
+    return () => {
+      void supabase.removeChannel(channel);
+    };
   }, [session?.user?.id]);
 
   return (
