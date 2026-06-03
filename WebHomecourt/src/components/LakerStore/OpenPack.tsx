@@ -208,7 +208,7 @@ function OpenPack(prop: OpenPackProp) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40" />
             {/* Using vh that sets to 95% of screen height */}
-            <div className="relative z-10 w-[22rem] md:w-[40rem] max-h-[90vh] md:max-h-[95vh] rounded-lg bg-white shadow-lg overflow-y-auto md:overflow-y-hidden">
+            <div className="relative z-10 w-[22rem] md:w-[40rem] max-h-[90vh] md:max-h-[95vh] rounded-lg bg-white shadow-lg overflow-y-auto">
                 {/* Header */}
                 <div className="border-b border-gray-200 px-6 py-6 bg-morado-lakers">
                     <div className="flex items-start justify-between">
