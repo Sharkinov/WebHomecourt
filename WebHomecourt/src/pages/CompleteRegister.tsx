@@ -6,11 +6,9 @@ import GenderSelect from '../components/GenderSelect'
 import StatusAlert from '../components/Messages/StatusAlert'
 import { useNavigate } from 'react-router-dom'
 import { fetchDefaultAvatarUrls } from './EditAvatar'
-
-const AVATAR_DRAFT_KEY = "draft_avatar_url"
+import { AVATAR_DRAFT_KEY, AVATAR_DRAFT_OWNER_KEY, cleanUserAvatars, moveAvatarFromTemp } from "../lib/avatar"
 const REGISTER_DRAFT_KEY = "complete_register_draft"
 const AVATAR_FALLBACK_CLASS = "w-full h-full rounded-3xl bg-white/80 border border-black/10 shadow-inner"
-const AVATAR_DRAFT_OWNER_KEY = "draft_avatar_user_id"
 
 type RegisterDraft = {
   username: string
@@ -162,7 +160,10 @@ async function insertUser(
   gender: number | null,
   photoUrl: string | null,
 ): Promise<boolean> {
-  const finalPhotoUrl = photoUrl ? await moveAvatarFromTemp(userId, photoUrl) : null
+  const isTempAvatar = Boolean(photoUrl?.includes('/tempImages/'))
+  await cleanUserAvatars(userId)
+
+  const finalPhotoUrl = photoUrl ? await moveAvatarFromTemp(userId, photoUrl, isTempAvatar) : null
 
   const { error } = await supabase
     .from('user_laker')
@@ -180,48 +181,6 @@ async function insertUser(
     return false
   }
   return true
-}
-
-async function moveAvatarFromTemp(userId: string, photoUrl: string): Promise<string> {
-  if (!photoUrl.includes('/tempImages/')) return photoUrl
-  const fileName = photoUrl.split('/tempImages/')[1]
-  if (!fileName) return photoUrl
-
-  const newPath = `avatars/${fileName}`
-  const { error: copyError } = await supabase.storage
-    .from('user_images')
-    .copy(`tempImages/${fileName}`, newPath)
-
-  if (copyError) {
-    console.error('Error copying avatar:', copyError)
-    return photoUrl
-  }
-
-  const { data: tempFiles, error: listError } = await supabase.storage
-    .from('user_images')
-    .list('tempImages')
-
-  if (listError) {
-    console.error("Error listing temp images:", listError)
-  } else if (tempFiles?.length) {
-    const pathsToRemove = tempFiles
-      .filter((f) => f.name.startsWith(`${userId}-`))
-      .map((f) => `tempImages/${f.name}`)
-
-    if (pathsToRemove.length) {
-      const { error: removeError } = await supabase.storage
-        .from("user_images")
-        .remove(pathsToRemove)
-
-      if (removeError) console.error("Error removing temp images:", removeError)
-    }
-  }
-
-  const { data } = supabase.storage
-    .from('user_images')
-    .getPublicUrl(newPath)
-
-  return data.publicUrl
 }
 
 type FieldFlags = {
