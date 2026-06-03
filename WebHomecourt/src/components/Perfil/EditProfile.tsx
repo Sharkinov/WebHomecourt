@@ -1,6 +1,14 @@
 import { supabase } from "../../lib/supabase"
 import { useEffect, useState } from "react"
 import { useAuth } from "../../context/AuthContext"
+import { useNavigate } from "react-router-dom"
+import {
+    AVATAR_DRAFT_KEY,
+    AVATAR_DRAFT_OWNER_KEY,
+    AVATAR_RETURN_KEY,
+    cleanUserAvatars,
+    moveAvatarFromTemp,
+} from "../../lib/avatar"
 const DEFAULT_AVATAR = "https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/object/public/user_images/profile_picture_default.png"
 // tipos
 export type Gender = {
@@ -57,43 +65,6 @@ async function updateUserData(userId: string, userData: Partial<UserData>): Prom
     return true
 }
 
-export async function uploadPhoto(userId: string, file: File): Promise<string | null> {
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${userId}-${Date.now()}.${fileExt}`
-    const filePath = `avatars/${fileName}`
-
-    const { data: existingFiles } = await supabase.storage
-        .from("user_images")
-        .list("avatars")
-
-    if (existingFiles && existingFiles.length > 0) {
-        const filesToDelete = existingFiles
-            .filter(f => f.name.startsWith(userId))
-            .map(f => `avatars/${f.name}`)
-
-        if (filesToDelete.length > 0) {
-            await supabase.storage
-                .from("user_images")
-                .remove(filesToDelete)
-        }
-    }
-
-    const { error: uploadError } = await supabase.storage
-        .from("user_images")
-        .upload(filePath, file)
-
-    if (uploadError) {
-        console.error("Error uploading photo:", uploadError.message)
-        return null
-    }
-
-    const { data } = supabase.storage
-        .from("user_images")
-        .getPublicUrl(filePath)
-
-    return data.publicUrl
-}
-
 // componente principal
 interface EditProfileProps {
     onBack: () => void
@@ -102,6 +73,7 @@ interface EditProfileProps {
 
 function EditProfile({ onBack, onSave }: EditProfileProps) {
     const { user } = useAuth()
+    const navigate = useNavigate()
     const userId = user?.id
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
@@ -110,13 +82,9 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
     // estados del forms
     const [username, setUsername] = useState("")
     const [nickname, setNickname] = useState("")
-    const [photoUrl, setPhotoUrl] = useState<string | null>(null)
     const [gender, setGender] = useState<number | null>(null)
     const [birthdate, setBirthdate] = useState("")
-
-    // photo upload state
-    const [photoFile, setPhotoFile] = useState<File | null>(null)
-    const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
     useEffect(() => {
         if (!userId) return
@@ -132,9 +100,13 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
             if (userData) {
                 setUsername(userData.username || "")
                 setNickname(userData.nickname || "")
-                setPhotoUrl(userData.photo_url)
                 setGender(userData.gender)
                 setBirthdate(userData.birthdate || "")
+
+                const draftUrl = sessionStorage.getItem(AVATAR_DRAFT_KEY)
+                const draftOwner = sessionStorage.getItem(AVATAR_DRAFT_OWNER_KEY)
+                const canUseDraft = Boolean(draftUrl) && draftOwner === userId
+                setAvatarUrl(canUseDraft ? draftUrl : (userData.photo_url ?? null))
             }
             setGenders(genderData)
             setLoading(false)
@@ -142,45 +114,36 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
         fetchData()
     }, [userId])
 
-    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            setPhotoFile(file)
-            const previewUrl = URL.createObjectURL(file)
-            setPhotoPreview(previewUrl)
-        }
-    }
-
     const handleSave = async () => {
         if (!userId) return
 
         setSaving(true)
 
-        let newPhotoUrl = photoUrl
+                const isTempAvatar = Boolean(avatarUrl?.includes("/tempImages/"))
+                await cleanUserAvatars(userId)
 
-        if (photoFile) {
-            const uploadedUrl = await uploadPhoto(userId, photoFile)
-            if (uploadedUrl) {
-                newPhotoUrl = uploadedUrl
-            }
-        }
+                const finalPhotoUrl = avatarUrl
+                    ? await moveAvatarFromTemp(userId, avatarUrl, isTempAvatar)
+                    : null
 
         const success = await updateUserData(userId, {
             username,
             nickname,
-            photo_url: newPhotoUrl,
+            photo_url: finalPhotoUrl,
             gender,
             birthdate: birthdate || null
         })
 
-        setSaving(false)
-
         if (success) {
+            sessionStorage.removeItem(AVATAR_DRAFT_KEY)
+            sessionStorage.removeItem(AVATAR_DRAFT_OWNER_KEY)
             onSave?.()
             onBack()
         } else {
             alert("Error al guardar los cambios")
         }
+
+        setSaving(false)
     }
 
     if (loading) {
@@ -191,9 +154,7 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
         )
     }
 
-    const displayPhoto =
-    photoPreview ||
-    (photoUrl && photoUrl.trim() !== "" ? photoUrl : DEFAULT_AVATAR)
+    const displayPhoto = avatarUrl && avatarUrl.trim() !== "" ? avatarUrl : DEFAULT_AVATAR
 
     return (
         <div className="bg-Background min-h-screen">
@@ -222,20 +183,26 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
                             />
 
                             {/* boton de camara */}
-                            <label className="absolute bottom-0 right-0 w-[82px] h-[82px] rounded-full bg-morado-lakers border border-black/25 flex items-center justify-center cursor-pointer hover:bg-morado-bajo transition-colors">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (userId && avatarUrl) {
+                                        sessionStorage.setItem(AVATAR_DRAFT_KEY, avatarUrl)
+                                        sessionStorage.setItem(AVATAR_DRAFT_OWNER_KEY, userId)
+                                    }
+                                    sessionStorage.setItem(AVATAR_RETURN_KEY, "/editar-perfil")
+                                    navigate("/edit-avatar")
+                                }}
+                                className="absolute bottom-0 right-0 w-[82px] h-[82px] rounded-full bg-morado-lakers border border-black/25 flex items-center justify-center cursor-pointer hover:bg-morado-bajo transition-colors"
+                                aria-label="Edit avatar"
+                            >
                                 <span
                                     className="material-symbols-outlined text-[#F3F2F3]"
                                     style={{ fontSize: '35px' }}
                                 >
                                     photo_camera
                                 </span>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handlePhotoChange}
-                                    className="hidden"
-                                />
-                            </label>
+                            </button>
                         </div>
                     </div>
 
