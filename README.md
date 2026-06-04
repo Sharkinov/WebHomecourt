@@ -212,6 +212,103 @@ npx supabase db push
 
 Si el esquema se aplica sobre una base que ya tiene tablas, extensiones o politicas con los mismos nombres, Supabase/Postgres puede marcar errores por objetos duplicados. En ese caso, usa una instancia limpia o adapta el SQL antes de ejecutarlo.
 
+### Configurar Google Auth en Supabase
+
+El frontend ya usa Google OAuth desde `WebHomecourt/src/components/botongoogle.tsx` con `supabase.auth.signInWithOAuth({ provider: "google" })`. No necesitas una variable `VITE_GOOGLE_CLIENT_ID` en React; el Client ID y el Client Secret se configuran dentro de Supabase.
+
+1. En Google Cloud Console crea o selecciona un proyecto.
+2. Configura la pantalla de consentimiento OAuth.
+3. Crea un OAuth Client ID de tipo `Web application`.
+4. En `Authorized redirect URIs` agrega el callback de Supabase:
+
+```text
+https://TU_PROJECT_REF.supabase.co/auth/v1/callback
+```
+
+5. Copia el `Client ID` y el `Client Secret`.
+6. En Supabase abre `Authentication > Providers > Google`.
+7. Activa Google y pega el `Client ID` y el `Client Secret`.
+8. En `Authentication > URL Configuration` configura:
+
+```text
+Site URL: http://localhost:5173
+Redirect URLs:
+http://localhost:5173/**
+https://TU_DOMINIO_DE_PRODUCCION/**
+```
+
+Para produccion, cambia `TU_DOMINIO_DE_PRODUCCION` por el dominio real de Vercel u otro hosting. El componente de Google redirige a `/` al iniciar sesion y a `/complete-register` durante registro, por eso los redirect URLs deben permitir esas rutas.
+
+### Desplegar Edge Functions
+
+Las migraciones de Supabase (`npx supabase db push`) solo aplican cambios de base de datos. Las Edge Functions que estan en `supabase/functions/` no se suben automaticamente con las migraciones; hay que desplegarlas aparte.
+
+1. Inicia sesion y vincula el proyecto:
+
+```bash
+npx supabase login
+npx supabase link --project-ref TU_PROJECT_REF
+```
+
+2. Configura los secretos que usan las funciones:
+
+```bash
+npx supabase secrets set OPENROUTER_API_KEY=tu_openrouter_key
+npx supabase secrets set NEWSAPI_KEY=tu_newsapi_key
+npx supabase secrets set CRON_SECRET=un_valor_largo_y_privado
+npx supabase secrets set APNS_KEY_ID=tu_key_id
+npx supabase secrets set APNS_TEAM_ID=tu_team_id
+npx supabase secrets set APNS_BUNDLE_ID=tu_bundle_id
+npx supabase secrets set APNS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+```
+
+Supabase agrega automaticamente secretos como `SUPABASE_URL`. En este proyecto las funciones tambien leen `SUPABASE_SERVICE_ROLE_KEY`; si tu instancia no lo expone automaticamente, agregalo manualmente desde `Project Settings > API`:
+
+```bash
+npx supabase secrets set SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key
+```
+
+3. Despliega todas las funciones:
+
+```bash
+npx supabase functions deploy
+```
+
+O despliegalas una por una:
+
+```bash
+npx supabase functions deploy analyze-report
+npx supabase functions deploy analyze-event-report
+npx supabase functions deploy fetch-lakers-news
+npx supabase functions deploy send-apns-notification
+npx supabase functions deploy send-score-notification
+npx supabase functions deploy hyper-action --no-verify-jwt
+```
+
+`hyper-action` valida el header `Authorization: Bearer CRON_SECRET` dentro del codigo, por eso se despliega con `--no-verify-jwt` si la va a llamar un cron externo sin JWT de Supabase. Si otra funcion se va a invocar desde `pg_cron`, `pg_net` o un servicio externo sin JWT de Supabase, tambien necesitara `--no-verify-jwt` y una validacion propia dentro del codigo.
+
+Importante: `fetch-lakers-news` actualmente no valida `CRON_SECRET` en su codigo. Si la despliegas con `--no-verify-jwt`, quedaria invocable publicamente. Antes de hacer eso, agrega una validacion similar a `hyper-action` o invocala con un JWT/secret valido.
+
+### Secretos usados por Edge Functions
+
+| Secreto | Lo usan | Para que sirve |
+| --- | --- | --- |
+| `OPENROUTER_API_KEY` | `analyze-report`, `analyze-event-report` | Llamar a OpenRouter para clasificar reportes con IA. |
+| `NEWSAPI_KEY` | `fetch-lakers-news` | Consultar noticias de Lakers desde NewsAPI. |
+| `SUPABASE_URL` | Todas las funciones que crean cliente de Supabase | URL del proyecto Supabase. Normalmente Supabase la inyecta automaticamente. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Funciones que escriben o leen con privilegios administrativos | Acceso backend que puede saltarse RLS. Nunca debe exponerse al frontend. |
+| `CRON_SECRET` | `hyper-action` | Proteger llamadas de cron con `Authorization: Bearer CRON_SECRET`. |
+| `APNS_KEY_ID` | `send-apns-notification`, `send-score-notification` | Key ID de Apple Push Notification service. |
+| `APNS_TEAM_ID` | `send-apns-notification`, `send-score-notification` | Team ID de Apple Developer. |
+| `APNS_BUNDLE_ID` | `send-apns-notification`, `send-score-notification` | Bundle ID usado como `apns-topic`. |
+| `APNS_PRIVATE_KEY` | `send-apns-notification`, `send-score-notification` | Llave privada `.p8` de APNS. Debe conservar encabezado y pie PEM. |
+
+Puedes revisar los secretos ya cargados con:
+
+```bash
+npx supabase secrets list
+```
+
 ## Estructura del repositorio
 
 ```text
