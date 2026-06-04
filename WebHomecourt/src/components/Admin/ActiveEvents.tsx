@@ -33,24 +33,29 @@ const ActiveEvents = ({ refreshKey }: { refreshKey: number }) => {
         </div>
       </div>
       <div className="bg-morado-lakers grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 px-10 pb-7 pt-7">
-        {paginated.map((event) => (
-          <EventCard
-            key={event.event_id}
-            id={event.event_id}
-            name={event.event_name}
-            status={(() => {
-              const eventDate = new Date(event.date)
-              const sevenDaysFromNow = new Date()
-              sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
-              return eventDate <= sevenDaysFromNow ? 'Upcoming' : 'Scheduled'
-            })()}
-            pfp={event.created_user?.photo_url ?? ''}
-            host={event.created_user?.username ?? 'N/A'}
-            location={event.court?.name ?? 'N/A'}
-            players={event.max_players}
-            date={event.date ? new Date(event.date).toLocaleDateString() : 'N/A'}
-          />
-        ))}
+        {events.length === 0 ? (
+          <p className="text-white text-center col-span-3 py-4">No active events</p>
+          
+        ) : (
+          paginated.map((event) => (
+            <EventCard
+              key={event.event_id}
+              id={event.event_id}
+              name={event.event_name}
+              status={(() => {
+                const eventDate = new Date(event.date)
+                const sevenDaysFromNow = new Date()
+                sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
+                return eventDate <= sevenDaysFromNow ? 'Upcoming' : 'Scheduled'
+              })()}
+              pfp={event.created_user?.photo_url ?? ''}
+              host={event.created_user?.username ?? 'N/A'}
+              location={event.court?.name ?? 'N/A'}
+              players={event.max_players}
+              date={event.date ? new Date(event.date).toLocaleDateString() : 'N/A'}
+            />
+          ))
+        )}
       </div>
     </div>
   )
