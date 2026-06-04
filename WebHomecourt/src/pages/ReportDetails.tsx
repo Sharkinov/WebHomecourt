@@ -215,7 +215,7 @@ const ReportDetails = () => {
               )}
             </div>
 
-            {/* Right side */}
+            {/* Right side*/}
             <div className="w-0.5 bg-black/20 self-stretch -mr-6 -mb-10" />
             <UserHistory
               reportedUser={{
