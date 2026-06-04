@@ -40,19 +40,25 @@ const EventReports = ({ refreshKey }: { refreshKey: number }) => {
               </tr>
             </thead>
             <tbody>
-              {reports.map((report) => (
-                <EventReportRow
-                  key={report.ereport_id}
-                  id={report.ereport_id}
-                  event={report.event?.event_name ?? 'N/A'}
-                  location={report.event?.court?.name ?? 'N/A'}
-                  date={report.event?.date ? new Date(report.event.date).toLocaleDateString() : 'N/A'}
-                  host={report.event?.created_user?.username ?? 'N/A'}
-                  pfp={report.event?.created_user?.photo_url ?? ''}
-                  priority={report.priority}
-                  status={report.status}
-                />
-              ))}
+              {reports.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="text-center text-gray-500 py-8">No reports found</td>
+                </tr>
+              ) : (
+                reports.map((report) => (
+                  <EventReportRow
+                    key={report.ereport_id}
+                    id={report.ereport_id}
+                    event={report.event?.event_name ?? 'N/A'}
+                    location={report.event?.court?.name ?? 'N/A'}
+                    date={report.event?.date ? new Date(report.event.date).toLocaleDateString() : 'N/A'}
+                    host={report.event?.created_user?.username ?? 'N/A'}
+                    pfp={report.event?.created_user?.photo_url ?? ''}
+                    priority={report.priority}
+                    status={report.status}
+                  />
+                ))
+              )}
             </tbody>
           </table>
         </div>
