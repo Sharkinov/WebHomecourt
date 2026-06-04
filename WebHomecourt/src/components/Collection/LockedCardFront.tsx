@@ -9,7 +9,7 @@ function LockedCardFront({ card }: CardProp) {
     return (
         <div className="w-full px-4 py-3 bg-gris-disabled rounded-2xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100 inline-flex flex-col justify-between items-center">
             {/* Question mark */}
-            <div className="w-full aspect-square pl-2.5 bg-Gris-Oscuro flex flex-col justify-center items-center gap-2.5 overflow-hidden mt-4 text-white text-2xl md:text-8xl font-bold">
+            <div className="w-full aspect-square pl-2.5 bg-Gris-Oscuro flex flex-col justify-center items-center gap-2.5 overflow-hidden mt-4 text-white text-8xl font-bold">
                 ?
             </div>
             {/* Card info */}
