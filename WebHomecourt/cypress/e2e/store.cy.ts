@@ -1,33 +1,46 @@
 describe('template spec', () => {
   it('passes', () => {
-    cy.visit('https://sharkinovhomecourt.vercel.app/login')
-    cy.get('#root input[placeholder="Email"]').click();
-    cy.get('#root input[placeholder="Email"]').type('lakerFan@lakerscourt.com');
-    cy.get('#root input[placeholder="Password"]').click();
-    cy.get('#root input[placeholder="Password"]').type('abc123');
-    cy.get('#root button.text-white').click();
-    // The 'Sign-in' button text changed to 'Signing-in'.
-    cy.get('#root button.text-white')
-      .should('contain.text', 'Signing-in')
-    
-    cy.get('#root div.lg\\:gap-8 button:nth-child(6)').click();
-    // Page URL changed.
-    cy.url()
-      .should('eq', 'https://sharkinovhomecourt.vercel.app/store')
-    // The title of the page changed to 'Lakers Cards Store'.
+    cy.intercept('POST', '**/auth/v1/token?grant_type=password').as('loginRequest');
+    cy.intercept('GET', '**/rest/v1/user_laker?select=banned_until&user_id=*').as('bannedCheck');
+
+    cy.visit('https://sharkinovhomecourt.vercel.app/login');
+    cy.get('input[placeholder="Email"]').type('lakerFan@lakerscourt.com');
+    cy.get('input[placeholder="Password"]').type('abc123');
+    cy.get('button.text-white').click();
+
+    cy.wait('@loginRequest');
+    cy.wait('@bannedCheck');
+    cy.url().should('eq', 'https://sharkinovhomecourt.vercel.app/');
+
+    cy.visit('https://sharkinovhomecourt.vercel.app/store');
+
     cy.get('#root h1.text-zinc-100')
       .should('contain.text', 'Lakers Cards Store')
-    // A description of the Lakers Cards Store is now visible.
+       
+    // The page title is now 'Lakers Cards Store'.
+    // A new subtitle describes the store's offerings.
     cy.get('#root h5.mt-2')
       .should('contain.text', 'Unlock more cards featuring your favorite players and improve your Dunk Royale game deck')
-    // The 'STORE' button is now visible and active.
-    cy.get('#root button.bg-morado-lakers')
-      .should('contain.text', 'STORE')
-    // The 'COLLECTION' button is now visible but inactive.
-    cy.get('#root button.bg-transparent')
-      .should('contain.text', 'COLLECTION')
+    // A 'Player Pack' section is now visible.
+    cy.get('#root div:nth-child(3) h2.font-bold')
+      .should('contain.text', 'Player Pack')
+    // A LeBron James player pack is available.
+    cy.get('#root div:nth-child(3) div:nth-child(1) div.flex-row div.w-full div.justify-start h4.font-bold')
+      .should('contain.text', 'LeBron James')
+    // The player pack costs 200.
+    cy.get('#root div:nth-child(3) div:nth-child(1) div.flex-row div.w-full div.mb-4 button.flex span:nth-child(3)')
+      .should('contain.text', '200')
+    // An Austin Reaves player pack is available.
+    cy.get('#root div:nth-child(3) div.grid div:nth-child(2) div.flex-row div.w-full div.justify-start h4.font-bold')
+      .should('contain.text', 'Austin Reaves')
+    // The player pack costs 200.
+    cy.get('#root div:nth-child(3) div.grid div:nth-child(2) div.flex-row div.w-full div.mb-4 button.flex span:nth-child(3)')
+      .should('contain.text', '200')
+    // A Luka Doncic player pack is available.
+    cy.get('#root div:nth-child(3) div.grid div:nth-child(3) div.flex-row div.w-full div.justify-start h4.font-bold')
+      .should('contain.text', 'Luka Doncic')
     
-    cy.get('#root div:nth-child(6) span:nth-child(3)').click();
+    cy.get('#root div:nth-child(3) div:nth-child(1) div.flex-row div.w-full div.mb-4 button.flex span.text-black').click();
     // A modal dialog titled 'Open the pack!' has appeared.
     cy.get('#root div.fixed.flex')
       .should('be.visible')
@@ -37,25 +50,43 @@ describe('template spec', () => {
         expect($el).to.be.visible
         expect($el).to.contain.text('Open the pack!')
       })
-    // The modal dialog displays 'April 2026 Recap'.
+    // The pack contains 'LeBron James'.
     cy.get('#root p.text-white')
       .should(($el) => {
         expect($el).to.be.visible
-        expect($el).to.contain.text('April 2026 Recap')
+        expect($el).to.contain.text('LeBron James')
       })
-    // The modal dialog instructs the user to 'Press the pack or the open button to see what you get!'.
+    // Instructions to 'Press the pack or the open button to see what you get!' are displayed.
     cy.get('#root div.text-center h5.mb-2')
       .should(($el) => {
         expect($el).to.be.visible
         expect($el).to.contain.text('Press the pack or the open button to see what you get!')
       })
-    // The pack cost of 950 is displayed.
+    // The pack costs 200.
     cy.get('#root span.pl-3.text-xl')
       .should(($el) => {
         expect($el).to.be.visible
-        expect($el).to.contain.text('950')
+        expect($el).to.contain.text('200')
       })
-    // An image of a pack is displayed within the modal.
+    // An 'OPEN' button is displayed.
+    cy.get('#root div.md\\:px-4 button.w-full')
+      .should(($el) => {
+        expect($el).to.be.visible
+        expect($el).to.contain.text('OPEN')
+      })
+    
+    cy.get('#root div.md\\:px-10 button.w-full').click();
+    cy.get('#root div:nth-child(3) div.grid div:nth-child(2) div.flex-row div.w-full div.mb-4 button.flex').click();
+    // A modal dialog titled 'Open the pack!' has appeared.
+    cy.get('#root div.fixed.flex')
+      .should('be.visible')
+    // The player name 'Austin Reaves' is displayed in the modal.
+    cy.get('#root p.text-white')
+      .should(($el) => {
+        expect($el).to.be.visible
+        expect($el).to.contain.text('Austin Reaves')
+      })
+    // An image of a player pack is displayed.
     cy.get('#root img.animate-\\[pulse_0\\.75s_ease-in-out_2\\]')
       .should('be.visible')
     // An 'OPEN' button is visible within the modal.
@@ -65,41 +96,120 @@ describe('template spec', () => {
         expect($el).to.contain.text('OPEN')
       })
     
-    cy.get('#root div.md\\:px-4 button.w-full').click();
-    // The instruction text changed from 'Press the pack or the open button to see what you get!' to 'First tear! Click again to keep opening it...'
-    cy.get('#root div.text-center h5.mb-2')
-      .should('contain.text', 'First tear! Click again to keep opening it...')
+    cy.get('#root svg.h-6').click();
+    cy.get('#root div:nth-child(3) div.items-center button:nth-child(3)').click();
+    // The number of available packs has increased to 2.
+    cy.get('#root div:nth-child(3) div.items-center span.text-black')
+      .should('contain.text', '2 / 2')
+    // The button to increase the pack quantity is disabled.
+    cy.get('#root div:nth-child(3) div.items-center button:nth-child(3)')
+      .should('have.attr', 'disabled')
+    // The player name displayed has changed to 'Black Mamba'.
+    cy.get('#root div:nth-child(3) div.outline div.flex-row div.w-full div.justify-start h4.font-bold')
+      .should('contain.text', 'Black Mamba')
+    // The pack number displayed has changed to 'Player Pack #8'.
+    cy.get('#root div:nth-child(3) div.outline div.flex-row div.w-full div.justify-start h5.font-semibold')
+      .should('contain.text', 'Player Pack #8')
     
-    cy.get('#root div.md\\:px-4 button.w-full').click();
-    // The instruction text changed to 'You can almost see the cards now...'
-    cy.get('#root div.text-center h5.mb-2')
-      .should('contain.text', 'You can almost see the cards now...')
-    
-    cy.get('#root div.md\\:px-4 button.w-full').click();
-    // The user's credit balance changed from 1490 to 540.
-    cy.get('#root span.font-normal')
-      .should('contain.text', '540')
-    // The instruction text changed from 'You can almost see the cards now...' to 'Congrats!'.
-    cy.get('#root div.mt-3 h5.mb-2')
-      .should('contain.text', 'Congrats!')
-    // The pack image is replaced by a container for the opened cards.
-    cy.get('#root div.justify-start')
+    cy.get('#root div:nth-child(4) > div.grid > div:nth-child(2) > div.flex-row > div.w-full > div.mb-4 > button.flex').click();
+    // A modal dialog has appeared.
+    cy.get('#root div.fixed.flex')
       .should('be.visible')
-    // The 'OPEN' button is disabled and its text changed to 'Not enough credits, you have 540 remaining'.
+    // The modal dialog title is 'Open the pack!'.
+    cy.get('#root h2.text-white')
+      .should(($el) => {
+        expect($el).to.be.visible
+        expect($el).to.contain.text('Open the pack!')
+      })
+    // Instructions to 'Press the pack or the open button to see what you get!' are displayed.
+    cy.get('#root div.text-center h5.mb-2')
+      .should(($el) => {
+        expect($el).to.be.visible
+        expect($el).to.contain.text('Press the pack or the open button to see what you get!')
+      })
+    // The pack costs 400.
+    cy.get('#root span.pl-3.text-xl')
+      .should(($el) => {
+        expect($el).to.be.visible
+        expect($el).to.contain.text('400')
+      })
+    // An 'OPEN' button is displayed.
     cy.get('#root div.md\\:px-4 button.w-full')
       .should(($el) => {
-        expect($el).to.contain.text('Not enough credits, you have 540 remaining')
-        expect($el).to.have.class('bg-disabled')
-        expect($el).to.have.class('text-gray-100')
-        expect($el).to.have.class('outline-disabled')
-        expect($el).to.not.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('text-white')
-        expect($el).to.not.have.class('outline-morado-lakers')
-        expect($el).to.not.have.class('hover:bg-morado-bajo')
-        expect($el).to.not.have.class('hover:outline-morado-bajo')
-        expect($el).to.not.have.class('selected:bg-morado-oscuro')
+        expect($el).to.be.visible
+        expect($el).to.contain.text('OPEN')
       })
     
-    cy.get('#root svg.h-6').click();
+    cy.get('#root div.md\\:px-10 button.w-full').click();
+    cy.get('#root div:nth-child(4) > div.md\\:flex-row > div.items-center > button:nth-child(3)').click();
+    // The number of available packs has increased to 2.
+    cy.get('#root div:nth-child(4) > div.md\\:flex-row > div.items-center > span.text-black')
+      .should('contain.text', '2 / 2')
+    // The button to increase the pack quantity is disabled.
+    cy.get('#root div:nth-child(4) > div.md\\:flex-row > div.items-center > button:nth-child(3)')
+      .should('have.attr', 'disabled')
+    // The player name displayed has changed to 'Showtime Lakers'.
+    cy.get('#root div:nth-child(4) > div.grid > div.outline > div.flex-row > div.w-full > div.justify-start > h4.font-bold')
+      .should('contain.text', 'Showtime Lakers')
+    // The pack number displayed has changed to 'Team Pack #10'.
+    cy.get('#root div:nth-child(4) > div.grid > div.outline > div.flex-row > div.w-full > div.justify-start > h5.font-semibold')
+      .should('contain.text', 'Team Pack #10')
+    
+    cy.get('#root div:nth-child(3) > div.flex-row > div.w-full > div.mb-4 > button.flex').click();
+    // A modal dialog has appeared.
+    cy.get('#root div.fixed.flex')
+      .should('be.visible')
+    // The modal dialog title is 'Open the pack!'.
+    cy.get('#root h2.text-white')
+      .should(($el) => {
+        expect($el).to.be.visible
+        expect($el).to.contain.text('Open the pack!')
+      })
+    // The pack contains 'Pre-2000s Legends'.
+    cy.get('#root p.text-white')
+      .should(($el) => {
+        expect($el).to.be.visible
+        expect($el).to.contain.text('Pre-2000s Legends')
+      })
+    // Instructions to 'Press the pack or the open button to see what you get!' are displayed.
+    cy.get('#root div.text-center h5.mb-2')
+      .should(($el) => {
+        expect($el).to.be.visible
+        expect($el).to.contain.text('Press the pack or the open button to see what you get!')
+      })
+    // The pack costs 700.
+    cy.get('#root span.pl-3.text-xl')
+      .should(($el) => {
+        expect($el).to.be.visible
+        expect($el).to.contain.text('700')
+      })
+    // An image of a player pack is displayed.
+    cy.get('#root img.animate-\\[pulse_0\\.75s_ease-in-out_2\\]')
+      .should('be.visible')
+    // An 'OPEN' button is displayed.
+    cy.get('#root div.md\\:px-4 button.w-full')
+      .should(($el) => {
+        expect($el).to.be.visible
+        expect($el).to.contain.text('OPEN')
+      })
+    
+    cy.get('#root div.md\\:px-10 button.w-full').click();
+    cy.get('#root div:nth-child(5) button:nth-child(3)').click();
+    // The button to decrease the pack quantity is enabled.
+    cy.get('#root div:nth-child(5) div.items-center button:nth-child(1)')
+      .should('not.have.attr', 'disabled')
+    // The pack quantity has increased to 2.
+    cy.get('#root div:nth-child(5) div.items-center span.text-black')
+      .should('contain.text', '2 / 2')
+    // The button to increase the pack quantity is disabled.
+    cy.get('#root div:nth-child(5) button:nth-child(3)')
+      .should('have.attr', 'disabled')
+    // The pack name has changed to 'Dynasty Pack'.
+    cy.get('#root div:nth-child(5) h4.font-bold')
+      .should('contain.text', 'Dynasty Pack')
+    // The pack number has changed to 'Legendary Pack #13'.
+    cy.get('#root div:nth-child(5) h5.font-semibold')
+      .should('contain.text', 'Legendary Pack #13')
+    
   })
 })
