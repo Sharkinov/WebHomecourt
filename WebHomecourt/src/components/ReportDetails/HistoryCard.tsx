@@ -16,7 +16,7 @@ const HistoryCard = ({ event, date, rating, tags, reportId }: HistoryCardProps) 
   return (
     <div 
       className="bg-white border border-gray-200 rounded-xl p-4 cursor-pointer hover:bg-gray-50 transition-colors"
-      onClick={() => navigate(`/admin/report/${reportId}`)}
+      onClick={() => navigate('/admin/report', { state: { id: reportId }, replace: true })}
     >
       <div className="flex items-center gap-2 mb-1">
         <div className="w-7 h-7 rounded-full bg-morado-lakers flex items-center justify-center">
