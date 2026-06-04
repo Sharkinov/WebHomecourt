@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { getActiveEvents } from '../../pages/Admin'
 import EventCard from './EventCard'
 
-const ActiveEvents= () => {
+const ActiveEvents = ({ refreshKey }: { refreshKey: number }) => {
   const [events, setEvents] = useState<any[]>([])
   const [page, setPage] = useState(0)
 
@@ -11,12 +11,8 @@ const ActiveEvents= () => {
   const paginated = events.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      const data = await getActiveEvents()
-      setEvents(data)
-    }
-    fetchEvents()
-  }, [])
+    getActiveEvents().then(setEvents)
+  }, [refreshKey])
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mt-6">
@@ -27,21 +23,14 @@ const ActiveEvents= () => {
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
             className="text-white disabled:opacity-30 hover:opacity-75 transition text-4xl px-4"
-          >
-            ‹
-          </button>
-          <span className="text-white text-base">
-            {page + 1} / {totalPages || 1}
-          </span>
+          >‹</button>
+          <span className="text-white text-base">{page + 1} / {totalPages || 1}</span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
             className="text-white disabled:opacity-30 hover:opacity-75 transition text-4xl px-4"
-          >
-            ›
-          </button>
+          >›</button>
         </div>
-      
       </div>
       <div className="bg-morado-lakers grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 px-10 pb-7 pt-7">
         {paginated.map((event) => (
@@ -55,7 +44,7 @@ const ActiveEvents= () => {
               sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
               return eventDate <= sevenDaysFromNow ? 'Upcoming' : 'Scheduled'
             })()}
-            pfp = {event.created_user?.photo_url ?? ''}
+            pfp={event.created_user?.photo_url ?? ''}
             host={event.created_user?.username ?? 'N/A'}
             location={event.court?.name ?? 'N/A'}
             players={event.max_players}
