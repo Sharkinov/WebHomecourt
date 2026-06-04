@@ -200,7 +200,7 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
                                     className="material-symbols-outlined text-[#F3F2F3]"
                                     style={{ fontSize: '35px' }}
                                 >
-                                    photo_camera
+                                    edit
                                 </span>
                             </button>
                         </div>
