@@ -28,7 +28,6 @@ function Perfil() {
 
     const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
     const [events, setEvents] = useState<EventItem[]>([])
-    const [activeTab, setActiveTab] = useState<'overview' | 'collection'>('overview')
 
     useEffect(() => {
         if (!profileUserId) return
@@ -78,29 +77,7 @@ function Perfil() {
             <div className="px-4 sm:px-8 md:px-12 lg:px-[60px] py-4 sm:py-[20px] flex flex-col gap-4 sm:gap-6 md:gap-[31px]">
                 <ProfileHeader userId={profileUserId!} isOwnProfile={isOwnProfile} />
 
-                {/* tabs para perfiles de otros usuarios */}
-                {!isOwnProfile && (
-                    <div className="w-full">
-                        <div className="flex gap-4">
-                            {['overview', 'collection'].map((tab) => (
-                                <button
-                                    key={tab}
-                                    onClick={() => setActiveTab(tab as 'overview' | 'collection')}
-                                    className={`w-[210px] h-[59px] rounded-[15px] text-[18px] flex items-center justify-center transition-all ${
-                                        activeTab === tab
-                                            ? 'bg-morado-oscuro text-white'
-                                            : 'bg-white border-[3px] border-morado-oscuro text-morado-oscuro hover:bg-morado-hover hover:border-morado-hover hover:text-white'
-                                    }`}
-                                    style={{ fontFamily: 'Graphik' }}
-                                >
-                                    {tab === 'overview' ? 'Overview' : 'Collection'}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* contenido basado en si es tu perfil o el tab activo */}
+                {/* contenido basado en si es tu perfil */}
                 {isOwnProfile ? (
                     <>
                         <FriendsList
@@ -117,25 +94,16 @@ function Perfil() {
                     </>
                 ) : (
                     <>
-                        {activeTab === 'overview' && (
-                            <>
-                                <FriendsList
-                                    userId={profileUserId!}
-                                    currentUser={currentUser}
-                                    isOwnProfile={isOwnProfile}
-                                />
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-[31px]">
-                                    <VotingActivity userId={profileUserId!} isOwnProfile={isOwnProfile} />
-                                    <LakerscourtMatches userId={profileUserId!} />
-                                </div>
-                                <Achievements userId={profileUserId!} />
-                            </>
-                        )}
-                        {activeTab === 'collection' && (
-                            <div className="bg-white rounded-[15px] p-6 border border-black/8 shadow-[0_4px_4px_0_rgba(0,0,0,0.08)]">
-                                <p className="text-center text-Gris-Oscuro">Collection coming soon...</p>
-                            </div>
-                        )}
+                        <FriendsList
+                            userId={profileUserId!}
+                            currentUser={currentUser}
+                            isOwnProfile={isOwnProfile}
+                        />
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-[31px]">
+                            <VotingActivity userId={profileUserId!} isOwnProfile={isOwnProfile} />
+                            <LakerscourtMatches userId={profileUserId!} />
+                        </div>
+                        <Achievements userId={profileUserId!} />
                     </>
                 )}
             </div>
