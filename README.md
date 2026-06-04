@@ -194,12 +194,19 @@ npx supabase migration new initial_schema
 
 Esto genera un archivo dentro de `supabase/migrations/`. Copia el contenido de `schema.sql` dentro de esa migracion.
 
-4. Revisa que la migracion se pueda aplicar y luego subela a la instancia remota:
+4. Revisa que la migracion se pueda aplicar:
 
 ```bash
 npx supabase db push --dry-run
-npx supabase db push
 ```
+
+5. Sube las migraciones y el `seed.sql` que viene en el repositorio:
+
+```bash
+npx supabase db push --include-seed
+```
+
+Este comando aplica las migraciones pendientes de `supabase/migrations/` y despues carga los datos iniciales definidos en `supabase/seed.sql`.
 
 #### Desde la interfaz de Supabase
 
@@ -211,6 +218,44 @@ npx supabase db push
 6. Revisa en `Table Editor` que las tablas, relaciones, funciones, triggers y politicas esperadas se hayan creado correctamente.
 
 Si el esquema se aplica sobre una base que ya tiene tablas, extensiones o politicas con los mismos nombres, Supabase/Postgres puede marcar errores por objetos duplicados. En ese caso, usa una instancia limpia o adapta el SQL antes de ejecutarlo.
+
+### Subir el `seed.sql` del repositorio
+
+El repositorio ya incluye un archivo `supabase/seed.sql` con datos iniciales para poblar la base despues de aplicar las migraciones. Este archivo sirve para que alguien que apenas esta instalando el proyecto pueda levantar una instancia nueva de Supabase con estructura y datos base.
+
+El proyecto ya tiene configurado el seed en `supabase/config.toml`:
+
+```toml
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+```
+
+Eso significa que Supabase buscara este archivo:
+
+```text
+supabase/seed.sql
+```
+
+Para subirlo a una instancia remota recien creada, ejecuta desde la raiz del repositorio:
+
+```bash
+npx supabase login
+npx supabase link --project-ref TU_PROJECT_REF
+npx supabase db push --include-seed
+```
+
+`--include-seed` es la parte importante: sin ese flag, `npx supabase db push` solo sube las migraciones de estructura y no carga los datos de `supabase/seed.sql`.
+
+Para probar el mismo flujo localmente antes de subirlo:
+
+```bash
+npx supabase db reset
+```
+
+Ese comando reinicia la base local, aplica las migraciones y despues ejecuta `supabase/seed.sql`.
+
+Si la base remota ya tiene datos, revisa el contenido del seed antes de correr `--include-seed`, porque puede fallar por registros duplicados o insertar datos demo que no quieres en produccion.
 
 ### Configurar Google Auth en Supabase
 
