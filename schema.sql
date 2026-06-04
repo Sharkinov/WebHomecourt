@@ -193,8 +193,13 @@ CREATE OR REPLACE FUNCTION "public"."calculate_lakers_court_access"() RETURNS "t
     LANGUAGE "plpgsql"
     AS $$
 BEGIN
+  IF NEW.birthdate IS NULL THEN
+    NEW.allow_lakers_court := false;
+    RETURN NEW;
+  END IF;
+
   NEW.allow_lakers_court := (
-    EXTRACT(YEAR FROM AGE(CURRENT_DATE, NEW.birthdate)) >= 15
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, NEW.birthdate::date)) >= 15
   );
   RETURN NEW;
 END;
@@ -1092,6 +1097,33 @@ $$;
 
 
 ALTER FUNCTION "public"."get_user_win_streak"("p_user_id" "uuid") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."grant_starter_cards"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+DECLARE
+  starter_cards uuid[] := ARRAY[
+    'b3f0f18c-a30c-4c7d-83e6-27fa4bae5cbb',
+    '22b47066-c01d-456d-bd53-80a2b492d79b',
+    '04237a89-7325-4c28-900f-2ca630b6f461',
+    '57349c90-efb1-4426-ae98-0dda1f3b8d55',
+    '83e16c31-f427-4a46-9d97-31e67b348463',
+    'ab0500ec-76b1-4eb3-8dba-9968b30317f2'
+  ];
+  cid uuid;
+BEGIN
+  FOREACH cid IN ARRAY starter_cards LOOP
+    INSERT INTO user_card (user_id, card_id, times_unlocked, first_unlock, added_deck, in_deck)
+    VALUES (NEW.user_id, cid, 1, NOW(), true, true)
+    ON CONFLICT DO NOTHING;
+  END LOOP;
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."grant_starter_cards"() OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."notify_ai_analyze_event_report"() RETURNS "trigger"
@@ -2731,7 +2763,7 @@ CREATE TABLE IF NOT EXISTS "public"."user_card" (
     "user_card_id" bigint NOT NULL,
     "user_id" "uuid" NOT NULL,
     "card_id" "uuid" NOT NULL,
-    "first_pack_id" bigint NOT NULL,
+    "first_pack_id" bigint,
     "times_unlocked" integer DEFAULT 1 NOT NULL,
     "first_unlock" timestamp with time zone DEFAULT "now"() NOT NULL,
     "added_deck" boolean DEFAULT false NOT NULL,
@@ -3844,6 +3876,10 @@ CREATE OR REPLACE TRIGGER "trg_create_conversation_on_friendship" AFTER INSERT O
 
 
 
+CREATE OR REPLACE TRIGGER "trg_grant_starter_cards" AFTER INSERT ON "public"."user_laker" FOR EACH ROW EXECUTE FUNCTION "public"."grant_starter_cards"();
+
+
+
 CREATE OR REPLACE TRIGGER "trg_lakers_court_access" BEFORE INSERT OR UPDATE OF "birthdate" ON "public"."user_laker" FOR EACH ROW EXECUTE FUNCTION "public"."calculate_lakers_court_access"();
 
 
@@ -3853,6 +3889,10 @@ CREATE OR REPLACE TRIGGER "trg_update_user_rewards" AFTER INSERT ON "public"."mi
 
 
 CREATE OR REPLACE TRIGGER "game_apns_trigger" AFTER UPDATE ON "simulacion_juego"."game" FOR EACH ROW EXECUTE FUNCTION "supabase_functions"."http_request"('https://ptbcoxaguvbwprxdundz.supabase.co/functions/v1/send-apns-notification', 'POST', '{"Content-type":"application/json","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0YmNveGFndXZid3ByeGR1bmR6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzM0MzM5NCwiZXhwIjoyMDg4OTE5Mzk0fQ.0hqDm_VSp-X7ST3vf88nSvX02Yulftl7Yh6ZO-s9pTo"}', '{}', '5000');
+
+
+
+CREATE OR REPLACE TRIGGER "score_apns_trigger" AFTER UPDATE ON "simulacion_juego"."team_player_stats" FOR EACH ROW EXECUTE FUNCTION "supabase_functions"."http_request"('https://ptbcoxaguvbwprxdundz.supabase.co/functions/v1/send-score-notification', 'POST', '{"Content-type":"application/json","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0YmNveGFndXZid3ByeGR1bmR6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzM0MzM5NCwiZXhwIjoyMDg4OTE5Mzk0fQ.0hqDm_VSp-X7ST3vf88nSvX02Yulftl7Yh6ZO-s9pTo"}', '{}', '5000');
 
 
 
@@ -4790,6 +4830,10 @@ ALTER PUBLICATION "supabase_realtime" ADD TABLE ONLY "public"."deck";
 
 
 
+ALTER PUBLICATION "supabase_realtime" ADD TABLE ONLY "public"."event";
+
+
+
 ALTER PUBLICATION "supabase_realtime" ADD TABLE ONLY "public"."event_report";
 
 
@@ -5186,6 +5230,12 @@ REVOKE ALL ON FUNCTION "public"."get_user_win_streak"("p_user_id" "uuid") FROM P
 GRANT ALL ON FUNCTION "public"."get_user_win_streak"("p_user_id" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."get_user_win_streak"("p_user_id" "uuid") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."get_user_win_streak"("p_user_id" "uuid") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."grant_starter_cards"() TO "anon";
+GRANT ALL ON FUNCTION "public"."grant_starter_cards"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."grant_starter_cards"() TO "service_role";
 
 
 
@@ -6014,192 +6064,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
-
-
-
-drop extension if exists "pg_net";
-
-create extension if not exists "pg_net" with schema "public";
-
-drop policy "allow_select_bad_words" on "public"."bad_words";
-
-drop policy "Public read event_report_type" on "public"."event_report_type";
-
-drop policy "Read packs" on "public"."pack";
-
-drop policy "Pack rarity probabilities" on "public"."pack_rarity";
-
-drop policy "Access pack type" on "public"."pack_type";
-
-drop policy "Enable read access for all users" on "public"."question";
-
-drop policy "Card rarity categories" on "public"."rarity";
-
-drop policy "Allow public read on report_type" on "public"."report_type";
-
-drop policy "Public read skill_level" on "public"."skill_level";
-
-drop policy "Los wrap backgrounds son públicos" on "public"."wrap_backgrounds";
-
-drop policy "Enable read access for all users" on "simulacion_juego"."game";
-
-drop policy "Enable read access for all users" on "simulacion_juego"."team";
-
-drop policy "allow update stats" on "simulacion_juego"."team_player_stats";
-
-
-  create policy "allow_select_bad_words"
-  on "public"."bad_words"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Public read event_report_type"
-  on "public"."event_report_type"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Read packs"
-  on "public"."pack"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Pack rarity probabilities"
-  on "public"."pack_rarity"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Access pack type"
-  on "public"."pack_type"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Enable read access for all users"
-  on "public"."question"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Card rarity categories"
-  on "public"."rarity"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Allow public read on report_type"
-  on "public"."report_type"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Public read skill_level"
-  on "public"."skill_level"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Los wrap backgrounds son públicos"
-  on "public"."wrap_backgrounds"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Enable read access for all users"
-  on "simulacion_juego"."game"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "Enable read access for all users"
-  on "simulacion_juego"."team"
-  as permissive
-  for select
-  to anon, authenticated
-using (true);
-
-
-
-  create policy "allow update stats"
-  on "simulacion_juego"."team_player_stats"
-  as permissive
-  for update
-  to anon, authenticated
-using (true)
-with check (true);
-
-
-
-  create policy "Anyone can view avatars"
-  on "storage"."objects"
-  as permissive
-  for select
-  to public
-using ((bucket_id = 'user_images'::text));
-
-
-
-  create policy "Users can delete their own avatar"
-  on "storage"."objects"
-  as permissive
-  for delete
-  to authenticated
-using (((bucket_id = 'user_images'::text) AND (storage.filename(name) ~~ ((auth.uid())::text || '-%'::text))));
-
-
-
-  create policy "Users can upload their own avatar"
-  on "storage"."objects"
-  as permissive
-  for insert
-  to authenticated
-with check ((bucket_id = 'user_images'::text));
-
-
-
-  create policy "Usuarios pueden actualizar su pfp"
-  on "storage"."objects"
-  as permissive
-  for update
-  to authenticated
-using ((bucket_id = 'user_images'::text))
-with check ((bucket_id = 'user_images'::text));
 
 
 
