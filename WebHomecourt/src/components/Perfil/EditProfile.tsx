@@ -159,12 +159,12 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
     return (
         <div className="bg-Background min-h-screen">
             {/* contenedor */}
-            <div className="pt-5 px-[60px] pb-5">
-                
+            <div className="pt-4 sm:pt-5 px-4 sm:px-8 md:px-12 lg:px-16 xl:px-[60px] pb-5">
+
                 {/* link de back */}
                 <button
                     onClick={onBack}
-                    className="text-morado-lakers text-2xl font-normal hover:text-morado-bajo transition-colors mb-2"
+                    className="text-morado-lakers text-lg sm:text-xl md:text-2xl font-normal hover:text-morado-bajo transition-colors mb-2"
                 >
                     {"< Back"}
                 </button>
@@ -173,13 +173,13 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
                 <div className="flex flex-col items-center">
 
                     {/* seccion de pfp */}
-                    <div className="flex justify-center items-center w-[364px] mb-3">
+                    <div className="flex justify-center items-center w-full max-w-[364px] mb-3 sm:mb-4 md:mb-5">
                         <div className="relative">
                             {/* img pfp */}
                             <img
                                 src={displayPhoto}
                                 alt="Profile"
-                                className="w-[272px] h-[272px] rounded-full object-cover border-4 border-black/25"
+                                className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-[272px] xl:h-[272px] rounded-full object-cover border-4 border-black/25"
                             />
 
                             {/* boton de camara */}
@@ -193,12 +193,11 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
                                     sessionStorage.setItem(AVATAR_RETURN_KEY, "/editar-perfil")
                                     navigate("/edit-avatar")
                                 }}
-                                className="absolute bottom-0 right-0 w-[82px] h-[82px] rounded-full bg-morado-lakers border border-black/25 flex items-center justify-center cursor-pointer hover:bg-morado-bajo transition-colors"
+                                className="absolute bottom-0 right-0 w-14 h-14 sm:w-16 sm:h-16 md:w-[70px] md:h-[70px] lg:w-[82px] lg:h-[82px] rounded-full bg-morado-lakers border border-black/25 flex items-center justify-center cursor-pointer hover:bg-morado-bajo transition-colors"
                                 aria-label="Edit avatar"
                             >
                                 <span
-                                    className="material-symbols-outlined text-[#F3F2F3]"
-                                    style={{ fontSize: '35px' }}
+                                    className="material-symbols-outlined text-[#F3F2F3] text-xl sm:text-2xl md:text-3xl lg:text-[35px]"
                                 >
                                     edit
                                 </span>
@@ -207,48 +206,48 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
                     </div>
 
                     {/* campos del forms */}
-                    <div className="w-full flex flex-col items-start gap-[30px] px-[250px]">
+                    <div className="w-full flex flex-col items-start gap-5 sm:gap-6 md:gap-[30px] px-0 sm:px-8 md:px-16 lg:px-32 xl:px-[250px]">
 
                         {/* campo username */}
                         <div className="w-full">
-                            <label className="block h4 mb-2.5" style={{ fontFamily: 'Graphik', fontSize: '24px', fontStyle: 'normal' }}>
+                            <label className="block h4 mb-1.5 sm:mb-2 md:mb-2.5 text-lg sm:text-xl md:text-2xl" style={{ fontFamily: 'Graphik', fontStyle: 'normal' }}>
                                 Username
                             </label>
                             <input
                                 type="text"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                className="w-full flex items-center gap-2.5 py-2.5 px-5 focus:outline-none self-stretch h3"
-                                style={{ borderRadius: '15px', border: '1px solid rgba(0, 0, 0, 0.24)', background: '#FDFDFD', fontFamily: 'Graphik', fontSize: '28px', fontStyle: 'normal' }}
+                                className="w-full flex items-center gap-2.5 py-1.5 sm:py-2 md:py-2.5 px-3 sm:px-4 md:px-5 focus:outline-none self-stretch h3 text-lg sm:text-xl md:text-2xl lg:text-[28px]"
+                                style={{ borderRadius: '15px', border: '1px solid rgba(0, 0, 0, 0.24)', background: '#FDFDFD', fontFamily: 'Graphik', fontStyle: 'normal' }}
                             />
                         </div>
 
                         {/* preferred name campo */}
                         <div className="w-full">
-                            <label className="block h4 mb-2.5" style={{ fontFamily: 'Graphik', fontSize: '24px', fontStyle: 'normal' }}>
+                            <label className="block h4 mb-1.5 sm:mb-2 md:mb-2.5 text-lg sm:text-xl md:text-2xl" style={{ fontFamily: 'Graphik', fontStyle: 'normal' }}>
                                 Preferred name
                             </label>
                             <input
                                 type="text"
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
-                                className="w-full flex items-center gap-2.5 py-2.5 px-5 focus:outline-none self-stretch h3"
-                                style={{ borderRadius: '15px', border: '1px solid rgba(0, 0, 0, 0.24)', background: '#FDFDFD', fontFamily: 'Graphik', fontSize: '28px', fontStyle: 'normal' }}
+                                className="w-full flex items-center gap-2.5 py-1.5 sm:py-2 md:py-2.5 px-3 sm:px-4 md:px-5 focus:outline-none self-stretch h3 text-lg sm:text-xl md:text-2xl lg:text-[28px]"
+                                style={{ borderRadius: '15px', border: '1px solid rgba(0, 0, 0, 0.24)', background: '#FDFDFD', fontFamily: 'Graphik', fontStyle: 'normal' }}
                             />
                         </div>
 
                         {/* gender y date of birth campos */}
-                        <div className="w-full flex gap-5">
+                        <div className="w-full flex flex-col sm:flex-row gap-4 sm:gap-5">
                             {/* campo gender */}
                             <div className="flex-1">
-                                <label className="block h4 mb-2.5" style={{ fontFamily: 'Graphik', fontSize: '24px', fontStyle: 'normal' }}>
+                                <label className="block h4 mb-1.5 sm:mb-2 md:mb-2.5 text-lg sm:text-xl md:text-2xl" style={{ fontFamily: 'Graphik', fontStyle: 'normal' }}>
                                     Gender
                                 </label>
                                 <select
                                     value={gender ?? ""}
                                     onChange={(e) => setGender(e.target.value ? Number(e.target.value) : null)}
-                                    className="w-full flex items-center gap-2.5 py-2.5 px-5 focus:outline-none appearance-none cursor-pointer self-stretch h3"
-                                    style={{ borderRadius: '15px', border: '1px solid rgba(0, 0, 0, 0.24)', background: '#FDFDFD', fontFamily: 'Graphik', fontSize: '28px', fontStyle: 'normal' }}
+                                    className="w-full flex items-center gap-2.5 py-1.5 sm:py-2 md:py-2.5 px-3 sm:px-4 md:px-5 focus:outline-none appearance-none cursor-pointer self-stretch h3 text-lg sm:text-xl md:text-2xl lg:text-[28px]"
+                                    style={{ borderRadius: '15px', border: '1px solid rgba(0, 0, 0, 0.24)', background: '#FDFDFD', fontFamily: 'Graphik', fontStyle: 'normal' }}
                                 >
                                     <option value="">Select</option>
                                     {genders.map((g) => (
@@ -261,7 +260,7 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
 
                             {/* date of birth campo */}
                             <div className="flex-1">
-                                <label className="block h4 mb-2.5" style={{ fontFamily: 'Graphik', fontSize: '24px', fontStyle: 'normal' }}>
+                                <label className="block h4 mb-1.5 sm:mb-2 md:mb-2.5 text-lg sm:text-xl md:text-2xl" style={{ fontFamily: 'Graphik', fontStyle: 'normal' }}>
                                     Date of birth
                                 </label>
                                 <div className="relative">
@@ -269,12 +268,11 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
                                         type="date"
                                         value={birthdate}
                                         onChange={(e) => setBirthdate(e.target.value)}
-                                        className="w-full flex items-center gap-2.5 py-2.5 px-5 pr-12 focus:outline-none self-stretch h3 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-12 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                                        style={{ borderRadius: '15px', border: '1px solid rgba(0, 0, 0, 0.24)', background: '#FDFDFD', fontFamily: 'Graphik', fontSize: '28px', fontStyle: 'normal' }}
+                                        className="w-full flex items-center gap-2.5 py-1.5 sm:py-2 md:py-2.5 px-3 sm:px-4 md:px-5 pr-10 sm:pr-12 focus:outline-none self-stretch h3 text-lg sm:text-xl md:text-2xl lg:text-[28px] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-10 sm:[&::-webkit-calendar-picker-indicator]:w-12 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                                        style={{ borderRadius: '15px', border: '1px solid rgba(0, 0, 0, 0.24)', background: '#FDFDFD', fontFamily: 'Graphik', fontStyle: 'normal' }}
                                     />
                                     <span
-                                        className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-Gris-Oscuro"
-                                        style={{ width: '21px', height: '24px', fontSize: '24px' }}
+                                        className="material-symbols-outlined absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 pointer-events-none text-Gris-Oscuro text-lg sm:text-xl md:text-2xl"
                                     >
                                         calendar_today
                                     </span>
@@ -283,20 +281,20 @@ function EditProfile({ onBack, onSave }: EditProfileProps) {
                         </div>
 
                         {/* botones */}
-                        <div className="w-full flex items-center self-stretch" style={{ paddingTop: '70px', gap: '20px' }}>
+                        <div className="w-full flex flex-col sm:flex-row items-center self-stretch gap-3 sm:gap-4 md:gap-5 pt-8 sm:pt-12 md:pt-16 lg:pt-[70px]">
                             <button
                                 onClick={onBack}
                                 disabled={saving}
-                                className="flex justify-center items-center rounded-[15px] bg-transparent border-3 border-morado-lakers hover:text-morado-bajo hover:border-morado-bajo transition-colors"
-                                style={{ padding: '12px 20px', gap: '10px', flex: '1 0 0', color: '#542581', fontFamily: 'Graphik', fontSize: '32px', fontStyle: 'normal', fontWeight: 500, lineHeight: 'normal' }}
+                                className="w-full sm:flex-1 flex justify-center items-center rounded-[15px] bg-transparent border-3 border-morado-lakers text-morado-lakers hover:text-morado-bajo hover:border-morado-bajo transition-colors py-2 sm:py-2.5 md:py-3 px-4 sm:px-5 text-xl sm:text-2xl md:text-3xl lg:text-[32px] font-medium"
+                                style={{ fontFamily: 'Graphik', fontStyle: 'normal', lineHeight: 'normal' }}
                             >
                                 Back
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="flex justify-center items-center rounded-[15px] bg-morado-lakers border-3 border-morado-lakers hover:bg-morado-bajo hover:border-morado-bajo transition-colors disabled:opacity-50"
-                                style={{ padding: '12px 20px', gap: '10px', flex: '1 0 0', color: '#F3F2F3', fontFamily: 'Graphik', fontSize: '32px', fontStyle: 'normal', fontWeight: 500, lineHeight: 'normal' }}
+                                className="w-full sm:flex-1 flex justify-center items-center rounded-[15px] bg-morado-lakers border-3 border-morado-lakers text-[#F3F2F3] hover:bg-morado-bajo hover:border-morado-bajo transition-colors disabled:opacity-50 py-2 sm:py-2.5 md:py-3 px-4 sm:px-5 text-xl sm:text-2xl md:text-3xl lg:text-[32px] font-medium"
+                                style={{ fontFamily: 'Graphik', fontStyle: 'normal', lineHeight: 'normal' }}
                             >
                                 {saving ? "Saving..." : "Save"}
                             </button>
