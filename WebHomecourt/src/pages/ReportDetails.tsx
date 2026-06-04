@@ -155,7 +155,7 @@ const ReportDetails = () => {
                       <span key={kw} className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-base">
                         {kw}
                       </span>
-                    ))}
+                    ))}{/*testing */}
                   </div>
                 </div>
               </div>
