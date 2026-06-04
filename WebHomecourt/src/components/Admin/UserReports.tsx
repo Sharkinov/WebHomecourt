@@ -38,17 +38,23 @@ const UserReportsTable = ({ refreshKey }: { refreshKey: number }) => {
               </tr>
             </thead>
             <tbody>
-              {reports.map((report) => (
-                <UserReportRow
-                  key={report.ureport_id}
-                  id={report.ureport_id}
-                  event={report.event?.event_name ?? 'N/A'}
-                  reportedUser={report.reported_user?.username ?? 'N/A'}
-                  pfp={report.reported_user?.photo_url ?? ''}
-                  priority={report.priority}
-                  status={report.status}
-                />
-              ))}
+              {reports.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center text-gray-500 py-8">No reports found</td>
+                </tr>
+              ) : (
+                reports.map((report) => (
+                  <UserReportRow
+                    key={report.ureport_id}
+                    id={report.ureport_id}
+                    event={report.event?.event_name ?? 'N/A'}
+                    reportedUser={report.reported_user?.username ?? 'N/A'}
+                    pfp={report.reported_user?.photo_url ?? ''}
+                    priority={report.priority}
+                    status={report.status}
+                  />
+                ))
+              )}
             </tbody>
           </table>
         </div>
