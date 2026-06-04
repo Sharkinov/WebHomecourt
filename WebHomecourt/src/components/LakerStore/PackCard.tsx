@@ -13,9 +13,8 @@ type PackCardProp = {
 function PackCard(prop: PackCardProp) {
     return (
         <div
-            //itemID={prop.itemId} // hola
             key={prop.pack.pack_id}
-            className="w-full md:max-w-[25rem] md:h-[16rem] p-4 mb-4 mr-5 bg-white rounded-xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100"
+            className="w-full md:max-w-[30rem] md:h-[16rem] p-4 mb-4 mr-5 bg-white rounded-xl shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)] shadow-lg outline outline-[0.80px] outline-offset-[-0.80px] outline-gray-100"
         >
             {/* Left side logo and team name, using h full to use full height of container and align button */}
             <div className="flex flex-row items-stretch mt-2 mb-1 justify-between">

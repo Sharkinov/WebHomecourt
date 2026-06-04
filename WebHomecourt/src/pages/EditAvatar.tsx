@@ -2,9 +2,7 @@ import Button from "../components/button"
 import { supabase } from "../lib/supabase"
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-
-const AVATAR_DRAFT_KEY = "draft_avatar_url"
-const AVATAR_DRAFT_OWNER_KEY = "draft_avatar_user_id"
+import { AVATAR_DRAFT_KEY, AVATAR_DRAFT_OWNER_KEY, AVATAR_RETURN_KEY } from "../lib/avatar"
 
 export async function fetchDefaultAvatarUrls(): Promise<string[]> {
   const { data: files, error } = await supabase.storage
@@ -28,7 +26,9 @@ function saveAvatarDraft(url: string, userId: string) {
 
 function saveDraftAndReturn(url: string, userId: string, navigate: ReturnType<typeof useNavigate>) {
   saveAvatarDraft(url, userId)
-  navigate("/complete-register")
+  const returnPath = sessionStorage.getItem(AVATAR_RETURN_KEY) ?? "/complete-register"
+  sessionStorage.removeItem(AVATAR_RETURN_KEY)
+  navigate(returnPath)
 }
 
 export async function uploadPhotoDefault(userId: string, file: File): Promise<string | null> {
@@ -143,7 +143,11 @@ function EditAvatar() {
             type="primary"
             text="Return"
             className="px-8 !py-2"
-            onClick={() => navigate("/complete-register")}
+            onClick={() => {
+              const returnPath = sessionStorage.getItem(AVATAR_RETURN_KEY) ?? "/complete-register"
+              sessionStorage.removeItem(AVATAR_RETURN_KEY)
+              navigate(returnPath)
+            }}
           />
         </div>
 

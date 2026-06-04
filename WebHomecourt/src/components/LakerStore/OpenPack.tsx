@@ -19,7 +19,7 @@ type OpenPackProp = {
     openingImg: string, // About to open img
     packName: string, // To display as open it onClick={onClose}
     packCost: number // Show how much package costs to ensure user wants to buy
-    onCreditsUpdated: (newCredits: number) => void; // Todo pq react no puede auto refresh no manches
+    //onCreditsUpdated: (newCredits: number) => void; // Todo pq react no puede auto refresh no manches
 }
 
 // Now the actual API logic based on pack they're buying and their id
@@ -159,7 +159,7 @@ function OpenPack(prop: OpenPackProp) {
 
                 const updatedCredits = cards[0]?.updated_credits ?? 0; // Checks first item if they have updated_credits field or otherwise set as 0
                 console.log(`New credits: ${updatedCredits}`);
-                prop.onCreditsUpdated(updatedCredits); // Pass to general store
+                //prop.onCreditsUpdated(updatedCredits); // Pass to general store
 
 
                 if (updatedCredits < prop.packCost) {
@@ -208,7 +208,7 @@ function OpenPack(prop: OpenPackProp) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40" />
             {/* Using vh that sets to 95% of screen height */}
-            <div className="relative z-10 w-[22rem] md:w-[40rem] max-h-[90vh] md:max-h-[95vh] rounded-lg bg-white shadow-lg overflow-y-auto md:overflow-y-hidden">
+            <div className="relative z-10 w-[22rem] md:w-[40rem] max-h-[90vh] md:max-h-[95vh] rounded-lg bg-white shadow-lg overflow-y-auto">
                 {/* Header */}
                 <div className="border-b border-gray-200 px-6 py-6 bg-morado-lakers">
                     <div className="flex items-start justify-between">
@@ -300,7 +300,6 @@ function OpenPack(prop: OpenPackProp) {
                                 <Button
                                     text={openTextButton}
                                     type={openEnabled ? 'primary' : 'primarydisable'}
-                                    //onClick={() => opening()} // Logic to open package
                                     onClick={openEnabled ? () => opening() : () => { }} // Only let open if they can actually afford to do so
                                     className="w-full"
                                 />
