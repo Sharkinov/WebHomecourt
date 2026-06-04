@@ -14,24 +14,25 @@ const pages = [
   { label: 'LakersCourt', path: '/lakerscourt' },
   { label: 'Dunk Royale', path: '/juego' },
   { label: 'Lakers Cards', path: '/store' },
-  { label: 'Wrapped', path: '/wrapped' }, 
+  { label: 'Wrapped', path: '/wrapped' },
 ]
 
 function Nav() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [navHeight, setNavHeight] = useState(72)
-  const navRef = useRef<HTMLDivElement>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [navHeight, setNavHeight] = useState(72);
+  const navRef = useRef<HTMLDivElement>(null);
 
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
-  const { user: authUser, userType, credits, photoUrl } = useAuth()
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { user: authUser, userType, credits, photoUrl } = useAuth();
 
   // Notifications state
-  const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([])
-  const [showNotifications, setShowNotifications] = useState(false)
-  const [lastSeenCount, setLastSeenCount] = useState(0)
-  const notificationRef = useRef<HTMLDivElement>(null)
+  const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [lastSeenCount, setLastSeenCount] = useState(0);
+  const notificationRef = useRef<HTMLDivElement>(null);
 
+  // Loads user notifications 
   useEffect(() => {
     const loadNotifications = async () => {
       if (!authUser?.id) return
@@ -84,7 +85,7 @@ function Nav() {
     if (path === '/') return pathname === '/'
     if (path === '/admin') return pathname.startsWith('/admin')
     if (path === '/store') return pathname === '/store' || pathname === '/collection'
-    return pathname === path
+    return pathname === path;
   }
 
   const current = navPages.find((p) => isActivePage(p.path))?.label ?? ''
@@ -224,13 +225,15 @@ function Nav() {
               )}
             </div>
 
+            {/* Credit counters */}
             <div className="p-2 bg-white rounded-2xl shadow-sm outline outline-1 outline-black/20 flex items-center gap-2">
               <span className="material-symbols-outlined text-amber-400 text-2xl leading-none">
                 payments
               </span>
-              <span className="text-black text-lg font-normal font-['Graphik']">{credits}</span>
+              <span className="text-black text-lg font-normal font-['Graphik']">{credits ?? 0}</span>
             </div>
 
+            {/* Checks user session to take to profile or to login */}
             <button
               type="button"
               onClick={() => navigate(authUser?.id ? '/perfil' : '/login')}
