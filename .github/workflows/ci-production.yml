@@ -48,11 +48,13 @@ jobs:
       
       - name: Verificar results
         run: |
+          export PATH="$PATH:/home/adolf/.local/bin"
           which results
           results --help
 
       - name: Generar SQL para igualar PROD con DEV
         run: |
+          export PATH="$PATH:/home/adolf/.local/bin"
           mkdir -p generated-migrations
 
           results dbdiff \
