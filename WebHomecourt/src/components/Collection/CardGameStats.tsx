@@ -13,7 +13,7 @@ function CardGameStats(props: GameStatsProp) {
     return (
         <div className="w-full py-2">
             <div className="flex flex-row justify-start">
-                <span className="material-symbols-outlined text-[20px] leading-none">{props.icon}</span>
+                <span className="material-symbols-outlined text-[0.50rem] md:text-[1.25rem] leading-none">{props.icon}</span>
                 <p className="pl-2">{props.category}</p>
             </div>
 
@@ -54,7 +54,6 @@ function CardGameStats(props: GameStatsProp) {
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
-
         </div>
     )
 }
