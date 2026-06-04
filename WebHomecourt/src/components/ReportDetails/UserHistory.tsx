@@ -33,7 +33,7 @@ const UserHistory = ({ reportedUser, history }: UserHistoryProps) => {
       if (priorityDiff !== 0) return priorityDiff
       return new Date(b.date).getTime() - new Date(a.date).getTime()
     })
-    .slice(0, 3)
+    .slice(0, 4)
 
   return (
     <div className="bg-[#000000]/5 w-full md:w-84 flex flex-col gap-4 self-stretch p-4 -mb-10">
@@ -61,7 +61,7 @@ const UserHistory = ({ reportedUser, history }: UserHistoryProps) => {
       </div>
 
       <p className="font-medium pt-6 px-1" style={{ fontSize: '20px' }}>History</p>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 max-h-[280px] overflow-y-auto pr-1">
         {topHistory.length === 0 ? (
           <p className="text-gray-500 text-center py-4">No previous reports</p>
         ) : (

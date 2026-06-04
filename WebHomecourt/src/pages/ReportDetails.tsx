@@ -155,14 +155,14 @@ const ReportDetails = () => {
                       <span key={kw} className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-base">
                         {kw}
                       </span>
-                    ))}
+                    ))}https://github.com/Sharkinov/WebHomecourt/pull/485/conflict?name=WebHomecourt%252Fsrc%252Fpages%252FReportDetails.tsx&ancestor_oid=4c5d6d72378df48ead8a203363ae6d8efdb27145&base_oid=d906307ec79ffd3f95114ee963cd8832fef77480&head_oid=5f8d8ee89e841ee79842e9dc69167e0f7ecc5b5f
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons*/}
               {report.status === 'Resolved' ? (
-                <div className="w-full px-5 py-3 bg-morado-oscuro rounded-xl flex items-center justify-center gap-2 mt-4">
+                <div className="w-2/3 mx-auto px-5 py-3 bg-morado-oscuro rounded-xl flex items-center justify-center gap-2 mt-4">
                   <span className="material-symbols-outlined text-white text-[20px]!">check_circle</span>
                   <p className="text-white font-medium">This report has been resolved</p>
                 </div>
