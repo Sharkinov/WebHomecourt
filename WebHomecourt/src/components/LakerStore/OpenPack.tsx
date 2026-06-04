@@ -19,7 +19,7 @@ type OpenPackProp = {
     openingImg: string, // About to open img
     packName: string, // To display as open it onClick={onClose}
     packCost: number // Show how much package costs to ensure user wants to buy
-    onCreditsUpdated: (newCredits: number) => void; // Todo pq react no puede auto refresh no manches
+    //onCreditsUpdated: (newCredits: number) => void; // Todo pq react no puede auto refresh no manches
 }
 
 // Now the actual API logic based on pack they're buying and their id
@@ -159,7 +159,7 @@ function OpenPack(prop: OpenPackProp) {
 
                 const updatedCredits = cards[0]?.updated_credits ?? 0; // Checks first item if they have updated_credits field or otherwise set as 0
                 console.log(`New credits: ${updatedCredits}`);
-                prop.onCreditsUpdated(updatedCredits); // Pass to general store
+                //prop.onCreditsUpdated(updatedCredits); // Pass to general store
 
 
                 if (updatedCredits < prop.packCost) {
@@ -300,7 +300,6 @@ function OpenPack(prop: OpenPackProp) {
                                 <Button
                                     text={openTextButton}
                                     type={openEnabled ? 'primary' : 'primarydisable'}
-                                    //onClick={() => opening()} // Logic to open package
                                     onClick={openEnabled ? () => opening() : () => { }} // Only let open if they can actually afford to do so
                                     className="w-full"
                                 />
