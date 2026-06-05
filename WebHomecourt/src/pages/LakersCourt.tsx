@@ -1,4 +1,3 @@
-import Nav from '../components/Nav/Nav'
 import Map from "../components/LakerCourt/Map"
 import CourtTournaments from '../components/LakerCourt/CourtTournaments'
 import RatePlayersPanel from '../components/LakerCourt/RatePlayersPanel'
@@ -10,6 +9,7 @@ import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import {
   getPendingRatingPlayers,
+  awardRatingCredits,
   markUserEventAsRated,
   saveUserEventRating,
   type RatePlayer,
@@ -140,6 +140,9 @@ function LakersCourt() {
           saveUserEventRating(pendingUserEventId, player.id, selectedRatings[player.id])
         )
       )
+      if (userId) {
+        await awardRatingCredits(userId, selectedRatings)
+      }
       await markUserEventAsRated(pendingUserEventId)
       await loadPendingRatings()
     } catch (error) {
@@ -161,9 +164,6 @@ function LakersCourt() {
 
   return (
     <div>
-      <div >
-        <Nav current="Lakers Court" />
-      </div>
       <div className='px-4 py-5 bg-zinc-100 w-full sm:px-6 lg:px-14'>
         <BannerReput
           title="LAKERS COURT"

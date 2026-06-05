@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { supabase } from "../lib/supabase";
 import { useNavigate } from 'react-router-dom';
 import { useStoreUser } from '../hooks/useStoreUser.ts'; // Hook for store user, just to get sesh info
-import Nav from '../components/Nav/Nav.tsx';
 import Button from '../components/button.tsx';
 // Specific to this screen
 import CategorySummary from '../components/Collection/CategorySummary.tsx';
@@ -169,7 +168,6 @@ function Collection() {
 
     return (
         <div>
-            <Nav current="Lakers Cards" />
             <div className="px-4 py-5 md:px-14 md:py-5 bg-Background w-full">
                 {/* Title comp */}
                 <BannerGeneral
@@ -228,7 +226,7 @@ function Collection() {
                 {/* Card filters */}
                 <div className="w-full px-5 py-2.5 mt-8 bg-white rounded-2xl">
                     <h4 className="mt-1 mb-3 ml-1">Filter Collection</h4>
-                    <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-2 mb-2">
+                    <div className="flex flex-col md:flex-row md:justify-left gap-4 mb-2">
                         {/* Custom filter box q toma el nombre del rectangle, las options, pasa currently selected one y cuando se pica otro, se cambia la option */}
                         <FilterBox
                             filterTitle='Card Rarity Category'
@@ -236,6 +234,8 @@ function Collection() {
                             selectedOption={rarityFilter}
                             onSelect={setRarityFilter}
                         />
+
+                        <div className="mr-4"></div>
 
                         <FilterBox
                             filterTitle='Card Status'
@@ -288,7 +288,7 @@ function Collection() {
                 ) : paginated.length === 0 ? (
                     <p className="text-center">No cards matching specified filters.</p>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-15">
                         {paginated.map((card) => (
                             <CollectionCardRender key={card.card_id} card={card} userId={storeUser.user_id} />
                         ))}

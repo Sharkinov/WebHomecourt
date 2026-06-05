@@ -1,5 +1,4 @@
 # Probando PR automatico
-supabase/
-schema.sql
 seed.sql
 .vscode
+WebHomecourt/supabase/.temp/

@@ -1,4 +1,3 @@
-import Nav from '../components/Nav/Nav'
 import { Unity, useUnityContext } from "react-unity-webgl";
 import { supabase } from "../lib/supabase";
 import type { Session } from "@supabase/supabase-js";
@@ -67,20 +66,31 @@ function Juego() {
     }
 
     const channel = supabase
-      .channel('coronas-juego')
+      .channel(`user_laker:${session.user.id}`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'minigame_match' },
-        () => {
-          void refreshCrowns();
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'user_laker',
+          filter: `user_id=eq.${session.user.id}`,
+        },
+        (payload) => {
+          console.log('Realtime user_laker fired:', payload);
+          const newCrowns = (payload.new as { crowns?: number })?.crowns;
+          if (typeof newCrowns === 'number') {
+            setCrowns(newCrowns);
+          }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Channel status:', status);
+      });
 
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [session]);
+  }, [session?.user?.id]);
 
   useEffect(() => {
     if (isLoaded && session?.access_token && session?.user?.id) {
@@ -97,7 +107,6 @@ function Juego() {
 
 return (
   <div>
-    <Nav current="Juego" />
     <section className="px-4 md:px-14 py-5 bg-zinc-100 w-full flex flex-col gap-6">
       <div className="w-full px-3 py-4 md:px-5 md:py-7 bg-morado-oscuro rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-black/25 flex flex-col gap-4 md:flex-row md:justify-between md:items-center overflow-hidden">
         <h1 className="justify-start text-white title1 text-center md:text-left text-3xl sm:text-4xl lg:text-5xl leading-tight">

@@ -1,5 +1,4 @@
 // HistorialLakers.tsx
-import Nav from '../components/Nav/Nav.tsx'
 import BannerReput from '../components/LakerCourt/BannerReput'
 import {
   getUserReputation,
@@ -69,8 +68,6 @@ function HistorialLakers() {
 
   return (
     <div>
-      <Nav current="Match History" />
-
       <div className="w-full max-w-7xl mx-auto px-4 py-8">
         <BannerReput
           title="MATCH HISTORY"

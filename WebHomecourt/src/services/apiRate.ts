@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import { addCredits } from './apiCredits'
 
 
 //Pa el frnt
@@ -70,6 +71,22 @@ export async function saveUserEventRating(
   if (error) {
     throw new Error('No se pudo guardar la calificacion')
   }
+}
+
+export async function awardRatingCredits(
+  userId: string,
+  ratings: Record<string, number>
+): Promise<void> {
+  const ratedPlayers = Object.entries(ratings).filter(([, rating]) => Boolean(rating))
+  if (ratedPlayers.length === 0) return
+
+  await addCredits(userId, 60)
+
+  await Promise.all(
+    ratedPlayers
+      .filter(([, rating]) => rating >= 4)
+      .map(([ratedUserId]) => addCredits(ratedUserId, 25))
+  )
 }
 
 export async function markUserEventAsRated(userEventId: number): Promise<void> {

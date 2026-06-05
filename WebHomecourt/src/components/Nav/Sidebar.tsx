@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom'
 // const DEFAULT_AVATAR = "https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/object/public/user_images/profile_picture_default.png"
 
 interface SidebarProps {
-  isOpen: boolean
-  onClose: () => void
-  navPages: { label: string; path: string }[]
-  current: string
-  navHeight?: number
-  isLoggedIn: boolean
+  isOpen: boolean;
+  onClose: () => void;
+  navPages: { label: string; path: string }[];
+  current: string;
+  navHeight?: number;
+  isLoggedIn: boolean;
 }
  
 function Sidebar({ isOpen, onClose, navPages, current, navHeight = 72, isLoggedIn }: SidebarProps) {

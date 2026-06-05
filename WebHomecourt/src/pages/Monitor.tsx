@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
-import Nav from '../components/Nav/Nav'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import StatusAlert from '../components/Messages/StatusAlert'
@@ -128,8 +127,6 @@ const Monitor = () => {
           onCancel={() => setShowEndEvent(false)}
         />
 )}
-      <Nav current="Admin" />
-
         {/* Header */}
       <div className="px-4 md:px-14 py-5 mb-10">
         <div className="w-full px-5 py-7 bg-violet-950 rounded-2xl flex items-center gap-3 mb-6">
@@ -214,14 +211,19 @@ const Monitor = () => {
 
             {/* Participants */}
             <div className="flex flex-col gap-3 flex-1 max-h-110 overflow-y-auto pr-1">
-              <h5 className="font-medium">Registered Players</h5>
-              {event?.participants?.map((p: any) => {
-                  const hasActiveReport = p.user.reports?.some(
-                    (r: any) => r.status === 'Pending' || r.status === 'Reviewed'
-                  )
-                  const latestActiveReport = p.user.reports
-                    ?.filter((r: any) => r.status === 'Pending' || r.status === 'Reviewed')
-                    .sort((a: any, b: any) => b.ureport_id - a.ureport_id)[0]
+                <h5 className="font-medium">Registered Players</h5>
+                {event?.participants?.length === 0 ? (
+                  <div className="bg-gray-100 rounded-xl px-5 py-4 text-center text-gray-500 text-medium">
+                    No players have joined yet
+                  </div>
+                ) : (
+                  event?.participants?.map((p: any) => {
+                    const hasActiveReport = p.user.reports?.some(
+                      (r: any) => r.status === 'Pending' || r.status === 'Reviewed'
+                    )
+                    const latestActiveReport = p.user.reports
+                      ?.filter((r: any) => r.status === 'Pending' || r.status === 'Reviewed')
+                      .sort((a: any, b: any) => b.ureport_id - a.ureport_id)[0]
 
               return (
                 <div key={p.user.user_id} className="flex flex-row items-center gap-3 bg-gray-100 rounded-xl px-5 py-4 w-full justify-between">
@@ -261,7 +263,7 @@ const Monitor = () => {
                   </div>
                 </div>
                   )
-                })}
+                }))}
               </div>
             </div>
 

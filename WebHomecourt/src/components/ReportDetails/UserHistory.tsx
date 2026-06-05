@@ -16,15 +16,27 @@ interface UserHistoryProps {
     rating: number
     tags: string[]
     report_id: string
+    priority: string
   }[]
 }
+
+const priorityOrder: Record<string, number> = { High: 1, Medium: 2, Low: 3 }
 
 const UserHistory = ({ reportedUser, history }: UserHistoryProps) => {
   const navigate = useNavigate()
 
+  const normalize = (p: string) => p?.charAt(0).toUpperCase() + p?.slice(1).toLowerCase()
+
+  const topHistory = [...history]
+    .sort((a, b) => {
+      const priorityDiff = (priorityOrder[normalize(a.priority)] ?? 99) - (priorityOrder[normalize(b.priority)] ?? 99)
+      if (priorityDiff !== 0) return priorityDiff
+      return new Date(b.date).getTime() - new Date(a.date).getTime()
+    })
+    .slice(0, 4)
+
   return (
     <div className="bg-[#000000]/5 w-full md:w-84 flex flex-col gap-4 self-stretch p-4 -mb-10">
-
       <div>
         <h1 className="font-medium mb-4 pb-2 pt-1" style={{ fontSize: '20px' }}>Reported User</h1>
         <div className="flex items-center gap-3 mb-2">
@@ -49,11 +61,11 @@ const UserHistory = ({ reportedUser, history }: UserHistoryProps) => {
       </div>
 
       <p className="font-medium pt-6 px-1" style={{ fontSize: '20px' }}>History</p>
-      <div className="flex flex-col gap-3">
-        {history.length === 0 ? (
+      <div className="flex flex-col gap-3 max-h-[280px] overflow-y-auto pr-1">
+        {topHistory.length === 0 ? (
           <p className="text-gray-500 text-center py-4">No previous reports</p>
         ) : (
-          history.map((h, i) => (
+          topHistory.map((h, i) => (
             <HistoryCard
               key={i}
               event={h.event}
@@ -65,7 +77,6 @@ const UserHistory = ({ reportedUser, history }: UserHistoryProps) => {
           ))
         )}
       </div>
-
     </div>
   )
 }

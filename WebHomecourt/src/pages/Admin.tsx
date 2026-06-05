@@ -1,9 +1,12 @@
-import Nav from '../components/Nav/Nav.tsx'
 import StatsCards from '../components/Admin/StatsCards'
 import UserReports from '../components/Admin/UserReports';
 import ActiveEvents from '../components/Admin/ActiveEvents.tsx'
 import EventReports from '../components/Admin/EventReports'
+import ReportsGraph from '../components/Admin/ReportsGraph'
 import { supabase } from '../lib/supabase'
+import ReportStatus from '../components/Admin/ReportStatus.tsx';
+import EventStatus from '../components/Admin/EventStatus.tsx';
+import { useEffect, useState } from 'react'
 
 
 export const getUserReports = async () => {
@@ -130,30 +133,51 @@ export const getUserHistory = async (userId: string, currentReportId: string) =>
 }
 
 function Admin() {
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('admin-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event' }, () => {
+        setRefreshKey(k => k + 1)
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_report' }, () => {
+        setRefreshKey(k => k + 1)
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_report' }, () => {
+        setRefreshKey(k => k + 1)
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [])
+
   return (
-    <div >
-      <Nav current="Admin" />
+    <div>
       <div className="px-4 md:px-14 py-5 pb-10 bg-zinc-100 w-full">
-
-        {/* Header */}
         <div className="w-full px-5 py-7 bg-violet-950 rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-black/25 flex justify-between items-center overflow-hidden">
-            <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-white" style={{ fontSize: '48px' }}>admin_panel_settings</span>
-                <h1 className="text-white title1">Reports Administration</h1>
-            </div>
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-white" style={{ fontSize: '48px' }}>admin_panel_settings</span>
+            <h1 className="text-white title1">Reports Administration</h1>
+          </div>
         </div>
-
-        {/* Stats */}
         <div className="mt-6">
-          <StatsCards />
+          <StatsCards refreshKey={refreshKey} />
         </div>
-        <UserReports/>
-        {/* Header 
-        <EventsCards />
-        */}
-        <ActiveEvents/>
-        <EventReports />
-
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6 mt-6 items-stretch">
+        <div className="md:col-span-2 lg:col-span-3">
+          <ReportsGraph refreshKey={refreshKey} />
+        </div>
+        <div className="md:col-span-1 lg:col-span-2">
+          <ReportStatus refreshKey={refreshKey} />
+        </div>
+        <div className="md:col-span-1 lg:col-span-2">
+          <EventStatus refreshKey={refreshKey} />
+        </div>
+      </div>
+        <UserReports refreshKey={refreshKey} />
+        <ActiveEvents refreshKey={refreshKey} />
+        <EventReports refreshKey={refreshKey} />
       </div>
     </div>
   )

@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import Nav from '../components/Nav/Nav'
 import UserHistory from '../components/ReportDetails/UserHistory'
 import ActionButtons from '../components/ReportDetails/ActionButtons'
 import { useLocation } from 'react-router-dom'
@@ -68,7 +67,6 @@ const ReportDetails = () => {
       }
       setReport(data)
 
-      //change status to reviewed if the report is opened, params takes in id of report opened
       if (data.status === 'Pending') {
         await supabase
           .from('user_report')
@@ -94,11 +92,8 @@ const ReportDetails = () => {
 
   if (!report) return null
 
-  //design
   return (
-    <div >
-      <Nav current="Admin" />
-
+    <div>
       <div className="px-4 md:px-14 py-5 mb-10">
         {/* Header */}
         <div className="w-full px-5 py-7 bg-violet-950 rounded-2xl flex items-center gap-3 mb-6">
@@ -111,8 +106,7 @@ const ReportDetails = () => {
           {/* Header */}
           <div className="bg-violet-950 px-5 py-4 flex justify-between items-center">
             <p className="text-white font-bold" style={{ fontSize: '26px' }}>Report Details</p>
-            <button onClick={() => navigate('/admin')}
-              className="text-white hover:text-gray-300 transition-colors">
+            <button onClick={() => navigate('/admin')} className="text-white hover:text-gray-300 transition-colors">
               <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>close</span>
             </button>
           </div>
@@ -143,15 +137,14 @@ const ReportDetails = () => {
                 </div>
               </div>
 
-              <hr className="border-amarillo-lakers border-t-2 my-4  -mx-12" />
-
+              <hr className="border-amarillo-lakers border-t-2 my-4 -mx-12" />
 
               {/* Report Comment */}
               <div className="grid gap-10" style={{ gridTemplateColumns: '2fr 1fr' }}>
                 <div className="flex flex-col gap-3">
                   <h2 className="font-medium text-black" style={{ fontSize: '20px' }}>Report Comment</h2>
                   <div className="bg-[#9382A5]/50 border border-gray-200 rounded-xl p-4 min-h-[150px]">
-                      <p className="text-black">{report.comment}</p>
+                    <p className="text-black">{report.comment}</p>
                   </div>
                 </div>
 
@@ -162,64 +155,67 @@ const ReportDetails = () => {
                       <span key={kw} className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-base">
                         {kw}
                       </span>
-                    ))}
+                    ))}{/*testing */}
                   </div>
                 </div>
               </div>
-                
 
-              {/* Action Buttons */}
-              <ActionButtons
-                //dismiss button
-                onDismiss={async () => {
-                  await supabase
-                    .from('user_report')
-                    .update({ status: 'Resolved' })
-                    .eq('ureport_id', report.ureport_id)
-                  handleAction('dismiss')
-                }}
+              {/* Action Buttons*/}
+              {report.status === 'Resolved' ? (
+                <div className="w-2/3 mx-auto px-5 py-3 bg-morado-oscuro rounded-xl flex items-center justify-center gap-2 mt-4">
+                  <span className="material-symbols-outlined text-white text-[20px]!">check_circle</span>
+                  <p className="text-white font-medium">This report has been resolved</p>
+                </div>
+              ) : (
+                <ActionButtons
+                  onDismiss={async () => {
+                    await supabase
+                      .from('user_report')
+                      .update({ status: 'Resolved' })
+                      .eq('ureport_id', report.ureport_id)
+                    handleAction('dismiss')
+                  }}
 
-                //warning button
-                onWarning={handleWarning}
+                  onWarning={handleWarning}
 
-                //suspend button
-                onSuspend={async () => {
-                const suspendedUntil = new Date()
-                suspendedUntil.setDate(suspendedUntil.getDate() + 7)
-                await supabase
-                  .from('user_laker')
-                  .update({ banned_until: suspendedUntil.toISOString() })
-                  .eq('user_id', report.reported_user_id)
-                await supabase
-                  .from('event_participant')
-                  .delete()
-                  .eq('user_id', report.reported_user_id)  
-                handleAction('suspend')
-              }}
+                  onSuspend={async () => {
+                    const suspendedUntil = new Date()
+                    suspendedUntil.setDate(suspendedUntil.getDate() + 7)
+                    await supabase
+                      .from('user_laker')
+                      .update({ banned_until: suspendedUntil.toISOString() })
+                      .eq('user_id', report.reported_user_id)
+                    await supabase
+                      .from('event_participant')
+                      .delete()
+                      .eq('user_id', report.reported_user_id)
+                    handleAction('suspend')
+                  }}
 
-              //ban button
-              onBan={async () => {
-                const bannedUntil = new Date()
-                bannedUntil.setFullYear(bannedUntil.getFullYear() + 999)
-                await supabase
-                  .from('user_laker')
-                  .update({ banned_until: bannedUntil.toISOString() })
-                  .eq('user_id', report.reported_user_id)
-                await supabase
-                  .from('event_participant')
-                  .delete()
-                  .eq('user_id', report.reported_user_id)
-                handleAction('ban')
-              }}
+                  onBan={async () => {
+                    const bannedUntil = new Date()
+                    bannedUntil.setFullYear(bannedUntil.getFullYear() + 999)
+                    await supabase
+                      .from('user_laker')
+                      .update({ banned_until: bannedUntil.toISOString() })
+                      .eq('user_id', report.reported_user_id)
+                    await supabase
+                      .from('event_participant')
+                      .delete()
+                      .eq('user_id', report.reported_user_id)
+                    handleAction('ban')
+                  }}
 
-              user={{
-                name: report.reported_user?.username ?? 'N/A',
-                photo_url: report.reported_user?.photo_url ?? ''
-              }}
-              target="User"
-              />
+                  user={{
+                    name: report.reported_user?.username ?? 'N/A',
+                    photo_url: report.reported_user?.photo_url ?? ''
+                  }}
+                  target="User"
+                />
+              )}
             </div>
-            {/* Right side */}
+
+            {/* Right side*/}
             <div className="w-0.5 bg-black/20 self-stretch -mr-6 -mb-10" />
             <UserHistory
               reportedUser={{
@@ -235,6 +231,7 @@ const ReportDetails = () => {
                 rating: h.reported_user?.reputation ?? 0,
                 tags: h.key_words ?? [],
                 report_id: h.ureport_id,
+                priority: h.priority ?? 'Low',
               }))}
             />
           </div>

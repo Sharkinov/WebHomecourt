@@ -1,4 +1,3 @@
-import Nav from '../components/Nav/Nav'
 import { useEffect, useState } from "react";
 import { getLakersPlayers } from "../components/Comparison/getPlayers";
 import { getPlayerSeasons } from "../components/Comparison/getPlayers";
@@ -35,7 +34,16 @@ function Comparison() {
   const [p1Season, setP1Season] = useState<number | null>(null); //id season
   const [p2Id, setP2Id] = useState<number | null>(null);
   const [p2Season, setP2Season] = useState<number | null>(null);
-
+  useEffect(() => {
+    if (players.length > 0 && p1Id === null) {
+      setP1Id(7);
+    }
+  }, [players]);
+  useEffect(() => {
+    if (players.length > 0 && p2Id === null) {
+      setP2Id(22);
+    }
+  }, [players]);
   const { seasons: s1} = usePlayerSeasons(p1Id);//lista de seasons 
   const { seasons: s2} = usePlayerSeasons(p2Id);
   const seasons1= s1.map(r => r.season_start); //años de las temporadas
@@ -51,7 +59,6 @@ function Comparison() {
 
   return (
     <div >
-      <Nav current="Comparison"/>
       <div className='px-4 md:px-14 py-5 bg-zinc-100 w-full min-h-screen flex flex-col gap-6'>
         <BannerGeneral
           title="Player Comparison"
@@ -63,14 +70,16 @@ function Comparison() {
               players={players} seasons={seasons1}
               onPlayerChange={id => { setP1Id(id); setP1Season(null); }}
               onSeasonChange={setP1Season}
-              color={'morado-lakers'}
+              color1={'morado-lakers'}
+              color2={'amarillo-lakers'}
             />
             <PlayerCard
               player={p2} season={p2Season}
               players={players} seasons={seasons2}
               onPlayerChange={id => { setP2Id(id); setP2Season(null); }}
               onSeasonChange={setP2Season}
-              color={'amarillo-lakers'}
+              color1={'amarillo-lakers'}
+              color2={'morado-lakers'}
             />
           </div>
 

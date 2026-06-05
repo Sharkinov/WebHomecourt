@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
-import Nav from '../components/Nav/Nav'
 import ActionButtons from '../components/ReportDetails/ActionButtons'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
@@ -117,8 +116,6 @@ const EventReportDetails = () => {
 
   return (
     <div >
-      <Nav current="Admin" />
-
       <div className="px-4 md:px-14 py-5 mb-10 w-full">
         <div className="w-full px-5 py-7 bg-violet-950 rounded-2xl flex items-center gap-3 mb-6">
           <span className="material-symbols-outlined text-white" style={{ fontSize: '36px' }}>

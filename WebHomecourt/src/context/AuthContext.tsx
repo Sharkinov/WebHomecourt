@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState, useContext } from "react";
-import type { ReactNode} from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 
@@ -11,8 +11,11 @@ interface AuthContextType {
   userType: number | null;
   nickname: string | null;
   photoUrl: string | null;
+  credits: number;
+  setCredits: Dispatch<SetStateAction<number>>;
   loading: boolean;
   gender: number | null;
+  refreshUserProfile: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<{ error: any } | undefined>; // Función para iniciar sesión
   signOut: () => Promise<void>; // Función para cerrar sesión
 }
@@ -33,8 +36,10 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [userType, setUserType] = useState<number | null>(null); // Empieza en null hasta obtener el rol del usuario
   const [nickname, setNickname] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [credits, setCredits] = useState(0);
   const [loading, setLoading] = useState(true); // Empieza en true hasta que supabase confirme si hay sesión activa o no
   const [gender, setGender] = useState<number | null>(null);
+  const DEFAULT_AVATAR = 'https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/object/public/user_images/profile_picture_default.png'; // Default image if none is set 
 
   const updateLastSeen = async (userId: string) => {
     await supabase
@@ -43,21 +48,26 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       .eq('user_id', userId);
   };
 
-  const fetchUserData = (userId: string) => {
+  const fetchUserData = async (userId: string) => {
     // actualizar last_seen 
-    updateLastSeen(userId); 
+    void updateLastSeen(userId);
 
-    supabase
+    const { data } = await supabase
       .from('user_laker')
-      .select("user_type, nickname, photo_url, gender")
+      .select("user_type, nickname, photo_url, gender, credits")
       .eq('user_id', userId)
       .maybeSingle()
-      .then(({ data }) => {
-        setUserType(data?.user_type ?? null);
-        setNickname(data?.nickname ?? null);
-        setPhotoUrl(data?.photo_url ?? null);
-        setGender(data?.gender ?? null);
-      });
+
+    setUserType(data?.user_type ?? null);
+    setNickname(data?.nickname ?? null);
+    setPhotoUrl(data?.photo_url ?? null);
+    setGender(data?.gender ?? null);
+    setCredits(Number(data?.credits ?? 0));
+  };
+
+  const refreshUserProfile = async () => {
+    if (!user?.id) return;
+    await fetchUserData(user.id);
   };
   // Obtiene sesion actual y escucha cambios de autenticacion
   useEffect(() => {
@@ -65,14 +75,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
-      setLoading(false); 
+      setLoading(false);
 
       if (data.session?.user) {
         fetchUserData(data.session.user.id);
       }
     });
 
-  const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
 
@@ -82,6 +92,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         setUserType(null);
         setNickname(null);
         setPhotoUrl(null);
+        setCredits(0);
+        setGender(null);
       }
     });
 
@@ -102,8 +114,50 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
   };
 
+  // Agregando realtime para credits 
+  useEffect(() => {
+    const userId = session?.user?.id;
+
+    // No user session, sets as no money
+    if (!userId) {
+      setCredits(0);
+      setPhotoUrl(DEFAULT_AVATAR);
+      return;
+    };
+
+    // Does have session, checks realtime credits
+    const channel = supabase
+      .channel(`user_laker:${userId}:profile`).on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'user_laker',
+          filter: `user_id=eq.${userId}`,
+        }, (payload) => {
+          // Credits 
+          const newCredits = (payload.new as { credits?: number })?.credits;
+          if (typeof newCredits === 'number') {
+            setCredits(newCredits);
+          }
+
+          // Picture changed
+          const newPhotoUrl = (payload.new as { photo_url?: string })?.photo_url;
+          if (typeof newPhotoUrl === 'string') {
+            setPhotoUrl(newPhotoUrl);
+          }
+        }
+      )
+      .subscribe(); // Listening to that channel
+
+    // Removes channel once done 
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [session?.user?.id]);
+
   return (
-    <AuthContext.Provider value={{ session, user, userId: user?.id ?? null, userType, nickname, photoUrl, gender, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ session, user, userId: user?.id ?? null, userType, nickname, photoUrl, credits, setCredits, gender, loading, refreshUserProfile, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

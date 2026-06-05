@@ -78,14 +78,14 @@ function Deck(){
     return(
         <section className="w-full max-h-[750px] overflow-y-auto p-6 bg-white rounded-2xl border border-black/10 shadow-sm flex flex-col gap-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-morado-oscuro">My Deck</h2>
+                <h2 className="text-morado-oscuro">Starting Lineup</h2>
                 {isChoosing && (
-                    <h5 className="text-gray-500">Choose a card to replace</h5>
+                    <h5 className="text-gray-500">Choose a player to replace</h5>
                 )}
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center">
                 {activeDeck.length === 0 ? (
-                    <p className="col-span-full text-gray-500">No cards in your deck yet.</p>
+                    <p className="col-span-full text-gray-500">No players in your field yet.</p>
                 ) : (
                     activeDeck.map((card) => (
                         <div key={card.user_card_id} onClick={() => {if (isChoosing && !loading){handleReplace(card);}}} className={`relative w-full max-w-[140px] aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-100 shadow-md transition duration-200
@@ -100,12 +100,12 @@ function Deck(){
                 )}
             </div>
             <div className="flex items-center justify-between">
-                <h2 className="text-morado-oscuro">My Wishlist</h2>
+                <h2 className="text-morado-oscuro">My Bench</h2>
                 
             </div>
             <div className="grid grid-cols-3 gap-3 justify-items-center">
                 {wishlist.length === 0 ? (
-                    <p className="col-span-full text-gray-500">No items in your wishlist.</p>
+                    <p className="col-span-full text-gray-500">No players in your bench.</p>
                 ) : (
                     wishlist.map((card) => (
                         <div key={card.user_card_id} className="flex flex-col items-center gap-2">

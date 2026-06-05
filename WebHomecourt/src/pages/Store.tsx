@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from "../lib/supabase"
 import { useNavigate } from 'react-router-dom';
-import Nav from '../components/Nav/Nav.tsx'
 import StoreRow from '../components/LakerStore/StoreRow.tsx'
 import Button from '../components/button.tsx';
 import BannerGeneral from '../components/BannerGeneral';
@@ -51,7 +50,8 @@ async function getPacksStore() {
 function Store() {
   const navigate = useNavigate(); // Switch to diff screen
   const [packs, setPacks] = useState<StorePacks[]>([]); // Array w packs
-  const { storeUser, setStoreUser } = useStoreUser(); // Use hook
+  //const { storeUser, setStoreUser } = useStoreUser(); // Use hook
+  const { storeUser } = useStoreUser(); // Use hook
 
   // Initial function to render
   useEffect(() => {
@@ -67,6 +67,7 @@ function Store() {
     loadPacks();
   }, []);
 
+  // Checks user session and money
   useEffect(() => {
     if (!storeUser.signedIn) {
       console.log("User not signed in");
@@ -77,17 +78,8 @@ function Store() {
     }
   }, [storeUser]);
 
-  // To show new creds once has more money 
-  function handleCreditsUpdated(newCredits: number) {
-    setStoreUser((prev) => ({
-      ...prev,
-      credits: newCredits,
-    }));
-  }
-
   return (
     <div>
-      <Nav current="Lakers Cards" creditsOverride={storeUser?.credits} />
       <div className="px-4 py-5 md:px-14 md:py-5 bg-Background w-full">
         {/* Title comp */}
         <BannerGeneral
@@ -114,10 +106,10 @@ function Store() {
 
         {/* Load the packs by giving id of each section */}
         {/*<p>{storeUser.credits} and {storeUser.signedIn? "Signed in" : "Not signed in"}</p>*/}
-        <StoreRow packTypeId={1} packs={packs} storeUser={storeUser} onCreditsUpdated={handleCreditsUpdated} />
-        <StoreRow packTypeId={2} packs={packs} storeUser={storeUser} onCreditsUpdated={handleCreditsUpdated} />
-        <StoreRow packTypeId={3} packs={packs} storeUser={storeUser} onCreditsUpdated={handleCreditsUpdated} />
-        <StoreRow packTypeId={4} packs={packs} storeUser={storeUser} onCreditsUpdated={handleCreditsUpdated} />
+        <StoreRow packTypeId={1} packs={packs} storeUser={storeUser} />
+        <StoreRow packTypeId={2} packs={packs} storeUser={storeUser} />
+        <StoreRow packTypeId={3} packs={packs} storeUser={storeUser} />
+        <StoreRow packTypeId={4} packs={packs} storeUser={storeUser} />
       </div>
     </div>
   )

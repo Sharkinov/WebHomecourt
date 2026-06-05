@@ -9,11 +9,11 @@ type StoreRowProps = {
     packTypeId: number;
     packs: StorePacks[];
     storeUser: StoreUser;
-    onCreditsUpdated: (newCredits: number) => void; // To let update the number of credits
+    //onCreditsUpdated: (newCredits: number) => void; // To let update the number of credits
 };
 
 // Pass the pack type and the user info itself
-function StoreRow({ packTypeId, packs, storeUser, onCreditsUpdated }: StoreRowProps) {
+function StoreRow({ packTypeId, packs, storeUser }: StoreRowProps) {
     // Pop-up info
     const [openPack, setOpenPack] = useState<null | { packId: number, packImg: string, tearImg: string, openingImg: string, packName: string, packCost: number }>(null); // To open and close pop-up
     const userId = storeUser.user_id ?? ''; // Pass directly to pop-up
@@ -73,7 +73,7 @@ function StoreRow({ packTypeId, packs, storeUser, onCreditsUpdated }: StoreRowPr
                     openingImg={openPack.openingImg}
                     packName={openPack.packName}
                     packCost={openPack.packCost}
-                    onCreditsUpdated={onCreditsUpdated}
+                    //onCreditsUpdated={onCreditsUpdated}
                 />
             )}
 
@@ -109,7 +109,6 @@ function StoreRow({ packTypeId, packs, storeUser, onCreditsUpdated }: StoreRowPr
             ) : (
                 // Need relative to make it scroll from side to side 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {/*<ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>*/}
                     {paginated.map((pack) => (
                         <PackCard
                             pack={pack} // Should be like the id tracking I guess?
@@ -119,7 +118,6 @@ function StoreRow({ packTypeId, packs, storeUser, onCreditsUpdated }: StoreRowPr
                             openPop={openPop}
                         />
                     ))}
-                    {/*</ScrollMenu>*/}
                 </div>
             )}
         </div>

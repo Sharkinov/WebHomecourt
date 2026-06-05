@@ -1,4 +1,3 @@
-import Nav from '../components/Nav/Nav'
 import EditProfile from "../components/Perfil/EditProfile"
 import { useNavigate } from "react-router-dom"
 
@@ -7,9 +6,6 @@ function EditarPerfil() {
 
     return (
         <div>
-            <div >
-                <Nav current="Perfil" />
-            </div>
             <EditProfile
                 onBack={() => navigate("/perfil")}
                 onSave={() => navigate("/perfil")}

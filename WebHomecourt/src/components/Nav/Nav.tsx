@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { getUserById, type User } from '../User'
 import { useAuth } from '../../context/AuthContext'
 import Sidebar from './Sidebar.tsx'
 import { getPendingRequests, type FriendRequest } from '../../lib/Perfil/friends'
+import { supabase } from '../../lib/supabase'
 
 const DEFAULT_AVATAR =
   'https://ptbcoxaguvbwprxdundz.supabase.co/storage/v1/object/public/user_images/profile_picture_default.png'
@@ -15,39 +15,26 @@ const pages = [
   { label: 'LakersCourt', path: '/lakerscourt' },
   { label: 'Dunk Royale', path: '/juego' },
   { label: 'Lakers Cards', path: '/store' },
-  { label: 'Wrapped', path: '/wrapped' }, 
+  { label: 'Wrapped', path: '/wrapped' },
 ]
 
-interface NavProps {
-  current: string
-  creditsOverride?: number
-}
+function Nav() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [navHeight, setNavHeight] = useState(72);
+  const navRef = useRef<HTMLDivElement>(null);
 
-function Nav({ current, creditsOverride }: NavProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [navHeight, setNavHeight] = useState(72)
-  const navRef = useRef<HTMLDivElement>(null)
-
-  const navigate = useNavigate()
-  const { user: authUser, userType } = useAuth()
-
-  const [user, setUser] = useState<User | null>(null)
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { user: authUser, userType, credits, photoUrl } = useAuth();
 
   // Notifications state
-  const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([])
-  const [showNotifications, setShowNotifications] = useState(false)
-  const [lastSeenCount, setLastSeenCount] = useState(0)
-  const notificationRef = useRef<HTMLDivElement>(null)
+  const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [lastSeenCount, setLastSeenCount] = useState(0);
+  const notificationRef = useRef<HTMLDivElement>(null);
+  const [warnings, setWarnings] = useState<any[]>([])
 
-  useEffect(() => {
-    const loadUser = async () => {
-      if (!authUser?.id) return
-      const data = await getUserById(authUser.id)
-      setUser(data)
-    }
-    loadUser()
-  }, [authUser?.id])
-
+  // Loads user notifications 
   useEffect(() => {
     const loadNotifications = async () => {
       if (!authUser?.id) return
@@ -58,6 +45,30 @@ function Nav({ current, creditsOverride }: NavProps) {
     loadNotifications()
     const interval = setInterval(loadNotifications, 900000) // 15 min
     return () => clearInterval(interval)
+  }, [authUser?.id])
+
+  useEffect(() => {
+    const loadWarnings = async () => {
+      if (!authUser?.id) return
+      const threeDaysAgo = new Date()
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
+
+      const { data } = await supabase
+        .from('warning')
+        .select(`
+          warning_id,
+          created_at,
+          custom_message,
+          warn_type(message, warn_type)
+        `)
+        .eq('user_id', authUser.id)
+        .gte('created_at', threeDaysAgo.toISOString())
+        .order('created_at', { ascending: false })
+        .limit(5)
+      
+      if (data) setWarnings(data)
+    }
+    loadWarnings()
   }, [authUser?.id])
 
   // Cerrar modal al hacer click fuera
@@ -94,9 +105,16 @@ function Nav({ current, creditsOverride }: NavProps) {
 
   const navPages = userType === 1 ? [...pages, { label: 'Admin', path: '/admin' }] : pages
 
-  const credits = typeof creditsOverride === 'number' ? creditsOverride : user?.credits ?? 0
+  const hasNewNotifications = pendingRequests.length > lastSeenCount || warnings.length > 0
 
-  const hasNewNotifications = pendingRequests.length > lastSeenCount
+  const isActivePage = (path: string) => {
+    if (path === '/') return pathname === '/'
+    if (path === '/admin') return pathname.startsWith('/admin')
+    if (path === '/store') return pathname === '/store' || pathname === '/collection'
+    return pathname === path;
+  }
+
+  const current = navPages.find((p) => isActivePage(p.path))?.label ?? ''
 
   return (
     <>
@@ -122,7 +140,7 @@ function Nav({ current, creditsOverride }: NavProps) {
 
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
             {navPages.map((p) => {
-              const isCurrent = p.label === current
+              const isCurrent = isActivePage(p.path)
               return (
                 <button
                   key={p.path}
@@ -161,7 +179,7 @@ function Nav({ current, creditsOverride }: NavProps) {
 
                 {hasNewNotifications && (
                   <span className="absolute top-1 right-1 min-w-5 h-5 px-1 bg-red-600 rounded-full text-white text-[10px] font-bold flex items-center justify-center">
-                    {pendingRequests.length}
+                    {pendingRequests.length + warnings.length}
                   </span>
                 )}
               </button>
@@ -181,7 +199,29 @@ function Nav({ current, creditsOverride }: NavProps) {
                   </div>
 
                   <div className="max-h-96 overflow-y-auto">
-                    {pendingRequests.length === 0 ? (
+                    {warnings.map((w) => (
+                    <div key={w.warning_id} className="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="material-symbols-outlined text-amber-500" style={{ fontSize: '18px' }}>warning</span>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-texto-oscuro text-[18px]!  py-2">
+                            {w.warn_type?.warn_type === 'Other' ? 'Warning' : w.warn_type?.warn_type}
+                          </p>
+                          <p className="text-gray-500 mt-0.5 text-[16px]!">
+                            {w.custom_message
+                              ? `You have received a warning for: ${w.custom_message}`
+                              : w.warn_type?.message}
+                          </p>
+                          <p className="text-gray-400 text-[15px]! mt-1.5">
+                            {new Date(w.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                    {pendingRequests.length === 0 && warnings.length === 0 ? (
                       <div
                         className="p-6 text-center text-Gris-Oscuro"
                         style={{ fontFamily: 'Graphik' }}
@@ -233,13 +273,15 @@ function Nav({ current, creditsOverride }: NavProps) {
               )}
             </div>
 
+            {/* Credit counters */}
             <div className="p-2 bg-white rounded-2xl shadow-sm outline outline-1 outline-black/20 flex items-center gap-2">
               <span className="material-symbols-outlined text-amber-400 text-2xl leading-none">
                 payments
               </span>
-              <span className="text-black text-lg font-normal font-['Graphik']">{credits}</span>
+              <span className="text-black text-lg font-normal font-['Graphik']">{credits ?? 0}</span>
             </div>
 
+            {/* Checks user session to take to profile or to login */}
             <button
               type="button"
               onClick={() => navigate(authUser?.id ? '/perfil' : '/login')}
@@ -247,7 +289,7 @@ function Nav({ current, creditsOverride }: NavProps) {
             >
               <img
                 className="w-full h-full object-cover"
-                src={user?.photo_url || DEFAULT_AVATAR}
+                src={photoUrl || DEFAULT_AVATAR}
                 alt="User avatar"
               />
             </button>
