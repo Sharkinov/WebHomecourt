@@ -75,6 +75,17 @@ const Monitor = () => {
       setEvent(data)
     }
     fetchEvent()
+
+    const channel = supabase
+    .channel('monitor-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'user_event' }, () => {
+      fetchEvent()
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'event' }, () => {
+      fetchEvent()
+    })
+    .subscribe()
+    return () => { supabase.removeChannel(channel) }
   }, [id])
 
   const [showWarning, setShowWarning] = useState(false)
