@@ -72,12 +72,12 @@ export default function FriendsTab({ friends, loading, onRemove }: FriendsTabPro
   return (
     <div>
       {/*FILTEER*/}
-      <div className="bg-white rounded-[15px] p-4 mb-6 flex items-center justify-between shadow-sm">
-        <div className="relative">
+      <div className="bg-white rounded-[15px] p-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+        <div className="relative w-full sm:w-auto">
           <select
             value={friendsFilter}
             onChange={(e) => setFriendsFilter(e.target.value)}
-            className="bg-Background text-texto-oscuro px-6 py-2 pr-10 rounded-[10px] appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-morado-oscuro border-[2px] border-morado-bajo"
+            className="w-full sm:w-auto bg-Background text-texto-oscuro px-6 py-2 pr-10 rounded-[10px] appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-morado-oscuro border-[2px] border-morado-bajo"
             style={{ fontFamily: 'Graphik' }}
           >
             <option value="all">All Friends</option>
@@ -93,13 +93,13 @@ export default function FriendsTab({ friends, loading, onRemove }: FriendsTabPro
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search friends"
             value={friendsSearchQuery}
             onChange={(e) => setFriendsSearchQuery(e.target.value)}
-            className="bg-Background text-texto-oscuro px-5 py-2 rounded-[10px] placeholder:text-morado-bajo focus:outline-none focus:ring-2 focus:ring-morado-oscuro border-[2px] border-morado-bajo"
+            className="w-full sm:w-auto bg-Background text-texto-oscuro px-5 py-2 rounded-[10px] placeholder:text-morado-bajo focus:outline-none focus:ring-2 focus:ring-morado-oscuro border-[2px] border-morado-bajo"
             style={{ fontFamily: 'Graphik' }}
           />
         </div>
@@ -114,22 +114,22 @@ export default function FriendsTab({ friends, loading, onRemove }: FriendsTabPro
           {filteredFriends.map((friend) => (
             <div
               key={friend.user_id}
-              className="bg-white rounded-[15px] p-6 flex items-center justify-between shadow-sm"
+              className="bg-white rounded-[15px] p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm"
             >
               <div
-                className="flex items-center gap-4 flex-1 cursor-pointer"
+                className="flex items-center gap-4 flex-1 min-w-0 cursor-pointer"
                 onClick={() => navigate(`/perfil/${friend.user_id}`)}
               >
                 <img
                   src={friend.photo_url || DEFAULT_AVATAR}
                   alt="Profile"
-                  className="w-20 h-20 rounded-full object-cover"
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover shrink-0"
                 />
-                <div>
-                  <h4 className="text-texto-oscuro text-sm font-medium mb-1" style={{ fontFamily: 'Graphik' }}>
+                <div className="min-w-0">
+                  <h4 className="text-texto-oscuro text-sm font-medium mb-1 break-words" style={{ fontFamily: 'Graphik' }}>
                     {friend.nickname}
                   </h4>
-                  <p className="text-texto-oscuro text-xs mb-2" style={{ fontFamily: 'Graphik' }}>
+                  <p className="text-texto-oscuro text-xs mb-2 break-words" style={{ fontFamily: 'Graphik' }}>
                     @{friend.username}
                   </p>
                   <p className="text-Gris-Oscuro text-xs" style={{ fontFamily: 'Graphik' }}>
@@ -139,7 +139,7 @@ export default function FriendsTab({ friends, loading, onRemove }: FriendsTabPro
               </div>
               <button
                 onClick={() => onRemove(friend)}
-                className="px-8 py-3 bg-rojo-error border-[3px] border-rojo-error text-white hover:bg-rojo-error-hover rounded-[15px] transition-all"
+                className="w-full sm:w-auto shrink-0 px-8 py-3 bg-rojo-error border-[3px] border-rojo-error text-white hover:bg-rojo-error-hover rounded-[15px] transition-all"
                 style={{ fontFamily: 'Graphik' }}
               >
                 Remove
