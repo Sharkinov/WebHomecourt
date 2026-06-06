@@ -278,7 +278,7 @@ function Nav() {
               <span className="material-symbols-outlined text-amber-400 text-2xl leading-none">
                 payments
               </span>
-              <span className="text-black text-lg font-normal font-['Graphik']">{credits ?? 0}</span>
+              <span className="text-black text-lg font-normal font-['Graphik']">{Number(credits ?? 0).toLocaleString('en-US')}</span>
             </div>
 
             {/* Checks user session to take to profile or to login */}
