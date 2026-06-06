@@ -186,7 +186,7 @@ const ReportDetails = () => {
                       .update({ banned_until: suspendedUntil.toISOString() })
                       .eq('user_id', report.reported_user_id)
                     await supabase
-                      .from('event_participant')
+                      .from('user_event')
                       .delete()
                       .eq('user_id', report.reported_user_id)
                     handleAction('suspend')
@@ -200,7 +200,7 @@ const ReportDetails = () => {
                       .update({ banned_until: bannedUntil.toISOString() })
                       .eq('user_id', report.reported_user_id)
                     await supabase
-                      .from('event_participant')
+                      .from('user_event')
                       .delete()
                       .eq('user_id', report.reported_user_id)
                     handleAction('ban')

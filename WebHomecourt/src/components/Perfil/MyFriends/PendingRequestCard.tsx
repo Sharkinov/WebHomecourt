@@ -13,7 +13,7 @@ export default function PendingRequestCard({ request, onAccept, onDeny }: Pendin
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white rounded-[15px] p-6 border border-morado-oscuro/10">
+    <div className="bg-white rounded-[15px] p-4 sm:p-6 border border-morado-oscuro/10">
       <h3
         className="mb-4 pb-3 border-b border-morado-oscuro/10"
         style={{ 
@@ -27,21 +27,21 @@ export default function PendingRequestCard({ request, onAccept, onDeny }: Pendin
         Request from {request.nickname}
       </h3>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div
-          className="flex items-center gap-4 cursor-pointer"
+          className="flex items-center gap-4 min-w-0 cursor-pointer"
           onClick={() => navigate(`/perfil/${request.sender_id}`)}
         >
           <img
             src={request.photo_url || DEFAULT_AVATAR}
             alt="Profile"
-            className="w-16 h-16 rounded-full object-cover"
+            className="w-16 h-16 rounded-full object-cover shrink-0"
           />
-          <div>
-            <p className="text-texto-oscuro text-sm font-medium mb-1" style={{ fontFamily: 'Graphik' }}>
+          <div className="min-w-0">
+            <p className="text-texto-oscuro text-sm font-medium mb-1 break-words" style={{ fontFamily: 'Graphik' }}>
               {request.nickname}
             </p>
-            <p className="text-Gris-Oscuro text-xs mb-2" style={{ fontFamily: 'Graphik' }}>
+            <p className="text-Gris-Oscuro text-xs mb-2 break-words" style={{ fontFamily: 'Graphik' }}>
               @{request.username}
             </p>
             <p className="text-Gris-Oscuro text-xs" style={{ fontFamily: 'Graphik' }}>
@@ -56,7 +56,7 @@ export default function PendingRequestCard({ request, onAccept, onDeny }: Pendin
             </p>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 shrink-0">
           <button
             onClick={async () => {
               try {
@@ -68,7 +68,7 @@ export default function PendingRequestCard({ request, onAccept, onDeny }: Pendin
                 alert('error al aceptar la solicitud.');
               }
             }}
-            className="h-11 px-6 bg-white border-2 border-morado-oscuro text-morado-oscuro hover:bg-morado-hover hover:border-morado-hover hover:text-white rounded-[10px] transition-all text-sm"
+            className="flex-1 sm:flex-none h-11 px-6 bg-white border-2 border-morado-oscuro text-morado-oscuro hover:bg-morado-hover hover:border-morado-hover hover:text-white rounded-[10px] transition-all text-sm"
             style={{ fontFamily: 'Graphik' }}
           >
             Accept Friend
@@ -77,7 +77,7 @@ export default function PendingRequestCard({ request, onAccept, onDeny }: Pendin
             onClick={async () => {
               await onDeny(request.friend_request_id);
             }}
-            className="h-11 px-6 bg-white border-2 border-morado-oscuro text-morado-oscuro hover:bg-morado-hover hover:border-morado-hover hover:text-white rounded-[10px] transition-all text-sm"
+            className="flex-1 sm:flex-none h-11 px-6 bg-white border-2 border-morado-oscuro text-morado-oscuro hover:bg-morado-hover hover:border-morado-hover hover:text-white rounded-[10px] transition-all text-sm"
             style={{ fontFamily: 'Graphik' }}
           >
             Deny
