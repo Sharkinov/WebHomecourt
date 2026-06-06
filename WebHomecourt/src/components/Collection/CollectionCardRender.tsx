@@ -10,6 +10,7 @@ import StatusAlert from '../Messages/StatusAlert.tsx';
 type CardProp = {
     card: CollectionCard;
     userId?: string | null; // To update whether card is added to deck; might be null if is not signed in
+    onCardChange?: (userCardId: number, patch: Partial<CollectionCard>) => void;
 }
 
 // API call to update the value of added_deck when the button clicked
@@ -41,7 +42,7 @@ async function updateCardWishlist(user_card_id: number, user_id: string, added: 
     return message;
 }
 
-function CollectionCardRender({ card, userId }: CardProp) {
+function CollectionCardRender({ card, userId, onCardChange }: CardProp) {
     const [cardFront, setCardFront] = useState(true);
     const [dunkRoyale, setDunkRoyale] = useState(card.added_deck); // Stores default if it's a part of dunk royale to update otherwise from here front end
     const [showMessage, setShowMessage] = useState(false); // To show success or error over card for two seconds
@@ -68,6 +69,10 @@ function CollectionCardRender({ card, userId }: CardProp) {
             if (message.success) {
                 setDunkRoyale(message.added_deck);
                 startShowMessage("success", "", message.message);
+                onCardChange?.(card.user_card_id, {
+                    added_deck: message.added_deck,
+                    in_deck: message.in_deck,
+                });
             } else {
                 // Shows error
                 startShowMessage("error", "", message.message);
