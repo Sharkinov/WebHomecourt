@@ -74,7 +74,18 @@ function News() {
     return () => window.removeEventListener("resize", updateScrollState) // si el componente ya no esta, ya no hay porque estar chequeando los rezis
   }, [news])
 
-
+  if (loading) {
+    return (
+      <section className="bg-[#fdfdfd] border border-black/25 rounded-2xl p-6 flex flex-col gap-5">
+        <h2 className="text-morado-lakers text-[28px] md:text-[32px] font-medium">Breaking news</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-37.5 rounded-xl bg-gris-claro animate-pulse" />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   if (!news.length && !error) return null
 
