@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import {
   getPendingRatingPlayers,
+  awardRatingCredits,
   markUserEventAsRated,
   saveUserEventRating,
   type RatePlayer,
@@ -139,6 +140,9 @@ function LakersCourt() {
           saveUserEventRating(pendingUserEventId, player.id, selectedRatings[player.id])
         )
       )
+      if (userId) {
+        await awardRatingCredits(userId, selectedRatings)
+      }
       await markUserEventAsRated(pendingUserEventId)
       await loadPendingRatings()
     } catch (error) {

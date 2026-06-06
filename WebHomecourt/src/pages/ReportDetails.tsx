@@ -155,7 +155,7 @@ const ReportDetails = () => {
                       <span key={kw} className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-base">
                         {kw}
                       </span>
-                    ))}
+                    ))}{/*testing */}
                   </div>
                 </div>
               </div>
@@ -186,7 +186,7 @@ const ReportDetails = () => {
                       .update({ banned_until: suspendedUntil.toISOString() })
                       .eq('user_id', report.reported_user_id)
                     await supabase
-                      .from('event_participant')
+                      .from('user_event')
                       .delete()
                       .eq('user_id', report.reported_user_id)
                     handleAction('suspend')
@@ -200,7 +200,7 @@ const ReportDetails = () => {
                       .update({ banned_until: bannedUntil.toISOString() })
                       .eq('user_id', report.reported_user_id)
                     await supabase
-                      .from('event_participant')
+                      .from('user_event')
                       .delete()
                       .eq('user_id', report.reported_user_id)
                     handleAction('ban')
@@ -215,7 +215,7 @@ const ReportDetails = () => {
               )}
             </div>
 
-            {/* Right side */}
+            {/* Right side*/}
             <div className="w-0.5 bg-black/20 self-stretch -mr-6 -mb-10" />
             <UserHistory
               reportedUser={{
