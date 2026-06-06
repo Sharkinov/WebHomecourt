@@ -25,7 +25,7 @@ function FGAvsFGMGraph({ stats }: { stats: PlayerStat[]}) {
 
   return (
     <div className="p-8 gap-2 w-full h-[350px] flex flex-wrap  bg-white border border-gray-300 rounded-2xl shadow">
-      <h2>Field Goals Attempted vs. Field Goals Made</h2>
+      <h2>Field Goals Ratio</h2>
       <select
         value={selectedPlayer}
         onChange={(e) =>
