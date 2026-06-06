@@ -47,12 +47,12 @@ export default function AddFriendTab({
   if (requestSent) {
     //EXITO
     return (
-      <div className="bg-white rounded-[15px] p-10">
+      <div className="bg-white rounded-[15px] p-6 sm:p-10">
         <div className="py-4 text-center">
           <p className="text-texto-oscuro text-[18px] mb-3" style={{ fontFamily: 'Graphik' }}>
             You have successfully sent <strong>{pendingRequest?.nickname}</strong> a friend request.
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center">
             <button
               onClick={() => navigate(`/perfil/${pendingRequest?.userId}`)}
               className="text-morado-oscuro hover:text-morado-hover underline text-[16px]"
@@ -77,7 +77,7 @@ export default function AddFriendTab({
   if (showConfirmation && pendingRequest) {
     //CONFIRMACION
     return (
-      <div className="bg-white rounded-[15px] p-10">
+      <div className="bg-white rounded-[15px] p-6 sm:p-10">
         <h2
           style={{
             fontFamily: 'Graphik',
@@ -103,7 +103,7 @@ export default function AddFriendTab({
         {sendError && (
           <p className="text-rojo-error mb-4 text-sm" style={{ fontFamily: 'Graphik' }}>{sendError}</p>
         )}
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <ProfileButton
             type={sendingRequest ? 'primarydisable' : 'secondary'}
             text={sendingRequest ? 'Sending...' : 'Yes, send friend request'}
@@ -121,7 +121,7 @@ export default function AddFriendTab({
 
   //BUSQUEDA
   return (
-    <div className="bg-white rounded-[15px]" style={{ padding: '40px' }}>
+    <div className="bg-white rounded-[15px] p-6 sm:p-10">
       <h2
         className="text-texto-oscuro mb-4 pb-4 border-b border-morado-oscuro/20"
         style={{
@@ -146,7 +146,7 @@ export default function AddFriendTab({
       >
         Enter the username or nickname of the person you would like to send a friend request to
       </p>
-      <div className="flex gap-3 items-center mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-center mb-6">
         <div className="flex-1">
           <input
             type="text"
@@ -161,7 +161,7 @@ export default function AddFriendTab({
         <button
           onClick={handleSearch}
           disabled={searching || !searchQuery.trim()}
-          className="h-[51px] px-10 bg-morado-oscuro hover:bg-morado-hover text-white rounded-[15px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full sm:w-auto h-[51px] px-10 bg-morado-oscuro hover:bg-morado-hover text-white rounded-[15px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ fontFamily: 'Graphik' }}
         >
           {searching ? 'Searching...' : 'Find Friend'}
@@ -186,29 +186,29 @@ export default function AddFriendTab({
           {searchResults.map((user) => (
             <div
               key={user.user_id}
-              className="bg-Background rounded-[15px] p-4 flex items-center justify-between hover:bg-morado-bajo/10 transition-colors"
+              className="bg-Background rounded-[15px] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-morado-bajo/10 transition-colors"
             >
               <div
-                className="flex items-center gap-4 flex-1 cursor-pointer"
+                className="flex items-center gap-4 flex-1 min-w-0 cursor-pointer"
                 onClick={() => navigate(`/perfil/${user.user_id}`)}
               >
                 <img
                   src={user.photo_url || DEFAULT_AVATAR}
                   alt={user.nickname}
-                  className="w-12 h-12 rounded-full object-cover"
+                  className="w-12 h-12 rounded-full object-cover shrink-0"
                 />
-                <div>
-                  <h4 className="text-texto-oscuro font-medium" style={{ fontFamily: 'Graphik' }}>
+                <div className="min-w-0">
+                  <h4 className="text-texto-oscuro font-medium break-words" style={{ fontFamily: 'Graphik' }}>
                     {user.nickname}
                   </h4>
-                  <p className="text-Gris-Oscuro text-sm" style={{ fontFamily: 'Graphik' }}>
+                  <p className="text-Gris-Oscuro text-sm break-words" style={{ fontFamily: 'Graphik' }}>
                     @{user.username}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => navigate(`/perfil/${user.user_id}`)}
-                className="px-6 py-2 bg-morado-oscuro hover:bg-morado-hover text-white rounded-[10px] transition-colors"
+                className="w-full sm:w-auto shrink-0 px-6 py-2 bg-morado-oscuro hover:bg-morado-hover text-white rounded-[10px] transition-colors"
                 style={{ fontFamily: 'Graphik' }}
               >
                 View Profile
