@@ -104,6 +104,14 @@ function Collection() {
     const [rarityFilter, setRarityFilter] = useState("All");
     const [statusFilter, setStatusFilter] = useState("All");
 
+    const handleCardChange = (userCardId: number, patch: Partial<CollectionCard>) => {
+        setCardCollection((prev) =>
+            prev.map((card) =>
+                card.user_card_id === userCardId ? { ...card, ...patch } : card
+            )
+        );
+    };
+
     // Get user session info 
     useEffect(() => {
         if (!storeUser.signedIn) {
@@ -197,29 +205,25 @@ function Collection() {
                     <CategorySummary
                         category='Common'
                         unlocked={summary?.unlocked_common ?? 0}
-                        total={summary?.total_common ?? 1} 
-                        outline='outline-4 outline-royal-blue'>
+                        total={summary?.total_common ?? 1} outline='outline-4 outline-royal-blue'>
                     </CategorySummary>
 
                     <CategorySummary
                         category='Rare'
                         unlocked={summary?.unlocked_rare ?? 0}
-                        total={summary?.total_rare ?? 1} 
-                        outline='outline-4 outline-morado-lakers'>
+                        total={summary?.total_rare ?? 1} outline='outline-4 outline-morado-lakers'>
                     </CategorySummary>
 
                     <CategorySummary
                         category='Legendary'
                         unlocked={summary?.unlocked_legendary ?? 0}
-                        total={summary?.total_legendary ?? 1} 
-                        outline='outline-4 outline-amarillo-lakers'>
+                        total={summary?.total_legendary ?? 1} outline='outline-4 outline-amarillo-lakers'>
                     </CategorySummary>
 
                     <CategorySummary
                         category='Limited'
                         unlocked={summary?.unlocked_limited ?? 0}
-                        total={summary?.total_limited ?? 1} 
-                        outline='outline-4 outline-light-blue'>
+                        total={summary?.total_limited ?? 1} outline='outline-4 outline-light-blue'>
                     </CategorySummary>
                 </div>
 
@@ -290,7 +294,7 @@ function Collection() {
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-15">
                         {paginated.map((card) => (
-                            <CollectionCardRender key={card.card_id} card={card} userId={storeUser.user_id} />
+                            <CollectionCardRender key={card.card_id} card={card} userId={storeUser.user_id} onCardChange={handleCardChange} />
                         ))}
                     </div>
                 )}
