@@ -123,23 +123,23 @@ export default function MyFriends() {
   return (
     <div className="min-h-screen bg-Background">
       <div className="px-4 sm:px-8 md:px-12 lg:px-[60px] py-4 sm:py-[20px]">
-        <div className="bg-morado-oscuro w-full h-[138px] flex flex-col justify-center px-8 rounded-2xl mb-6">
-          <h1 className="text-white text-[40px] font-black leading-normal mb-2" style={{ fontFamily: 'Graphik' }}>
+        <div className="bg-morado-oscuro w-full min-h-[138px] flex flex-col justify-center px-5 sm:px-8 py-6 rounded-2xl mb-6">
+          <h1 className="text-white text-[28px] sm:text-[40px] font-black leading-tight sm:leading-normal mb-2" style={{ fontFamily: 'Graphik' }}>
             My Friends
           </h1>
-          <p className="text-texto-claro text-2xl leading-[1.2]" style={{ fontFamily: 'Graphik' }}>
+          <p className="text-texto-claro text-base sm:text-2xl leading-[1.2]" style={{ fontFamily: 'Graphik' }}>
             Connect, share, and stay in touch with your community
           </p>
         </div>
 
         {/*TABS!!*/}
         <div className="w-full mb-8">
-          <div className="flex gap-4">
+          <div className="flex gap-2 sm:gap-4">
             {['my-friends', 'pending', 'add-friend'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`w-[210px] h-[59px] rounded-[15px] text-[18px] flex items-center justify-center transition-all ${
+                className={`flex-1 min-w-0 sm:flex-none sm:w-[210px] h-[50px] sm:h-[59px] px-1 sm:px-2 rounded-[15px] text-[11px] sm:text-[18px] text-center leading-tight flex items-center justify-center transition-all ${
                   activeTab === tab
                     ? 'bg-morado-oscuro text-white'
                     : 'bg-white border-[3px] border-morado-oscuro text-morado-oscuro hover:bg-morado-hover hover:border-morado-hover hover:text-white'
@@ -188,7 +188,7 @@ export default function MyFriends() {
       {/*CONFIRMACION REMOVE FRIEND*/}
       {friendToRemove && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-[15px] p-10 max-w-md mx-4">
+          <div className="bg-white rounded-[15px] p-6 sm:p-10 max-w-md w-full mx-4">
             <h2
               style={{
                 fontFamily: 'Graphik',
@@ -211,7 +211,7 @@ export default function MyFriends() {
             >
               Are you sure you want to remove <strong>{friendToRemove.nickname}</strong> from your friends list? This action cannot be undone.
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <ProfileButton
                 type={removingFriend ? 'primarydisable' : 'secondary'}
                 text={removingFriend ? 'Removing...' : 'Yes, remove friend'}
