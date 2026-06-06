@@ -1,0 +1,64 @@
+name: DB Migration — PRODUCTION
+
+on:
+  workflow_dispatch:
+
+jobs:
+  db_diff:
+    name: Comparar DEV vs PROD
+    runs-on: [self-hosted, Linux, X64]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generar SQL para igualar PROD con DEV
+        run: |
+          export PATH="$PATH:/home/adolf/.local/bin"
+          mkdir -p generated-migrations
+
+          results dbdiff \
+            "${{ secrets.PROD_DB_URL }}" \
+            "postgresql://postgres.a0gv:${{ secrets.DEV_DB_PASSWORD }}@localhost:5432/postgres" \
+            --schema public \
+            > generated-migrations/dev_to_prod.sql || true
+
+          if [ ! -s generated-migrations/dev_to_prod.sql ]; then
+            echo "-- No schema changes detected" > generated-migrations/dev_to_prod.sql
+          fi
+
+          sed -i '/drop extension/Id' generated-migrations/dev_to_prod.sql
+          cat generated-migrations/dev_to_prod.sql
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dev-to-prod-sql
+          path: generated-migrations/dev_to_prod.sql
+
+  migrate:
+    name: Aplicar cambios DB → PROD
+    runs-on: ubuntu-latest
+    needs: db_diff
+    environment: production
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dev-to-prod-sql
+          path: generated-migrations
+
+      - name: Instalar psql
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Bloquear SQL destructivo
+        run: |
+          if grep -Eiq "drop table|drop column|truncate|drop schema|drop database|drop extension|drop function|drop policy" generated-migrations/dev_to_prod.sql; then
+            echo "⚠️ SQL destructivo detectado"
+            cat generated-migrations/dev_to_prod.sql
+            exit 1
+          fi
+
+      - name: Aplicar SQL a PROD
+        run: |
+          psql "${{ secrets.PROD_DB_URL }}" \
+            -v ON_ERROR_STOP=1 \
+            -f generated-migrations/dev_to_prod.sql
