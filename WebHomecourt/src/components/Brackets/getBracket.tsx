@@ -32,7 +32,8 @@ export async function getLastQuestion(): Promise<Question> {
     .select('*')
     .lt('end_date', now) 
     .order('end_date', { ascending: false })
-    .single()
+    .limit(1)
+    .single();
   if (error) {
     console.error("Supabase error:", error.message);
     throw new Error("Failed to get previous bracket");
