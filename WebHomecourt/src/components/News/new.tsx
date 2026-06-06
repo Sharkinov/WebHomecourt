@@ -30,6 +30,7 @@ function News() {
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
 
+  //OPara habilitar o deshabilitar los botones de desplazo izquierda y derecha
   const updateScrollState = () => {
     const container = scrollRef.current
     if (!container) return
@@ -41,7 +42,7 @@ function News() {
   const scrollNews = (direction: "left" | "right") => {
     const container = scrollRef.current
     if (!container) return
-    const groupWidth = (293 + 26) * 4
+    const groupWidth = container.clientWidth //Para desplzar justo la cantidad de nocisas que se ven en la pantalla
     container.scrollBy({
       left: direction === "right" ? groupWidth : -groupWidth,
       behavior: "smooth",
@@ -67,35 +68,25 @@ function News() {
     return () => { isMounted = false }
   }, [])
 
+  //Para el rezise
   useEffect(() => {
     updateScrollState()
-    window.addEventListener("resize", updateScrollState)
-    return () => window.removeEventListener("resize", updateScrollState)
+    window.addEventListener("resize", updateScrollState) //para que si se cambia la dimension de la pantalla, se llame al uSS
+    return () => window.removeEventListener("resize", updateScrollState) // si el componente ya no esta, ya no hay porque estar chequeando los rezis
   }, [news])
 
-  if (loading) {
-    return (
-      <section className="bg-[#fdfdfd] border border-black/25 rounded-2xl p-6 flex flex-col gap-5">
-        <h2 className="text-morado-lakers text-[28px] md:text-[32px] font-medium">Breaking news</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-[150px] rounded-xl bg-gris-claro animate-pulse" />
-          ))}
-        </div>
-      </section>
-    )
-  }
+
 
   if (!news.length && !error) return null
 
   return (
-    <section className="bg-[#fdfdfd] border border-black/25 rounded-2xl p-5 md:p-6 flex flex-col gap-5 overflow-hidden">
+    <section className="bg-Background border border-black/25 rounded-2xl p-5 md:p-6 flex flex-col gap-5 overflow-hidden">
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-morado-lakers text-[28px] md:text-[32px] font-medium">Breaking news</h2>
         {(canScrollLeft || canScrollRight) && (
           <div className="flex items-center gap-2">
+            {/* Si no hay noticias o caben asi en chiquieto, no se ponene los botons */}
             <button
-              aria-label="Previous news"
               className="w-9 h-9 rounded-full border border-black/20 text-morado-lakers flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-morado-lakers hover:text-texto-claro transition-colors"
               disabled={!canScrollLeft}
               type="button"
@@ -104,7 +95,6 @@ function News() {
               <LuChevronLeft size={20} />
             </button>
             <button
-              aria-label="Next news"
               className="w-9 h-9 rounded-full border border-black/20 text-morado-lakers flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-morado-lakers hover:text-texto-claro transition-colors"
               disabled={!canScrollRight}
               type="button"
@@ -121,7 +111,7 @@ function News() {
       ) : (
         <div
           ref={scrollRef}
-          className="flex gap-[26px] overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex gap-6.5 overflow-x-auto scroll-smooth pb-1 scrollbar-none "
           onScroll={updateScrollState}
         >
           {news.map((item) => (
@@ -129,20 +119,28 @@ function News() {
               key={item.news_id}
               href={item.news_url}
               rel="noopener noreferrer"
-              target="_blank"
-              className="group relative h-[150px] w-[293px] min-w-[293px] overflow-hidden rounded-xl no-underline shadow-sm focus:outline-none focus:ring-2 focus:ring-morado-lakers focus:ring-offset-2"
+              target="_blank" //abre en nueva pestana
+              className="group relative h-37.5 w-73.25 min-w-73.25 overflow-hidden rounded-xl no-underline shadow-sm focus:outline-none focus:ring-2 focus:ring-morado-lakers focus:ring-offset-2"
             >
               <img
                 alt=""
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 src={item.photo_url}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2a123f]/95 via-[#542581]/65 to-black/30" />
-              <div className="absolute inset-x-0 bottom-0 flex h-[97px] flex-col gap-2 overflow-hidden rounded-xl px-5 py-3 text-texto-claro">
+              <div className="absolute inset-0 bg-linear-to-t from-morado-oscuro/95 via-morado-lakers/65 to-black/30" />
+              <div className="pointer-events-none absolute inset-x-3 top-3 z-20 translate-y-2 rounded-2xl border border-white/10 bg-morado-oscuro/85 px-4 py-3 text-texto-claro opacity-0 shadow-lg backdrop-blur-md transition-all duration-200 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/65">
+                  News headline
+                </p>
+                <p className="mt-1 text-[14px] font-semibold leading-snug text-white">
+                  {item.title}
+                </p>
+              </div>
+              <div className="absolute inset-x-0 bottom-0 flex h-24.25 flex-col gap-2 overflow-hidden rounded-xl px-5 py-3 text-texto-claro">
                 <span className="text-[12px] font-semibold uppercase leading-none">
                   {item.category}
                 </span>
-                <h3 className="line-clamp-2 max-w-[230px] text-[15px] font-semibold leading-tight">
+                <h3 className="max-w-57.5 truncate text-[15px] font-semibold leading-tight">
                   {item.title}
                 </h3>
                 <span className="text-[14px] leading-none">

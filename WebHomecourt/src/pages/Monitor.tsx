@@ -62,7 +62,7 @@ const Monitor = () => {
           created_at,
           created_user:user_laker!created_user_id(user_id, username, nickname, photo_url, birthdate, gender, reputation),
           court:court!court_id(name),
-          participants:event_participant(
+          participants:user_event(
             user:user_laker!user_id(user_id, username, nickname, photo_url, birthdate, gender, reputation,
             reports:user_report!reported_user_id(ureport_id, status)
             )
@@ -153,7 +153,7 @@ const Monitor = () => {
               </div>
               <div className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-black text-[18px]">groups</span>
-                <p>Participants: {event?.max_players ?? 'N/A'}</p>
+                <p>Participants: {event?.participants?.length ?? 0}/{event?.max_players ?? 'N/A'}</p>
               </div>
               <div className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-black text-[18px]">edit_calendar</span>
@@ -218,32 +218,33 @@ const Monitor = () => {
                   </div>
                 ) : (
                   event?.participants?.map((p: any) => {
-                    const hasActiveReport = p.user.reports?.some(
+                    const participantUser = p.user ?? p.user_laker ?? p
+                    const hasActiveReport = participantUser.reports?.some(
                       (r: any) => r.status === 'Pending' || r.status === 'Reviewed'
                     )
-                    const latestActiveReport = p.user.reports
+                    const latestActiveReport = participantUser.reports
                       ?.filter((r: any) => r.status === 'Pending' || r.status === 'Reviewed')
                       .sort((a: any, b: any) => b.ureport_id - a.ureport_id)[0]
 
               return (
-                <div key={p.user.user_id} className="flex flex-row items-center gap-3 bg-gray-100 rounded-xl px-5 py-4 w-full justify-between">
+                <div key={participantUser.user_id} className="flex flex-row items-center gap-3 bg-gray-100 rounded-xl px-5 py-4 w-full justify-between">
                   <div className="w-14 h-14 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-                    {p.user.photo_url && <img src={p.user.photo_url} className="w-full h-full object-cover" />}
+                    {participantUser.photo_url && <img src={participantUser.photo_url} className="w-full h-full object-cover" />}
                   </div>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 flex-1 min-w-0">
                     <div className="flex flex-col gap-0.5 min-w-0 sm:min-w-[150px]">
-                      <p className="!font-medium truncate">{p.user.nickname}</p>
-                      <small className="text-gray-500 truncate">@{p.user.username}</small>
+                      <p className="!font-medium truncate">{participantUser.nickname}</p>
+                      <small className="text-gray-500 truncate">@{participantUser.username}</small>
                     </div>
 
                     <div className="flex flex-col gap-1">
                       <div className="flex gap-3">
-                        <small className="text-morado-lakers">Age: <span className="text-black">{calculateAge(p.user.birthdate)}</span></small>
-                        <small className="text-morado-lakers">Gender: <span className="text-black">{formatGender(p.user.gender)}</span></small>
+                        <small className="text-morado-lakers">Age: <span className="text-black">{calculateAge(participantUser.birthdate)}</span></small>
+                        <small className="text-morado-lakers">Gender: <span className="text-black">{formatGender(participantUser.gender)}</span></small>
                       </div>
                       <div className="flex items-center gap-2">
-                        <small className="text-morado-lakers">Reputation: <span className="text-black">{p.user.reputation}</span></small>
-                        <StarRating rating={p.user.reputation} />
+                        <small className="text-morado-lakers">Reputation: <span className="text-black">{participantUser.reputation}</span></small>
+                        <StarRating rating={participantUser.reputation} />
                       </div>
                     </div>
                   </div>
