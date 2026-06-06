@@ -25,6 +25,7 @@ async function getRecentNews(): Promise<NewsItem[]> {
 function News() {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const [news, setNews] = useState<NewsItem[]>([])
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
