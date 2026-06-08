@@ -9,15 +9,18 @@ describe('Profile page', () => {
     cy.get('button.text-white').click();
 
     cy.wait('@loginRequest');
-    cy.url().should('eq', 'https://sharkinovhomecourt.vercel.app/');
+    // Tras el login, la app aún hace getUser() + consulta banned_until antes de
+    // navegar a "/", así que ampliamos el timeout para esas peticiones extra.
+    cy.url({ timeout: 15000 }).should('eq', 'https://sharkinovhomecourt.vercel.app/');
 
     // Una vez logueado, navegamos al perfil
     cy.visit('https://sharkinovhomecourt.vercel.app/perfil');
   });
 
   it('loads the profile header with stats and actions', () => {
-    // El encabezado del perfil muestra desde cuando es miembro
-    cy.contains('Member since').should('be.visible');
+    // El encabezado del perfil muestra desde cuando es miembro.
+    // El header carga varias consultas de Supabase, así que esperamos un poco más.
+    cy.contains('Member since', { timeout: 15000 }).should('be.visible');
 
     // Las estadisticas del usuario estan visibles
     cy.contains('Reputation').should('be.visible');
@@ -26,13 +29,14 @@ describe('Profile page', () => {
     cy.contains('Events Attended').should('be.visible');
     cy.contains('Cards collected').should('be.visible');
 
-    // El boton de editar perfil esta disponible
-    cy.contains('Edit Profile').should('be.visible');
+    // El boton de editar perfil esta disponible. Hay dos botones (movil y
+    // escritorio); en el viewport por defecto solo el de escritorio es visible.
+    cy.contains('button:visible', 'Edit Profile').should('be.visible');
   });
 
   it('shows the main profile sections', () => {
     // Seccion de amigos con su accion para administrarlos
-    cy.contains('Friends').should('be.visible');
+    cy.contains('Friends', { timeout: 15000 }).should('be.visible');
     cy.contains('Manage Friends').should('be.visible');
 
     // Secciones de actividad y eventos del propio perfil
@@ -45,7 +49,7 @@ describe('Profile page', () => {
 
   it('navigates to My Friends from the profile', () => {
     // Al pulsar "Manage Friends" se va a la pantalla de amigos
-    cy.contains('Manage Friends').click();
+    cy.contains('Manage Friends', { timeout: 15000 }).click();
 
     cy.url().should('include', '/my-friends');
     cy.contains('h1', 'My Friends').should('be.visible');
