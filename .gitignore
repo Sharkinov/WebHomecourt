@@ -2,3 +2,6 @@
 seed.sql
 .vscode
 WebHomecourt/supabase/.temp/
+stresstest/venv/
+stresstest/__pycache__/
+stresstest/.env
