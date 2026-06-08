@@ -1,0 +1,17 @@
+
+  {
+    "game_id": 1,
+  "lakers_name": "string",
+  "lakers_logo": "string",
+  "lakers_score": "number",
+  "opposing_team_name": "string",
+  "opposing_team_logo": "string",
+  "opposing_score": 1,
+  "home": true,
+  "start_date": "string",
+  "game_end_time": "string",
+  "seconds_elapsed": 1,
+  "current_quarter": 1,
+  "venue": "string",
+  "attended": 1
+  }
