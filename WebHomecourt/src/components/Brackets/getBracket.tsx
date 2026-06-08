@@ -26,9 +26,12 @@ export async function getBracketActual(): Promise<Question> {
 
 export async function getLastQuestion(): Promise<Question> {
   const { data, error } = await supabase
-    .rpc('get_last_question')
+    .from('question')
+    .select('*')
+    .lt('end_date', now) 
+    .order('end_date', { ascending: false })
+    .limit(1)
     .single();
-
   if (error) {
     console.error("Supabase error:", error.message);
     throw new Error("Failed to get previous bracket");

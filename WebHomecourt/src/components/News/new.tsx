@@ -75,9 +75,10 @@ function News() {
     return () => window.removeEventListener("resize", updateScrollState) // si el componente ya no esta, ya no hay porque estar chequeando los rezis
   }, [news])
 
+  //Carga
   if (loading) {
     return (
-      <section className="bg-[#fdfdfd] border border-black/25 rounded-2xl p-6 flex flex-col gap-5">
+      <section className="bg-Background border border-black/25 rounded-2xl p-6 flex flex-col gap-5">
         <h2 className="text-morado-lakers text-[28px] md:text-[32px] font-medium">Breaking news</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -133,6 +134,7 @@ function News() {
               target="_blank" //abre en nueva pestana
               className="group relative h-37.5 w-73.25 min-w-73.25 overflow-hidden rounded-xl no-underline shadow-sm focus:outline-none focus:ring-2 focus:ring-morado-lakers focus:ring-offset-2"
             >
+              {/* El absolute sirve para poder poner todo junto, poniendo uno encima del otro */}
               <img
                 alt=""
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
