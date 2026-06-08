@@ -1,195 +1,148 @@
-describe('collection page', () => {
-  it('loads and lets the user interact with filters', () => {
+describe('Collection', () => {
+  const rarityFilter = () =>
+    cy.contains('div', 'Card Rarity Category').parent();
+
+  const statusFilter = () =>
+    cy.contains('div', 'Card Status').parent();
+
+  const pageCounter = () => cy.get('#root span.text-xl');
+  const nextButton = () => cy.get('#root div.ml-4 button:nth-child(3)');
+
+  const selectFilter = (
+    filter: () => Cypress.Chainable<JQuery<HTMLElement>>,
+    option: string,
+  ) => {
+    filter().within(() => {
+      cy.contains('button', option).click();
+    });
+  };
+
+  const assertSelectedFilter = (
+    filter: () => Cypress.Chainable<JQuery<HTMLElement>>,
+    selectedOption: string,
+    inactiveOption: string,
+  ) => {
+    filter().within(() => {
+      cy.contains('button', selectedOption)
+        .should('have.class', 'bg-morado-lakers')
+        .and('not.have.class', 'bg-Gris-Oscuro');
+
+      cy.contains('button', inactiveOption)
+        .should('have.class', 'bg-Gris-Oscuro')
+        .and('not.have.class', 'bg-morado-lakers');
+    });
+  };
+
+  beforeEach(() => {
+    cy.intercept('POST', '**/auth/v1/token?grant_type=password').as('login');
     cy.intercept('POST', '**/rest/v1/rpc/collection_summary').as('getCollectionSummary');
     cy.intercept('POST', '**/rest/v1/rpc/card_collection').as('cardCollection');
-    
+
     cy.visit('https://sharkinovhomecourt.vercel.app/login');
     cy.get('input[placeholder="Email"]').type('lakerFan@lakerscourt.com');
     cy.get('input[placeholder="Password"]').type('abc123');
     cy.get('button.text-white').click();
-    
+    cy.wait('@login').its('response.statusCode').should('eq', 200);
+
     cy.visit('https://sharkinovhomecourt.vercel.app/collection');
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(2)').click();
-    // The 'All' filter button is no longer active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(1)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-Gris-Oscuro')
-        expect($el).to.not.have.class('bg-morado-lakers')
-      })
-    // The 'Common' filter button is now active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(2)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('bg-Gris-Oscuro')
-      })
-    // The displayed item count updated from 1/9 to 1/4.
-    cy.get('#root span.text-xl')
-      .should('contain.text', '1 / 4')
-    
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(1)').click();
-    // The 'All' filter button is now active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(1)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('bg-Gris-Oscuro')
-      })
-    // The 'Common' filter button is no longer active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(2)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-Gris-Oscuro')
-        expect($el).to.not.have.class('bg-morado-lakers')
-      })
-    // The displayed item count updated from 1/4 to 1/9.
-    cy.get('#root span.text-xl')
-      .should('contain.text', '1 / 9')
-    
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(2)').click();
-    // The 'All' filter button changed from active to inactive.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(1)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-Gris-Oscuro')
-        expect($el).to.not.have.class('bg-morado-lakers')
-      })
-    // The 'Common' filter button changed from inactive to active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(2)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('bg-Gris-Oscuro')
-      })
-    // The displayed item count changed from '1 / 9' to '1 / 4'.
-    cy.get('#root span.text-xl')
-      .should('contain.text', '1 / 4')
-    
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(3)').click();
-    // The 'All' filter button is no longer active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(2)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-Gris-Oscuro')
-        expect($el).to.not.have.class('bg-morado-lakers')
-      })
-    // The 'Common' filter button is now active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(3)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('bg-Gris-Oscuro')
-      })
-    // The displayed item count updated from 1/4 to 1/3.
-    cy.get('#root span.text-xl')
-      .should('contain.text', '1 / 3')
-    
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(4)').click();
-    // The 'All' filter button changed from active to inactive.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(3)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-Gris-Oscuro')
-        expect($el).to.not.have.class('bg-morado-lakers')
-      })
-    // The 'Rare' filter button changed from inactive to active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(4)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('bg-Gris-Oscuro')
-      })
-    // The displayed item count changed from '1 / 3' to '1 / 4'.
-    cy.get('#root span.text-xl')
-      .should('contain.text', '1 / 4')
-    
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(5)').click();
-    // The 'All' filter button is no longer active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(4)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-Gris-Oscuro')
-        expect($el).to.not.have.class('bg-morado-lakers')
-      })
-    // The 'Common' filter button is now active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(5)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('bg-Gris-Oscuro')
-      })
-    // The displayed item count updated from '1 / 4' to '1 / 1'.
-    cy.get('#root span.text-xl')
-      .should('contain.text', '1 / 1')
-    // The 'Next' button is now disabled.
-    cy.get('#root div.ml-4 button:nth-child(3)')
-      .should('have.attr', 'disabled')
-    
-    cy.get('#root div:nth-child(3) div.grid button:nth-child(2)').click();
-    // The 'All' filter button is no longer active.
-    cy.get('#root div:nth-child(3) div.grid button:nth-child(1)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-Gris-Oscuro')
-        expect($el).to.not.have.class('bg-morado-lakers')
-      })
-    // The 'Common' filter button is now active.
-    cy.get('#root div:nth-child(3) div.grid button:nth-child(2)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('bg-Gris-Oscuro')
-      })
-    // A message indicating that no cards match the specified filters is now displayed.
-    cy.get('#root p.text-center')
-      .should('contain.text', 'No cards matching specified filters.')
-    
-    cy.get('#root div:nth-child(3) div.grid button:nth-child(3)').click();
-    // The 'Common' filter button is no longer active.
-    cy.get('#root div:nth-child(3) div.grid button:nth-child(2)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-Gris-Oscuro')
-        expect($el).to.not.have.class('bg-morado-lakers')
-      })
-    // The 'Limited' filter button is now active.
-    cy.get('#root div:nth-child(3) div.grid button:nth-child(3)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('bg-Gris-Oscuro')
-      })
-    
-    cy.get('#root div:nth-child(3) div.grid button:nth-child(1)').click();
-    // The 'All' filter button is now active.
-    cy.get('#root div:nth-child(3) div.grid button:nth-child(1)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('bg-Gris-Oscuro')
-      })
-    // The 'Limited' filter button is no longer active.
-    cy.get('#root div:nth-child(3) div.grid button:nth-child(3)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-Gris-Oscuro')
-        expect($el).to.not.have.class('bg-morado-lakers')
-      })
-    
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(1)').click();
-    // The 'All' filter button is now active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(1)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-morado-lakers')
-        expect($el).to.not.have.class('bg-Gris-Oscuro')
-      })
-    // The 'Limited' filter button is no longer active.
-    cy.get('#root div:nth-child(1) > div.grid > button:nth-child(5)')
-      .should(($el) => {
-        expect($el).to.have.class('bg-Gris-Oscuro')
-        expect($el).to.not.have.class('bg-morado-lakers')
-      })
-    // The displayed item count updated from '1 / 1' to '1 / 9'.
-    cy.get('#root span.text-xl')
-      .should('contain.text', '1 / 9')
-    // The 'Next' button is now enabled.
-    cy.get('#root div.ml-4 button:nth-child(3)')
-      .should('not.have.attr', 'disabled')
-    // The card title changed to 'Austin Reaves'.
-    cy.get('#root div:nth-child(1) > div.outline > div.font-semibold')
-      .should('contain.text', 'Austin Reaves')
-    // The card's rarity changed to 'Common'.
-    cy.get('#root div:nth-child(1) > div.outline > div:nth-child(3) > div.text-base')
-      .should('contain.text', 'Common')
-    // The card title changed to 'Derek Fisher Bouncing'.
-    cy.get('#root div:nth-child(2) div.outline div.font-semibold')
-      .should('contain.text', 'Derek Fisher Bouncing')
-    // The card's rarity changed to 'Common'.
-    cy.get('#root div:nth-child(2) div.outline div:nth-child(3) div.text-base')
-      .should('contain.text', 'Common')
-    
+    cy.wait('@getCollectionSummary');
+    cy.wait('@cardCollection');
+    cy.contains('h1, h2, h3', 'Lakers Cards Collection').should('be.visible');
+  });
+
+  describe('Carga inicial y navegación', () => {
+    it('muestra toda la colección y habilita la navegación', () => {
+      assertSelectedFilter(rarityFilter, 'All', 'Limited');
+      pageCounter().should('contain.text', '1 / 9');
+      nextButton().should('not.be.disabled');
+
+      cy.get('#root div:nth-child(1) > div.outline > div.font-semibold')
+        .should('contain.text', 'Austin Reaves');
+      cy.get('#root div:nth-child(1) > div.outline > div:nth-child(3) > div.text-base')
+        .should('contain.text', 'Common');
+      cy.get('#root div:nth-child(2) div.outline div.font-semibold')
+        .should('contain.text', 'Derek Fisher Bouncing');
+      cy.get('#root div:nth-child(2) div.outline div:nth-child(3) div.text-base')
+        .should('contain.text', 'Common');
+    });
+  });
+
+  describe('Filtros por rareza', () => {
+    it('filtra las cartas Common', () => {
+      selectFilter(rarityFilter, 'Common');
+
+      assertSelectedFilter(rarityFilter, 'Common', 'All');
+      pageCounter().should('contain.text', '1 / 4');
+    });
+
+    it('regresa de Common a todas las rarezas', () => {
+      selectFilter(rarityFilter, 'Common');
+      selectFilter(rarityFilter, 'All');
+
+      assertSelectedFilter(rarityFilter, 'All', 'Common');
+      pageCounter().should('contain.text', '1 / 9');
+    });
+
+    it('filtra las cartas Rare', () => {
+      selectFilter(rarityFilter, 'Rare');
+
+      assertSelectedFilter(rarityFilter, 'Rare', 'All');
+      pageCounter().should('contain.text', '1 / 3');
+    });
+
+    it('filtra las cartas Legendary', () => {
+      selectFilter(rarityFilter, 'Legendary');
+
+      assertSelectedFilter(rarityFilter, 'Legendary', 'Rare');
+      pageCounter().should('contain.text', '1 / 4');
+    });
+
+    it('filtra las cartas Limited y deshabilita el botón siguiente', () => {
+      selectFilter(rarityFilter, 'Limited');
+
+      assertSelectedFilter(rarityFilter, 'Limited', 'Legendary');
+      pageCounter().should('contain.text', '1 / 1');
+      nextButton().should('be.disabled');
+    });
+  });
+
+  describe('Filtros por estado', () => {
+    it('muestra el estado vacío cuando no hay cartas Unlocked', () => {
+      selectFilter(statusFilter, 'Unlocked');
+
+      assertSelectedFilter(statusFilter, 'Unlocked', 'All');
+      cy.get('#root p.text-center')
+        .should('contain.text', 'No cards matching specified filters.');
+    });
+
+    it('cambia el filtro de Unlocked a Locked', () => {
+      selectFilter(statusFilter, 'Unlocked');
+      selectFilter(statusFilter, 'Locked');
+
+      assertSelectedFilter(statusFilter, 'Locked', 'Unlocked');
+    });
+
+    it('regresa de Locked a todos los estados', () => {
+      selectFilter(statusFilter, 'Locked');
+      selectFilter(statusFilter, 'All');
+
+      assertSelectedFilter(statusFilter, 'All', 'Locked');
+    });
+
+    it('Quit card from deck', function() {
+      cy.get('#root div:nth-child(3) div.grid button:nth-child(5)').click();
+      // The card count changed from '1 / 9' to '1 / 1'.
+      cy.get('#root span.text-xl')
+        .should('contain.text', '1 / 1')
+      // The navigation button is now disabled.
+      cy.get('#root div.ml-4 button:nth-child(3)')
+        .should('have.attr', 'disabled')
+      
+      cy.get('#root div:nth-child(3) span:nth-child(2)').click();
+      // A toast message appeared: 'Remove from Dunk Royale deck first'
+      cy.get('#root div.absolute.items-center')
+        .should('be.visible')
+      
+    });
   });
 });
