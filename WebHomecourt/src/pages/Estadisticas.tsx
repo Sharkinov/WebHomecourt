@@ -10,6 +10,7 @@ import PlayerStatsTable from '../components/Stats/PlayerStatsTable';
 import {getMarcadorByGameId} from '../components/Stats/getMarcadorByGameId';
 import  type {MarcadorJuego} from '../components/Home/Marcador'
 import MarcadorActivo from '../components/Home/Marcador'
+import { supabase } from "../lib/supabase"
 
 function Estadisticas() {
   const location = useLocation()
@@ -28,7 +29,41 @@ function Estadisticas() {
         console.error(err)
       }
     }
-  loadStats()}, [game_id])
+
+    loadStats()
+    const channel = supabase
+      .channel(`player-stats-${game_id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "simulacion_juego",
+          table: "team_player_stats",
+          filter: `game_id=eq.${game_id}`
+        },
+        async (payload) => {
+          console.log("EVENTO RECIBIDO", payload)
+          
+          try {
+            const data = await getStatsByGameId(game_id)
+
+            console.log("DATOS RECARGADOS", data)
+
+            setStats(data)
+          } catch (err) {
+            console.error(err)
+          }
+        }
+      )
+      .subscribe((status) => {
+        console.log("Realtime status:", status)
+      })
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [game_id])
+
 
   const [juego, setJuego] = useState<MarcadorJuego | null> (null);
   useEffect(() => {
@@ -36,14 +71,46 @@ function Estadisticas() {
       try {
         const marca = await getMarcadorByGameId(game_id)
         setJuego(marca)
-        
       } catch (error) {
-        console.error("Error loading marcador:", error)
         setJuego(null)
+        console.error(error)
       }
     }
-  loadJuego()}, [game_id])
-  
+
+    loadJuego()
+    const channel = supabase
+      .channel(`game-stats-${game_id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "simulacion_juego",
+          table: "team_player_stats",
+          filter: `game_id=eq.${game_id}`
+        },
+        async (payload) => {
+          console.log("EVENTO RECIBIDO", payload)
+          
+          try {
+            const marca = await getMarcadorByGameId(game_id)
+
+            console.log("DATOS RECARGADOS", marca)
+            setJuego(marca)
+
+          } catch (err) {
+            console.error(err)
+            setJuego(null)
+          }
+        }
+      )
+      .subscribe((status) => {
+        console.log("Realtime status:", status)
+      })
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [game_id])
 
   return (
     <div >
