@@ -5,7 +5,6 @@ export async function getBracketActual(): Promise<Question> {
   const { data, error } = await supabase
     .from('question')
     .select('*')
-    .is('winner', null)
     .order('start_date', { ascending: true });
 
   if (error) {
@@ -26,17 +25,13 @@ export async function getBracketActual(): Promise<Question> {
 }
 
 export async function getLastQuestion(): Promise<Question> {
-  const now = new Date().toISOString();
   const { data, error } = await supabase
-    .from('question')
-    .select('*')
-    .lt('end_date', now) 
-    .order('end_date', { ascending: false })
-    .limit(1)
+    .rpc('get_last_question')
     .single();
+
   if (error) {
     console.error("Supabase error:", error.message);
     throw new Error("Failed to get previous bracket");
   }
-  return data;
+  return data as Question;
 }
