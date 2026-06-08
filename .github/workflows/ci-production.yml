@@ -42,7 +42,7 @@ jobs:
   deploy:
     name: Deploy → PRODUCTION
     runs-on: ubuntu-latest
-    needs: [lint]
+    needs: [test, lint]
     environment: production
     steps:
       - uses: actions/checkout@v4
