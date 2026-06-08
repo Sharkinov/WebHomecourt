@@ -41,6 +41,7 @@ export async function getStatsByGameId(game_id: number): Promise<PlayerStat[]> {
       field_attempted
     `)
     .eq("game_id", game_id)
+    .order("team_player_id", { ascending: true })
 
   if (error) {
     console.error("Supabase error:", error.message)

@@ -3,6 +3,7 @@ import {getTeamStatsByGameId} from "./getTeamStatsByGameId"
 import { useEffect, useState } from "react"
 import { BarChart, Bar, XAxis, YAxis, LabelList, ResponsiveContainer,
 } from "recharts";
+import { supabase } from "../../lib/supabase"
 
 export const STATS = [
   { key: "total_points",    label: "Points"    },
@@ -25,6 +26,33 @@ function GameSummaryGraph({ game_id }: { game_id: number}) {
             }
         } 
         loadStats()
+        const channel = supabase
+            .channel(`mini-game-stats-${game_id}`)
+            .on("postgres_changes",{
+                    event: "UPDATE",
+                    schema: "simulacion_juego",
+                    table: "team_player_stats",
+                    filter: `game_id=eq.${game_id}`
+                },
+                async (payload) => {
+                    console.log("EVENTO RECIBIDO", payload)
+                    try {
+                        const marca = await getTeamStatsByGameId(game_id)
+              
+                        console.log("DATOS RECARGADOS", marca)
+                        setTeamStats(marca)
+              
+                    } catch (err) {
+                        console.error(err)
+                    }
+                }
+            )
+            .subscribe((status) => {
+                console.log("Realtime status:", status)
+            })
+        return () => {
+          supabase.removeChannel(channel)
+        }
     }, [game_id])
 
     const teamA = teamStats.find(t => t.team_id === 1)
