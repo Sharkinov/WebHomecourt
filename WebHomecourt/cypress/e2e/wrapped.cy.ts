@@ -9,7 +9,9 @@ describe('Wrapped page', () => {
     cy.get('button.text-white').click();
 
     cy.wait('@loginRequest');
-    cy.url().should('eq', 'https://sharkinovhomecourt.vercel.app/');
+    // Tras el login, la app aún hace getUser() + consulta banned_until antes de
+    // navegar a "/", así que ampliamos el timeout para esas peticiones extra.
+    cy.url({ timeout: 15000 }).should('eq', 'https://sharkinovhomecourt.vercel.app/');
 
     cy.visit('https://sharkinovhomecourt.vercel.app/wrapped');
   });
