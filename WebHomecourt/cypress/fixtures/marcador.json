@@ -1,5 +1,4 @@
-
-  {
+{
     "game_id": 1,
   "lakers_name": "string",
   "lakers_logo": "string",
@@ -8,8 +7,8 @@
   "opposing_team_logo": "string",
   "opposing_score": 1,
   "home": true,
-  "start_date": "string",
-  "game_end_time": "string",
+  "start_date": "2024-01-01T20:00:00Z",
+  "game_end_time": "2024-01-01T22:00:00Z",
   "seconds_elapsed": 1,
   "current_quarter": 1,
   "venue": "string",
