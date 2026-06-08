@@ -23,7 +23,7 @@ describe('Pagina de Estadisticas', () => {
     })
 
     it('muestra un jugador de las estadisticas', () => {
-        cy.contains('Juan Garcia').should('be.visible')
+        cy.contains('Juan García').should('be.visible')
     })
 
     it('renderiza al menos una grafica', () => {
