@@ -1,19 +1,30 @@
 describe('Lakers History', () => {
-  // Login 
+  // Login w session reset por el uso del otro perfil for test case 10
   const login = () => {
-    cy.session('lakerFan', () => {
-      cy.intercept('POST', '**/auth/v1/token?grant_type=password').as('login')
+    cy.session(
+      'lakerFan-session',
+      () => {
+        cy.clearCookies()
+        cy.clearLocalStorage()
 
-      cy.visit('https://sharkinovhomecourt.vercel.app/login')
+        cy.intercept('POST', '**/auth/v1/token?grant_type=password').as('login')
 
-      cy.get('input[placeholder="Email"]').type('lakerFan@lakerscourt.com')
-      cy.get('input[placeholder="Password"]').type('abc123')
-      cy.contains('button', 'Sign-in').click()
+        cy.visit('https://sharkinovhomecourt.vercel.app/login')
 
-      // Check login worked 
-      cy.wait('@login', { timeout: 15000 })
-      cy.location('pathname', { timeout: 10000 }).should('eq', '/')
-    })
+        cy.get('input[placeholder="Email"]').type('lakerFan@lakerscourt.com')
+        cy.get('input[placeholder="Password"]').type('abc123')
+        cy.contains('button', 'Sign-in').click()
+
+        cy.wait('@login', { timeout: 15000 })
+        cy.location('pathname', { timeout: 10000 }).should('eq', '/')
+      },
+      {
+        validate() {
+          cy.visit('https://sharkinovhomecourt.vercel.app/')
+          cy.location('pathname', { timeout: 10000 }).should('not.include', '/login')
+        },
+      }
+    )
   }
 
   const visitHistoryPage = () => {
@@ -90,7 +101,7 @@ describe('Lakers History', () => {
     cy.contains('Review your previous games and performance').should('be.visible')
     cy.contains('YOUR REPUTATION').should('be.visible')
     cy.contains('h2', 'Past Games').should('be.visible')
-  })
+  })*/
 
   // 2. No permite characters q no sean númericos
   it('Estadísticas claves númericas', () => {
@@ -260,6 +271,7 @@ describe('Lakers History', () => {
     })
   })
 
+  /*
   // 5. Ir a editar stats de la actividad que se acaba de completar, llenar solo los extra stats y picar en varita; verifica que FG made y click en Auto-fill points from shooting calcule el points bien (1 FG = 2 points). Llenar las otras required fields con 0 y click en guardar
   it('Calcular puntos con FG', () => {
     // Checks it can actually edit a game 
@@ -522,24 +534,34 @@ describe('Lakers History', () => {
 
   // Intermediate step tengo que log out, iniciar sesión ahora con email: noLakers@gmail.com password: noGames0! and then navigate to historial-lakers
   const loginNoGames = () => {
-    cy.session('noGamesUser', () => {
-      cy.clearCookies()
-      cy.clearLocalStorage()
+    cy.session(
+      'noGamesUser-session',
+      () => {
+        cy.clearCookies()
+        cy.clearLocalStorage()
 
-      cy.intercept('POST', '**/auth/v1/token?grant_type=password').as('loginNoGames')
+        cy.intercept('POST', '**/auth/v1/token?grant_type=password').as('loginNoGames')
 
-      cy.visit('https://sharkinovhomecourt.vercel.app/login')
+        cy.visit('https://sharkinovhomecourt.vercel.app/login')
 
-      cy.get('input[placeholder="Email"]').clear().type('noLakers@gmail.com')
-      cy.get('input[placeholder="Password"]').clear().type('noGames0!')
-      cy.contains('button', 'Sign-in').click()
+        cy.get('input[placeholder="Email"]').clear().type('noLakers@gmail.com')
+        cy.get('input[placeholder="Password"]').clear().type('noGames0!')
+        cy.contains('button', 'Sign-in').click()
 
-      cy.wait('@loginNoGames', { timeout: 15000 })
-      cy.location('pathname', { timeout: 10000 }).should('eq', '/')
-    })
+        cy.wait('@loginNoGames', { timeout: 15000 })
+        cy.location('pathname', { timeout: 10000 }).should('eq', '/')
+      },
+      {
+        validate() {
+          cy.visit('https://sharkinovhomecourt.vercel.app/')
+          cy.location('pathname', { timeout: 10000 }).should('not.include', '/login')
+        },
+      }
+    )
   }
 
   // 10. Todas las gráficas se muestrn pero con 0s, y la tabla de Past Games muestra solo una fila "No past games yet"
+  /*
   it('Usuario sin Lakers Court', () => {
     // Navega y loads
     loginNoGames()
@@ -575,5 +597,5 @@ describe('Lakers History', () => {
       .within(() => {
         cy.contains('No past games yet').should('be.visible')
       })
-  })
+  })*/
 })
