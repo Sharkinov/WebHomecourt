@@ -77,7 +77,7 @@ function PlayerStatsTable({ stats }: { stats: PlayerStat[]}) {
             </div> 
         </div>
         {/* tabla */}
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-x-auto">   
             <div className="min-w-[500px] bg-white border border-gray-300 rounded-2xl shadow overflow-hidden">
                 {/* header */}
                 <div className="bg-morado-lakers text-white font-semibold px-4 py-3 grid gap-3" 
