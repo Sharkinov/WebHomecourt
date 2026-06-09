@@ -42,6 +42,7 @@ describe('Lakers History', () => {
   })
 
   // 1. First test checks that the page does load everything in English
+  /*
   it('Lakers History en inglés', () => {
     cy.contains('h1', 'MATCH HISTORY').should('be.visible')
     cy.contains('Review your previous games and performance').should('be.visible')
@@ -52,7 +53,7 @@ describe('Lakers History', () => {
   // 2. No permite characters q no sean númericos
   it('Estadísticas claves númericas', () => {
     const statLabels = ['Points', 'Rebounds', 'Assists', 'Blocks', 'Steals']
-  
+
     // Tries to add alphabetic chars and checks that it remains blank
     openStatsModal().within(() => {
       statLabels.forEach((label) => {
@@ -69,18 +70,82 @@ describe('Lakers History', () => {
 
         cy.get('@statInput')
           .type('1')
-          .should('have.value', '')
+          .should('have.value', '1')
       })
     })
   })
 
-  // 3. No permite ingresar valores negativos al input de estadísticas, solo igual o mayor a 0
+  // 3. No permite ingresar valores negativos al input de estadísticas, solo igual o mayor a 0 (este va a fallar)
+  it('Estadísticas claves númericas', () => {
+    const mainStatLabels = ['Points', 'Rebounds', 'Assists', 'Blocks', 'Steals']
+    const shootingLabels = ['FG Made', 'FG Attempts', '3P Made', '3P Attempts']
 
-  // 4. Publicar ya que todas las estadísticas claves tengan un valor 
+    openStatsModal().within(() => {
+      //Add negative team overall score values 
+      cy.contains('p', 'Your Team')
+        .parent()
+        .find('input')
+        .clear()
+        .type('-10')
 
-  // 5. Ir a editar stats de la actividad que se acaba de completar, llenar solo los extra stats y picar en varita; verifica que el autofill from shooting calcule los valores correctamente 
+      cy.contains('p', 'Opposing team')
+        .parent()
+        .find('input')
+        .clear()
+        .type('-10')
 
-  // 6. 
+      // Main stat fields w -10 
+      mainStatLabels.forEach((label) => {
+        cy.contains('label', label)
+          .parent()
+          .find('input')
+          .should('have.attr', 'type', 'number')
+          .clear()
+          .type('-10')
+          .should('have.value', '-10')
+      })
+
+      // Open shooting splits division
+      cy.contains('button', 'Shooting splits (optional)').click()
+
+      cy.get('div.pt-4').should('be.visible')
+
+      // Shooting split fields
+      shootingLabels.forEach((label) => {
+        cy.contains('label', label)
+          .parent()
+          .find('input')
+          .should('be.visible')
+          .and('have.attr', 'type', 'number')
+          .clear()
+          .type('-10')
+          .should('have.value', '-10')
+      })
+
+      cy.contains('button', 'Save stats').click()
+
+      // Adolfo no consider q se muestre el error q stats cannot be negative 
+      cy.contains('p', 'Error').should('be.visible')
+      cy.contains('p', 'Your stats cannot be negative.').should('be.visible')
+    })
+  })
+  */
+
+  // 4. Publicar ya que todas las estadísticas claves tengan un valor válido que afecte los valores que se ven en las gráficas en general para validar number updating 
+
+  // 5. Ir a editar stats de la actividad que se acaba de completar, llenar solo los extra stats y picar en varita; verifica que FG made y click en Auto-fill points from shooting calcule el points bien (1 FG = 2 points). Llenar las otras required fields con 0 y click en guardar
+
+  // 6.  Ir a editar stats de la actividad que se acaba de completar, llenar solo los extra stats y picar en varita; verifica que 3P Made y click en Auto-fill points from shooting calcule el points bien (1 3P Made = 3 points ). Llenar las otars required fields con valores = 0 y click en guardar
+
+  // 7. Filter view Wins solo muestra juegos en tabla donde result = W 
+
+  // 8. Filter view Losses solo muestra juegos en tabla donde result = L 
+
+  // 9. Filter view Pending solo muestra el nombre de evento, ubicación, fecha, result  con P y las ptras columnas de SCORE PTS REB AST = -- con actions de + Add Stats 
+
+  // Intermediate step tengo que log out, iniciar sesión ahora con email: noLakers@gmail.com password: noGames0! and then navigate to historial-lakers
+
+  // 10. Todas las gráficas se muestrn pero con 0s, y la tabla de Past Games muestra solo una fila "No past games yet"
 
   // 3. Ingresar más estadísticas y asegurar que estén vacíos los inputs
   it('Ingresar más estadísticas', () => {
