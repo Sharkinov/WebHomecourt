@@ -1,0 +1,13 @@
+[
+  {
+    "game_id": 1,
+    "team_id": 1,
+    "total_points": 85,
+    "total_rebounds": 40,
+    "total_assists": 20,
+    "total_steals": 8,
+    "total_turnovers": 12,
+    "total_field_made": 32,
+    "total_field_attempted": 70
+  }
+]

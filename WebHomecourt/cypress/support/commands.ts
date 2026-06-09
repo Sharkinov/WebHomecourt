@@ -35,3 +35,10 @@
 //     }
 //   }
 // }
+// cypress/support/commands.ts
+Cypress.Commands.add('visitWithState', (url: string, state: object) => {
+  cy.window().then((win) => {
+    win.history.pushState(state, '', url)
+  })
+  cy.visit(url)
+})
