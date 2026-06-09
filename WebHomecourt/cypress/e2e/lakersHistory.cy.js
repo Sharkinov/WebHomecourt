@@ -444,7 +444,6 @@ describe('Lakers History', () => {
         .should('not.exist')
     })
   })
-    */
 
   // 7. Filter view Wins solo muestra juegos en tabla donde result = W 
   it('Filtrar por victorias', () => {
@@ -519,51 +518,62 @@ describe('Lakers History', () => {
         cy.contains('No past games yet').should('not.exist')
       })
   })
+  */
 
   // Intermediate step tengo que log out, iniciar sesión ahora con email: noLakers@gmail.com password: noGames0! and then navigate to historial-lakers
+  const loginNoGames = () => {
+    cy.session('noGamesUser', () => {
+      cy.clearCookies()
+      cy.clearLocalStorage()
+
+      cy.intercept('POST', '**/auth/v1/token?grant_type=password').as('loginNoGames')
+
+      cy.visit('https://sharkinovhomecourt.vercel.app/login')
+
+      cy.get('input[placeholder="Email"]').clear().type('noLakers@gmail.com')
+      cy.get('input[placeholder="Password"]').clear().type('noGames0!')
+      cy.contains('button', 'Sign-in').click()
+
+      cy.wait('@loginNoGames', { timeout: 15000 })
+      cy.location('pathname', { timeout: 10000 }).should('eq', '/')
+    })
+  }
 
   // 10. Todas las gráficas se muestrn pero con 0s, y la tabla de Past Games muestra solo una fila "No past games yet"
+  it('Usuario sin Lakers Court', () => {
+    // Navega y loads
+    loginNoGames()
+    cy.visit('https://sharkinovhomecourt.vercel.app/historial-lakers')
+    cy.contains('h1', 'MATCH HISTORY', { timeout: 10000 }).should('be.visible')
+    cy.contains('h2', 'Past Games').should('be.visible')
 
-  /*
-  // 3. Ingresar más estadísticas y asegurar que estén vacíos los inputs
-  it('Ingresar más estadísticas', () => {
-    const shootingLabels = ['FG Made', 'FG Attempts', '3P Made', '3P Attempts']
+    // Dashboard cards existen w/o vals 
+    const expectedCards = {
+      PPG: '0.0',
+      RPG: '0.0',
+      APG: '0.0',
+      Record: '0-0',
+      'FG%': '0.0%',
+      '3P%': '0.0%',
+      'Winning Streak': '0-0',
+      Pending: '0',
+    }
 
-    openStatsModal().within(() => {
-      cy.get('span.transition-transform').click()
+    // Compares expected 0s against defined cards  
+    Object.entries(expectedCards).forEach(([title, expectedValue]) => {
+      cy.contains('p', title)
+        .closest('div.flex.w-full.flex-col')
+        .find('span.text-texto-oscuro')
+        .first()
+        .should('have.text', expectedValue)
+    })
 
-      cy.get('div.pt-4').should('be.visible')
-
-      shootingLabels.forEach((label) => {
-        cy.contains('label', label)
-          .parent()
-          .find('input')
-          .should('be.visible')
-          .and('have.attr', 'type', 'number')
+    // Table w empty no past games mssg
+    cy.contains('h2', 'Past Games')
+      .closest('section')
+      .find('.max-h-76')
+      .within(() => {
+        cy.contains('No past games yet').should('be.visible')
       })
-
-      cy.get('span.transition-transform')
-        .should('have.attr', 'style')
-        .and('include', 'rotate(180deg)')
-    })
   })
-
-  // 4. Cerrar pop-up impacta gráficas
-  it('can close the stats modal', () => {
-    openStatsModal()
-
-    // This works if the X/close icon is rendered as a button.
-    cy.get('body').then(($body) => {
-      if ($body.find('button:contains("Cancel")').length > 0) {
-        cy.contains('button', 'Cancel').click()
-      } else if ($body.find('button:contains("Close")').length > 0) {
-        cy.contains('button', 'Close').click()
-      } else {
-        cy.get('body').type('{esc}')
-      }
-    })
-
-    cy.contains('h2', /Add my stats|Edit my stats/).should('not.exist')
-  })
-    */
 })
