@@ -262,7 +262,7 @@ describe('Lakers History', () => {
     */
 
   // 5. Ir a editar stats de la actividad que se acaba de completar, llenar solo los extra stats y picar en varita; verifica que FG made y click en Auto-fill points from shooting calcule el points bien (1 FG = 2 points). Llenar las otras required fields con 0 y click en guardar
-  it('Calcular FG Made', () => {
+  it('Calcular puntos con FG', () => {
     // Checks it can actually edit a game 
     cy.get('body').then(($body) => {
       if ($body.find('button:contains("Edit")').length === 0) {
@@ -352,7 +352,99 @@ describe('Lakers History', () => {
     })
   })
 
-  // 6.  Ir a editar stats de la actividad que se acaba de completar, llenar solo los extra stats y picar en varita; verifica que 3P Made y click en Auto-fill points from shooting calcule el points bien (1 3P Made = 3 points ). Llenar las otars required fields con valores = 0 y click en guardar
+  // 6. Ir a editar stats de la actividad que se acaba de completar, llenar solo los extra stats y picar en varita; verifica que 3P Made y click en Auto-fill points from shooting calcule el points bien (1 3P Made = 3 points ). Llenar las otars required fields con valores = 0 y click en guardar
+  it('Calcula puntos con 3P Made', () => {
+    cy.get('body').then(($body) => {
+      if ($body.find('button:contains("Edit")').length === 0) {
+        cy.log('No hay actividades completadas con Edit, test no aplica')
+        return
+      }
+
+      cy.contains('button', 'Edit')
+        .first()
+        .scrollIntoView()
+        .click({ force: true })
+
+      cy.contains('h2', 'Edit my stats', { timeout: 10000 })
+        .should('be.visible')
+        .closest('div.fixed')
+        .within(() => {
+          // No final scores 
+          cy.contains('p', 'Your Team')
+            .parent()
+            .find('input')
+            .clear()
+            .type('0')
+
+          cy.contains('p', 'Opposing team')
+            .parent()
+            .find('input')
+            .clear()
+            .type('0')
+
+          // Required fields in 0 first
+          const mainStatLabels = ['Points', 'Rebounds', 'Assists', 'Steals', 'Blocks']
+
+          mainStatLabels.forEach((label) => {
+            cy.contains('label', label)
+              .parent()
+              .find('input')
+              .clear()
+              .type('0')
+              .should('have.value', '0')
+          })
+
+          // Open shooting splits
+          cy.contains('button', 'Shooting splits (optional)').click()
+
+          cy.get('div.pt-4').should('be.visible')
+
+          // Reset shooting fields to 0
+          const shootingLabels = ['FG Made', 'FG Attempts', '3P Made', '3P Attempts']
+
+          shootingLabels.forEach((label) => {
+            cy.contains('label', label)
+              .parent()
+              .find('input')
+              .clear()
+              .type('0')
+              .should('have.value', '0')
+          })
+
+          // 1 3P = 3 pts 
+          cy.contains('label', '3P Made')
+            .parent()
+            .find('input')
+            .clear()
+            .type('1')
+            .should('have.value', '1')
+
+          // 3P Attempts should be at least equal to 3P Made
+          cy.contains('label', '3P Attempts')
+            .parent()
+            .find('input')
+            .clear()
+            .type('1')
+            .should('have.value', '1')
+
+
+          // Click Auto-fill points from shooting
+          cy.contains('button', 'Auto-fill points from shooting')
+            .click({ force: true })
+
+          // Points update to 3
+          cy.contains('label', 'Points')
+            .parent()
+            .find('input')
+            .should('have.value', '3')
+
+          cy.contains('button', 'Save stats').click()
+        })
+
+      cy.contains('h2', 'Edit my stats', { timeout: 15000 })
+        .should('not.exist')
+    })
+  })
 
   // 7. Filter view Wins solo muestra juegos en tabla donde result = W 
 
