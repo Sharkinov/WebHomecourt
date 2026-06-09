@@ -95,13 +95,12 @@ describe('Lakers History', () => {
 
 
   // 1. First test checks that the page does load everything in English
-  /*
   it('Lakers History en inglés', () => {
     cy.contains('h1', 'MATCH HISTORY').should('be.visible')
     cy.contains('Review your previous games and performance').should('be.visible')
     cy.contains('YOUR REPUTATION').should('be.visible')
     cy.contains('h2', 'Past Games').should('be.visible')
-  })*/
+  })
 
   // 2. No permite characters q no sean númericos
   it('Estadísticas claves númericas', () => {
@@ -271,7 +270,6 @@ describe('Lakers History', () => {
     })
   })
 
-  /*
   // 5. Ir a editar stats de la actividad que se acaba de completar, llenar solo los extra stats y picar en varita; verifica que FG made y click en Auto-fill points from shooting calcule el points bien (1 FG = 2 points). Llenar las otras required fields con 0 y click en guardar
   it('Calcular puntos con FG', () => {
     // Checks it can actually edit a game 
@@ -530,7 +528,6 @@ describe('Lakers History', () => {
         cy.contains('No past games yet').should('not.exist')
       })
   })
-  */
 
   // Intermediate step tengo que log out, iniciar sesión ahora con email: noLakers@gmail.com password: noGames0! and then navigate to historial-lakers
   const loginNoGames = () => {
@@ -561,7 +558,6 @@ describe('Lakers History', () => {
   }
 
   // 10. Todas las gráficas se muestrn pero con 0s, y la tabla de Past Games muestra solo una fila "No past games yet"
-  /*
   it('Usuario sin Lakers Court', () => {
     // Navega y loads
     loginNoGames()
@@ -597,5 +593,5 @@ describe('Lakers History', () => {
       .within(() => {
         cy.contains('No past games yet').should('be.visible')
       })
-  })*/
+  })
 })
