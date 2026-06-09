@@ -259,7 +259,6 @@ describe('Lakers History', () => {
       })
     })
   })
-    */
 
   // 5. Ir a editar stats de la actividad que se acaba de completar, llenar solo los extra stats y picar en varita; verifica que FG made y click en Auto-fill points from shooting calcule el points bien (1 FG = 2 points). Llenar las otras required fields con 0 y click en guardar
   it('Calcular puntos con FG', () => {
@@ -445,12 +444,81 @@ describe('Lakers History', () => {
         .should('not.exist')
     })
   })
+    */
 
   // 7. Filter view Wins solo muestra juegos en tabla donde result = W 
+  it('Filtrar por victorias', () => {
+    cy.contains('button', 'Wins').click()
+
+    cy.contains('h2', 'Past Games')
+      .closest('section')
+      .find('.max-h-76')
+      .within(() => {
+        cy.get('> div').then(($rows) => {
+          // Checa que solo se muestren W
+          cy.wrap($rows).each(($row) => {
+            cy.wrap($row)
+              .children()
+              .eq(3)
+              .find('span')
+              .invoke('text')
+              .then((resultText) => {
+                const result = resultText.trim()
+
+                expect(result).to.eq('W')
+
+                // Failed
+                expect(result).not.to.eq('L')
+                expect(result).not.to.eq('P')
+              })
+          })
+        })
+      })
+  })
 
   // 8. Filter view Losses solo muestra juegos en tabla donde result = L 
+  it('Filtra por perdidas', () => {
+    cy.contains('button', 'Losses').click()
 
-  // 9. Filter view Pending solo muestra el nombre de evento, ubicación, fecha, result  con P y las ptras columnas de SCORE PTS REB AST = -- con actions de + Add Stats 
+    cy.contains('h2', 'Past Games')
+      .closest('section')
+      .find('.max-h-76')
+      .within(() => {
+        cy.get('> div').then(($rows) => {
+          // Checa todas las rows third elem the sticker 
+          cy.wrap($rows).each(($row) => {
+            cy.wrap($row)
+              .children()
+              .eq(3)
+              .find('span')
+              .invoke('text')
+              .then((resultText) => {
+                const result = resultText.trim()
+
+                expect(result).to.eq('L')
+                // Other vals no no
+                expect(result).not.to.eq('W')
+                expect(result).not.to.eq('P')
+              })
+          })
+        })
+      })
+  })
+
+  // 9. Filter view Pending ya no tiene pending entonces muestra No pending games (va a fallar, muestra "No past games yet")
+  it('Filtrar sin juegos pendientes', () => {
+    // Click filter
+    cy.contains('button', 'Pending').click()
+
+    // Checa q no se muestre mssg generic solo No pending games
+    cy.contains('h2', 'Past Games')
+      .closest('section')
+      .find('.max-h-76')
+      .within(() => {
+        cy.contains('No pending games').should('be.visible')
+        cy.contains('No past games yet').should('not.exist')
+      })
+  })
 
   // Intermediate step tengo que log out, iniciar sesión ahora con email: noLakers@gmail.com password: noGames0! and then navigate to historial-lakers
 
