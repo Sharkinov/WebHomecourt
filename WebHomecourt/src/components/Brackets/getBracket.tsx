@@ -25,6 +25,7 @@ export async function getBracketActual(): Promise<Question> {
 }
 
 export async function getLastQuestion(): Promise<Question> {
+  const now = new Date().toISOString();
   const { data, error } = await supabase
     .from('question')
     .select('*')
